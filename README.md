@@ -49,4 +49,4 @@
 ### Installation
 1. **Clone the Repository:**
    ```bash
-   git clone [https://github.com/yourusername/event-lottery-system.git](https://github.com/CMPUT301F24jobber/QueueUp.git)
+   git clone https://github.com/CMPUT301F24jobber/QueueUp.git
