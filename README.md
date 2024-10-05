@@ -7,13 +7,7 @@
 - [Features](#features)
 - [Technologies Used](#technologies-used)
 - [Getting Started](#getting-started)
-- [Usage](#usage)
-- [User Stories](#user-stories)
-- [Actors](#actors)
-- [Glossary](#glossary)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
+
 
 ## Project Overview
 
@@ -42,7 +36,7 @@
 ## Technologies Used
 - **Platform:** Android
 - **Backend:** Firebase
-- **QR Code Libraries:** Zebra Crossing, Google QR Code Scanning Libraries
+- **QR Code Libraries:** Google QR Code Scanning Libraries
 - **Other Tools:** [List any additional technologies or libraries used]
 
 ## Getting Started
@@ -50,9 +44,9 @@
 ### Prerequisites
 - **Android Studio:** Ensure you have the latest version of Android Studio installed.
 - **Firebase Account:** Set up a Firebase project to manage backend services.
-- **QR Code Libraries:** Integrate Zebra Crossing or Google QR Code scanning libraries.
+- **QR Code Libraries:** Google QR Code scanning libraries.
 
 ### Installation
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/yourusername/event-lottery-system.git
+   git clone [https://github.com/yourusername/event-lottery-system.git](https://github.com/CMPUT301F24jobber/QueueUp.git)
