@@ -38,3 +38,5 @@ local.properties
 .history*
 .history
 .history/*
+
+.DS_Store
