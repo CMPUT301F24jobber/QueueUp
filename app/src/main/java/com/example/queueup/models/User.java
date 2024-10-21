@@ -1,6 +1,7 @@
 package com.example.queueup.models;
 
 import android.util.Log;
+
 import com.google.firebase.firestore.Exclude;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +38,7 @@ public class User {
         this.emailAddress = emailAddress;
         this.phoneNumber = phoneNumber;
         this.deviceId = deviceId;
-        this.role = "entrant"; // Default role
+        this.role = "admin"; // Default role set during creation
     }
 
     // Getters and setters
@@ -165,13 +166,9 @@ public class User {
         this.profileImageUrl = null;
     }
 
-    // Exclude the generated profile image URL from Firestore
-    @Exclude
-    public String getGeneratedProfileImageUrl() {
-        // Generate a deterministic URL based on the user's name
-        // This is a placeholder implementation using a free avatar service
-        String seed = this.firstName + this.lastName;
-        return "https://avatars.dicebear.com/api/initials/" + seed + ".svg";
+
+    public String pfp() {
+        return this.firstName.substring(0, 1);
     }
 
     // Exclude the full name from Firestore
@@ -179,7 +176,6 @@ public class User {
     public String getFullName() {
         return this.firstName + " " + this.lastName;
     }
-
 
     @Override
     public String toString() {

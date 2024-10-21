@@ -3,11 +3,12 @@ package com.example.queueup.controllers;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.provider.Settings;
+
 import com.example.queueup.models.User;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 public class UserController {
@@ -81,6 +82,7 @@ public class UserController {
     public Task<Void> createUser(User user) {
         return userCollectionReference.document(user.getUuid()).set(user);
     }
+
     /**
      * Update a user in the Firestore database.
      *
@@ -143,15 +145,9 @@ public class UserController {
      * Get a user by their device ID.
      *
      * @param deviceId The device ID to search for.
-     * @return A task that resolves with a DocumentSnapshot containing the user.
+     * @return A task that resolves with a QuerySnapshot containing the user.
      */
-    public Task<DocumentSnapshot> getUserByDeviceId(String deviceId) {
-        return userCollectionReference.whereEqualTo("deviceId", deviceId).get()
-                .continueWith(task -> {
-                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                        return task.getResult().getDocuments().get(0);
-                    }
-                    return null;
-                });
+    public Task<QuerySnapshot> getUserByDeviceId(String deviceId) {
+        return userCollectionReference.whereEqualTo("deviceId", deviceId).get();
     }
 }
