@@ -14,7 +14,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 public class CurrentUserHandler {
     private static CurrentUserHandler singleInstance = null;
-    private static UserViewModel userViewModel;
+    public static UserViewModel userViewModel;
     private static AppCompatActivity ownerActivity;
     private static UserController userController = UserController.getInstance();
 
