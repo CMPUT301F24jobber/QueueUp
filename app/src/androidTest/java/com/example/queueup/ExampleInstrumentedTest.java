@@ -1,17 +1,12 @@
 package com.example.queueup;
 
-import android.content.Context;
-
-import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import static org.junit.Assert.*;
 
 import com.example.queueup.controllers.EventController;
 import com.example.queueup.models.Event;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.util.Date;
 
@@ -25,6 +20,6 @@ public class ExampleInstrumentedTest {
     @Test
     public void testEvent() {
         Event event = new Event("id", "name", "description","www.google.com", 0.0, 0.0, new Date(), new Date());
-        EventController.getEventController().addEvent(event);
+        EventController.getEventController().createEvent(event);
     }
 }

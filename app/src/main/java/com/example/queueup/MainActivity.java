@@ -27,6 +27,6 @@ public class MainActivity extends AppCompatActivity {
         });
         Event event = new Event("id", "name", "description","www.google.com", 0.0, 0.0, new Date(), new Date());
         EventController controller = EventController.getEventController();
-        controller.addEvent(event);
+        controller.createEvent(event);
     }
 }
