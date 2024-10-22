@@ -1,5 +1,6 @@
 package com.example.queueup.views;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -108,8 +109,22 @@ public class SignUp extends AppCompatActivity {
                     Toast.makeText(SignUp.this, "Failed to register user: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
+            if(role.equals("Admin")){
+                // Navigate to AdminActivity
+                navigateToSignupPage("AdminHome");
+            } else if(role.equals("Organizer")){
+                // Navigate to OrganizerActivity
+                navigateToSignupPage("OrganizerHome");
+            } else {
+                // Navigate to AttendeeActivity
+                navigateToSignupPage("AttendeeHome");
+            }
         }
     }
 
-    // print error message in console
+    private void navigateToSignupPage(String role) {
+        Intent intent = new Intent(this, SignUp.class);
+        intent.putExtra("role", role);
+        startActivity(intent);
+    }
 }
