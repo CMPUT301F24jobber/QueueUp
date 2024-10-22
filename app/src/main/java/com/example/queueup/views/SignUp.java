@@ -108,7 +108,7 @@ public class SignUp extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     Toast.makeText(SignUp.this, "User registered successfully", Toast.LENGTH_SHORT).show();
                     // Redirect based on role
-                    redirectToRoleBasedActivity(finalRole);
+                    redirectToRoleBasedActivity(finalRole, user);
                 } else {
                     Toast.makeText(SignUp.this, "Failed to register user: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
@@ -120,7 +120,7 @@ public class SignUp extends AppCompatActivity {
      * Redirect to the appropriate activity based on the user's role.
      */
 
-    private void redirectToRoleBasedActivity(String role) {
+    private void redirectToRoleBasedActivity(String role, User user) {
         Intent intent = null;
         switch (role) {
 //            case "Admin":
@@ -132,6 +132,7 @@ public class SignUp extends AppCompatActivity {
             case "Attendee":
             default:
                 intent = new Intent(SignUp.this, AttendeeHome.class); // Navigate to AttendeeHome
+                intent.putExtra("deviceId", user.getDeviceId());
                 break;
         }
         startActivity(intent);

@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
             case "Attendee":
             default:
                 intent = new Intent(MainActivity.this, AttendeeHome.class);
+                intent.putExtra("deviceId", userViewModel.getDeviceId());
                 break;
         }
         startActivity(intent);

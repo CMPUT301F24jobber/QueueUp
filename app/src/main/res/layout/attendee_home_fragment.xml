@@ -1,17 +1,36 @@
-<!-- res/layout/admin_home_fragment.xml -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/attendeeHomeText"
+        android:id="@+id/titleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/welcome_attendee"
+        android:text="Welcome, Attendee!"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:layout_gravity="center"
-        android:padding="16dp"/>
-</LinearLayout>
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp" />
+
+    <!-- User Info Section -->
+    <TextView
+        android:id="@+id/userInfoTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your Events"
+        android:textSize="18sp"
+        android:layout_below="@id/titleTextView"
+        android:layout_marginBottom="20dp" />
+
+    <!-- ListView for Events -->
+    <ListView
+        android:id="@+id/eventsListView"
+        android:layout_width="wrap_content"
+        android:layout_height="471dp"
+        android:layout_below="@id/userInfoTextView"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="1dp" />
+
+</RelativeLayout>
