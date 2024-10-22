@@ -10,6 +10,11 @@ import org.junit.runner.RunWith;
 
 import static org.junit.Assert.*;
 
+import com.example.queueup.controllers.EventController;
+import com.example.queueup.models.Event;
+
+import java.util.Date;
+
 /**
  * Instrumented test, which will execute on an Android device.
  *
@@ -18,9 +23,8 @@ import static org.junit.Assert.*;
 @RunWith(AndroidJUnit4.class)
 public class ExampleInstrumentedTest {
     @Test
-    public void useAppContext() {
-        // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.example.queueup", appContext.getPackageName());
+    public void testEvent() {
+        Event event = new Event("id", "name", "description","www.google.com", 0.0, 0.0, new Date(), new Date());
+        EventController.getEventController().addEvent(event);
     }
 }
