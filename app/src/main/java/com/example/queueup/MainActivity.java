@@ -79,10 +79,6 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(MainActivity.this, "User role not found.", Toast.LENGTH_SHORT).show();
                             }
                         }
-                    } else {
-                        // Device ID not found, redirect to SignUp page
-                        Log.d("MainActivity", "Device ID not found. Navigating to Sign Up.");
-                        navigateToSignupPage(null); // Navigate to SignUp with no role if device ID doesn't exist
                     }
                 })
                 .addOnFailureListener(e -> {

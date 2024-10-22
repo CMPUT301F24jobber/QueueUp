@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.queueup.R;
 import com.example.queueup.models.User;
 import com.example.queueup.viewmodels.UserViewModel;
+import com.example.queueup.views.admin.AdminHome;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseApp;
@@ -101,30 +102,37 @@ public class SignUp extends AppCompatActivity {
             user.setRole(role);
 
             // Save user to Firestore using UserViewModel
+            String finalRole = role;
             userViewModel.createUser(user).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     Toast.makeText(SignUp.this, "User registered successfully", Toast.LENGTH_SHORT).show();
-                    // Optionally, navigate to another activity
+                    // Redirect based on role
+                    redirectToRoleBasedActivity(finalRole);
                 } else {
                     Toast.makeText(SignUp.this, "Failed to register user: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
-            if(role.equals("Admin")){
-                // Navigate to AdminActivity
-                navigateToSignupPage("AdminHome");
-            } else if(role.equals("Organizer")){
-                // Navigate to OrganizerActivity
-                navigateToSignupPage("OrganizerHome");
-            } else {
-                // Navigate to AttendeeActivity
-                navigateToSignupPage("AttendeeHome");
-            }
         }
     }
 
-    private void navigateToSignupPage(String role) {
-        Intent intent = new Intent(this, SignUp.class);
-        intent.putExtra("role", role);
+    /**
+     * Redirect to the appropriate activity based on the user's role.
+     */
+    private void redirectToRoleBasedActivity(String role) {
+        Intent intent = null;
+        switch (role) {
+            case "Admin":
+                intent = new Intent(SignUp.this, AdminHome.class); // Navigate to AdminHome
+//                break;
+//            case "Organizer":
+//                intent = new Intent(SignUp.this, OrganizerHome.class); // Navigate to OrganizerHome
+//                break;
+//            case "Attendee":
+            default:
+//                intent = new Intent(SignUp.this, AttendeeHome.class); // Navigate to AttendeeHome
+                break;
+        }
         startActivity(intent);
+        finish(); // Close the current activity
     }
 }
