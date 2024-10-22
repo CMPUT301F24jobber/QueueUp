@@ -3,7 +3,7 @@ package com.example.queueup.models;
 import java.util.Date;  
 
 public class Event {
-    private String id; 
+    private String id;
     private String name;
     private String description;
     private String imageUrl;

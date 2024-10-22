@@ -4,13 +4,10 @@ import static android.content.ContentValues.TAG;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.example.queueup.models.Event;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -35,23 +32,34 @@ public class EventController {
     }
 
     public void addEvent(Event event) {
-        Map<String, Object> eventMap = new HashMap<>();
-        eventMap.put("id", event.getId());
-        eventMap.put("name", event.getName());
-        eventMap.put("description", event.getDescription());
-        eventMap.put("image", event.getImageUrl());
-        eventMap.put("latitude", event.getLatitude());
-        eventMap.put("longitude", event.getLongitude());
-        eventMap.put("startDate", event.getStartDate());
-        eventMap.put("endDate", event.getEndDate());
+        Map<String, Object> eventData = new HashMap<>();
+        eventData.put("id", event.getId());
+        eventData.put("name", event.getName());
+        eventData.put("description", event.getDescription());
+        eventData.put("image", event.getImageUrl());
+        eventData.put("latitude", event.getLatitude());
+        eventData.put("longitude", event.getLongitude());
+        eventData.put("startDate", event.getStartDate());
+        eventData.put("endDate", event.getEndDate());
         Map<String, Object> thing = new HashMap<>();
         thing.put("id", event.getId());
 
-        eventCollectionReference.document(event.getId()).set(eventMap);
+        eventCollectionReference.document(event.getId()).set(eventData);
         eventCollectionReference.add(thing);
     }
-    public void getEvent(String id) {
-        eventCollectionReference.document(id).getData();
+    public Task<DocumentSnapshot> getEvent(String id) {
+        return eventCollectionReference.document(id).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    final Map<String, Object> eventData = document.getData();
+                } else {
+                    Log.d(TAG, "No such document");
+                }
+            } else {
+                Log.d(TAG, "get failed with ", task.getException());
+            }
+        });
     }
     
 }
