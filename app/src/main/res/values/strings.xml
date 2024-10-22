@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">QueueUp</string>
+    <string name="welcome_attendee">Welcome Attendee!</string>
 </resources>

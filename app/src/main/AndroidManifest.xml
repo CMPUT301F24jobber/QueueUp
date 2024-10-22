@@ -30,6 +30,10 @@
             android:name="com.example.queueup.views.admin.AdminHome"
             android:exported="true">
         </activity>
+        <activity
+            android:name="com.example.queueup.views.attendee.AttendeeHome"
+            android:exported="true">
+        </activity>
     </application>
 
 </manifest>
