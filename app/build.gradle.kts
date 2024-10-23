@@ -49,4 +49,5 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     implementation("com.google.firebase:firebase-firestore:25.1.0")
     implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.android.material:material:1.9.0")
 }
