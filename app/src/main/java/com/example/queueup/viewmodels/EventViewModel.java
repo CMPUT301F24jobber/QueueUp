@@ -19,17 +19,13 @@ public class EventViewModel extends AndroidViewModel {
         super(application);
         eventController = EventController.getEventController();
     }
+
     public Task<Void> createEvent (Event event) {
         return eventController.createEvent(event).addOnSuccessListener( result -> currentEvent.setValue(event) );
     }
+
     public Task<Void> updateEvent (Event event) {
         return eventController.createEvent(event).addOnSuccessListener( result -> currentEvent.setValue(event) );
     }
-
-//    public Task<Void> deleteEvent () {
-//        return eventController.deleteEvent(currentEvent.getValue().getId()).addOnSuccessListener( result -> currentEvent.setValue(event) );
-//    }
-
-
 
 }
