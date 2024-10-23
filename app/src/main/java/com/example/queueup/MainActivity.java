@@ -14,8 +14,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.queueup.viewmodels.UserViewModel;
 import com.example.queueup.views.SignUp;
-
-import com.example.queueup.views.admin.AdminHome;
 import com.example.queueup.views.attendee.AttendeeHome;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.FirebaseApp;
