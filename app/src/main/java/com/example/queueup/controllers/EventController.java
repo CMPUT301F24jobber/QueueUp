@@ -32,12 +32,15 @@ public class EventController {
     public Task<Void> createEvent(Event event) {
         return eventCollectionReference.document(event.getId()).set(event);
     }
+
     public Task<Void> updateEvent(Event event) {
         return eventCollectionReference.document(event.getId()).set(event);
     }
+
     public Task<Void> updateEventbyId(String id, String field, Object value) {
         return eventCollectionReference.document(id).update(field, value);
     }
+
     public Task<DocumentSnapshot> getEvent(String id) {
         return eventCollectionReference.document(id).get();
     }
@@ -45,6 +48,7 @@ public class EventController {
     public Task<Void> deleteEvent(String id) {
         return eventCollectionReference.document(id).delete();
     }
+
     public Task<Void> deleteEvent(Event event) {
         return eventCollectionReference.document(event.getId()).delete();
     }
