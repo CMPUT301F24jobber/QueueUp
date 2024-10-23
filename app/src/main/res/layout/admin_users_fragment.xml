@@ -71,13 +71,16 @@
     <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"
-        android:layout_width="408dp"
+        android:layout_width="388dp"
         android:layout_height="72dp"
-        android:background="@color/light_beige"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/home_event_bg"
         app:itemIconTint="#F5F3F3"
         app:itemTextColor="#F5F3F3"
         app:labelVisibilityMode="unlabeled"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/admin_bottom_nav_menu" />
 

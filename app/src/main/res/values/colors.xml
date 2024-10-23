@@ -9,6 +9,7 @@
     <color name='light_brown'>#AA927A</color>
     <color name='grey'>#828282</color>
     <color name="red">#CD4B4B</color>
+    <color name="brownish_text_color">#393939</color>
 
 
 </resources>
