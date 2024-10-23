@@ -41,5 +41,13 @@ public class EventController {
     public Task<DocumentSnapshot> getEvent(String id) {
         return eventCollectionReference.document(id).get();
     }
+
+    public Task<Void> deleteEvent(String id) {
+        return eventCollectionReference.document(id).delete();
+    }
+    public Task<Void> deleteEvent(Event event) {
+        return eventCollectionReference.document(event.getId()).delete();
+    }
+
     
 }
