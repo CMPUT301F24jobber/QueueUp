@@ -14,6 +14,7 @@ import com.example.queueup.R;
 import com.example.queueup.models.User;
 import com.example.queueup.viewmodels.UserViewModel;
 import com.example.queueup.views.admin.AdminHome;
+import com.example.queueup.views.attendee.AttendeeHome;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseApp;
@@ -107,7 +108,7 @@ public class SignUp extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     Toast.makeText(SignUp.this, "User registered successfully", Toast.LENGTH_SHORT).show();
                     // Redirect based on role
-                    redirectToRoleBasedActivity(finalRole);
+                    redirectToRoleBasedActivity(finalRole, user);
                 } else {
                     Toast.makeText(SignUp.this, "Failed to register user: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
@@ -118,18 +119,20 @@ public class SignUp extends AppCompatActivity {
     /**
      * Redirect to the appropriate activity based on the user's role.
      */
-    private void redirectToRoleBasedActivity(String role) {
+
+    private void redirectToRoleBasedActivity(String role, User user) {
         Intent intent = null;
         switch (role) {
-            case "Admin":
-                intent = new Intent(SignUp.this, AdminHome.class); // Navigate to AdminHome
+//            case "Admin":
+//                intent = new Intent(SignUp.this, AdminHome.class); // Navigate to AdminHome
 //                break;
 //            case "Organizer":
 //                intent = new Intent(SignUp.this, OrganizerHome.class); // Navigate to OrganizerHome
 //                break;
-//            case "Attendee":
+            case "Attendee":
             default:
-//                intent = new Intent(SignUp.this, AttendeeHome.class); // Navigate to AttendeeHome
+                intent = new Intent(SignUp.this, AttendeeHome.class); // Navigate to AttendeeHome
+                intent.putExtra("deviceId", user.getDeviceId());
                 break;
         }
         startActivity(intent);

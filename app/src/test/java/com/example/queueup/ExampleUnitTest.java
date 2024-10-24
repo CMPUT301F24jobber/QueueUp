@@ -4,6 +4,11 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+import com.example.queueup.controllers.EventController;
+import com.example.queueup.models.Event;
+
+import java.util.Date;
+
 /**
  * Example local unit test, which will execute on the development machine (host).
  *
@@ -11,7 +16,9 @@ import static org.junit.Assert.*;
  */
 public class ExampleUnitTest {
     @Test
-    public void addition_isCorrect() {
-        assertEquals(4, 2 + 2);
+    public void testEvent() {
+        Event event = new Event("id", "name", "desc", "www.google.com", 0.0, 0.0, new Date(), new Date());
+        EventController controller = EventController.getEventController();
+        controller.addEvent(event);
     }
 }

@@ -54,6 +54,11 @@ public class User {
         return firstName;
     }
 
+    public String getInitials() {
+        return firstName.substring(0, 1).toUpperCase() + lastName.substring(0, 1).toUpperCase();
+    }
+
+
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
