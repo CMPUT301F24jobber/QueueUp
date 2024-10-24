@@ -27,6 +27,19 @@
 
    </FrameLayout>
 
+   <ImageButton
+       android:id="@+id/backButton"
+       android:layout_width="48dp"
+       android:layout_height="48dp"
+       android:background="@drawable/circle_shape"
+       android:contentDescription="backButton"
+       android:src="@drawable/ic_arrow_back"
+       android:layout_alignParentStart="true"
+       android:layout_alignParentTop="true"
+       android:layout_marginStart="16dp"
+       android:layout_marginTop="16dp" />
+
+
    <!-- Profile Full Name -->
    <TextView
       android:id="@+id/organizerProfileNameTextView"
