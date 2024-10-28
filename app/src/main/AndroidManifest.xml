@@ -40,6 +40,14 @@
             android:name=".views.profiles.AttendeeProfileActivity"
             android:exported="true">
         </activity>
+        <activity
+            android:name=".views.organizer.OrganizerHome"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".views.profiles.OrganizerProfileActivity"
+            android:exported="true">
+        </activity>
 
     </application>
 
