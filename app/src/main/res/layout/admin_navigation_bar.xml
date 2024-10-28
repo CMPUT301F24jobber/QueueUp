@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.bottomnavigation.BottomNavigationView
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bottomNavigation"
+    android:layout_width="350dp"
+    android:layout_height="60dp"
+    android:layout_marginHorizontal="30dp"
+    android:layout_marginBottom="25dp"
+    android:background="@drawable/home_event_bg"
+    app:menu="@menu/admin_bottom_nav_menu"
+    app:itemIconTint="#F5F3F3"
+    app:itemTextColor="#F5F3F3"
+    app:labelVisibilityMode="unlabeled">
+</com.google.android.material.bottomnavigation.BottomNavigationView>
