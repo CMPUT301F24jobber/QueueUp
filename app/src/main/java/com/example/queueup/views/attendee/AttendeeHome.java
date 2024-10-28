@@ -5,16 +5,18 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.queueup.R;
 import com.example.queueup.controllers.UserController;
 import com.example.queueup.models.User;
-import com.example.queueup.views.profiles.AttendeeProfileActivity;
+import com.example.queueup.views.profiles.ProfileActivity;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 /**
- * The AttendeeHome class represents the home screen for attendees
+ * The AttendeeHome class represents the home screen for attendees.
  * Displays a welcome message, allows navigation to the attendee's profile, and fetches user data.
  */
 public class AttendeeHome extends AppCompatActivity {
@@ -48,13 +50,10 @@ public class AttendeeHome extends AppCompatActivity {
 
         // Set up listener for profile initials (similar to a button)
         profileInitialsFrame.setOnClickListener(v -> {
-            Intent intent = new Intent(AttendeeHome.this, AttendeeProfileActivity.class);
+            Intent intent = new Intent(AttendeeHome.this, ProfileActivity.class);
             intent.putExtra("deviceId", deviceId);
             startActivity(intent);
         });
-
-        // Fetch user data
-        fetchUserData();
     }
 
     /**
@@ -92,5 +91,14 @@ public class AttendeeHome extends AppCompatActivity {
                     }
                 })
                 .addOnFailureListener(e -> Log.e("AttendeeHome", "Error fetching user data", e));
+    }
+
+    /**
+     * Called when the activity has become visible. Used here to refresh the user data.
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fetchUserData();  // Re-fetch user data to update the UI with any changes made
     }
 }
