@@ -58,4 +58,13 @@ public class AdminHome extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> Log.e("AdminHome", "Error fetching user data", e));
     }
+    
+    /**
+     * Called when the activity has become visible. Used here to refresh the user data.
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fetchUserData();  // Re-fetch user data to update the UI with any changes made
+    }
 }
