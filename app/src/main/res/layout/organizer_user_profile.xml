@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+   <FrameLayout
+      android:id="@+id/organizerProfileImageFrame"
+      android:layout_width="100dp"
+      android:layout_height="100dp"
+      android:layout_marginTop="50dp"
+      android:layout_centerHorizontal="true"
+      android:background="@drawable/circle_shape">
+
+      <TextView
+        android:id="@+id/organizerProfileInitialsTextView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Initial"
+        android:textColor="@color/white"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="10dp"
+        android:visibility="visible"/>
+
+   </FrameLayout>
+
+   <ImageButton
+       android:id="@+id/backButton"
+       android:layout_width="48dp"
+       android:layout_height="48dp"
+       android:layout_alignParentStart="true"
+       android:layout_alignParentTop="true"
+       android:layout_marginStart="16dp"
+       android:layout_marginTop="16dp"
+       android:layout_marginEnd="75dp"
+       android:layout_toStartOf="@+id/organizerProfileImageFrame"
+       android:background="@drawable/circle_shape"
+       android:contentDescription="backButton"
+       android:src="@drawable/ic_arrow_back" />
+
+
+   <!-- Profile Full Name -->
+   <TextView
+      android:id="@+id/organizerProfileNameTextView"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="Name"
+      android:textSize="22sp"
+      android:textStyle="bold"
+       android:textColor="#8C7466"
+      android:fontFamily="sans-serif-medium"
+      android:layout_centerHorizontal="true"
+      android:layout_below="@+id/organizerProfileImageFrame"
+      android:layout_marginTop="20dp"/>
+
+   <!-- Profile Username -->
+   <TextView
+       android:id="@+id/organizerProfileUsernameTextView"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="Username"
+       android:textStyle="bold"
+       android:textColor="#8C7466"
+       android:textSize="16sp"
+       android:fontFamily="sans-serif-light"
+       android:layout_centerHorizontal="true"
+      android:layout_marginTop="8dp"
+      android:layout_below="@+id/organizerProfileNameTextView"/>
+
+   <!-- Profile Email -->
+   <TextView
+       android:id="@+id/organizerProfileEmailTextView"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="Email"
+       android:textSize="16sp"
+       android:fontFamily="sans-serif-light"
+      android:layout_below="@+id/organizerProfileUsernameTextView"
+       android:layout_marginTop="8dp"
+       android:layout_centerHorizontal="true"/>
+
+   <!-- Profile Phone -->
+   <TextView
+       android:id="@+id/organizerProfilePhoneTextView"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="Phone Number"
+       android:textSize="16sp"
+       android:fontFamily="sans-serif-light"
+       android:layout_centerHorizontal="true"
+       android:layout_marginTop="8dp"
+       android:layout_below="@+id/organizerProfileEmailTextView"/>
+
+   <!-- Invite Button -->
+   <Button
+       android:id="@+id/inviteButton"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="Invite"
+       android:textColor="@android:color/white"
+       android:backgroundTint="#8C7466"
+       android:layout_below="@+id/organizerProfilePhoneTextView"
+       android:layout_marginTop="80dp"
+       android:layout_centerHorizontal="true"/>
+
+
+
+   </RelativeLayout>
