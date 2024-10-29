@@ -10,6 +10,7 @@
     android:layout_marginBottom="16dp"
     android:background="@drawable/navigation_bar_bg"
     android:elevation="8dp"
+    app:itemActiveIndicatorStyle="@style/BottomNavigationView.ActiveIndicator"
     app:itemIconTint="@color/white"
     app:labelVisibilityMode="unlabeled"
     app:layout_constraintBottom_toBottomOf="parent"
