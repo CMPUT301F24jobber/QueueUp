@@ -56,8 +56,6 @@ public class EventViewModel extends ViewModel {
         this.eventController = EventController.getInstance();
     }
 
-    // -------------------- LiveData Getters --------------------
-
     /**
      * Returns LiveData containing all events.
      */
