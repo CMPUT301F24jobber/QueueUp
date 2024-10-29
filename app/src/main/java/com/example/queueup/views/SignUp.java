@@ -15,6 +15,7 @@ import com.example.queueup.models.User;
 import com.example.queueup.viewmodels.UserViewModel;
 import com.example.queueup.views.admin.AdminHome;
 import com.example.queueup.views.attendee.AttendeeHome;
+import com.example.queueup.views.organizer.OrganizerHome;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseApp;
@@ -126,14 +127,15 @@ public class SignUp extends AppCompatActivity {
 //            case "Admin":
 //                intent = new Intent(SignUp.this, AdminHome.class); // Navigate to AdminHome
 //                break;
-//            case "Organizer":
-//                intent = new Intent(SignUp.this, OrganizerHome.class); // Navigate to OrganizerHome
-//                break;
-            case "Attendee":
-            default:
-                intent = new Intent(SignUp.this, AttendeeHome.class); // Navigate to AttendeeHome
-                intent.putExtra("deviceId", user.getDeviceId());
+            case "Organizer":
+                intent = new Intent(SignUp.this, OrganizerHome.class); // Navigate to OrganizerHome
+                intent.putExtra("deviceId", userViewModel.getDeviceId()); // Delete later (maybe)
                 break;
+//            case "Attendee":
+//            default:
+//                intent = new Intent(SignUp.this, AttendeeHome.class); // Navigate to AttendeeHome
+//                intent.putExtra("deviceId", user.getDeviceId());
+//                break;
         }
         startActivity(intent);
         finish(); // Close the current activity

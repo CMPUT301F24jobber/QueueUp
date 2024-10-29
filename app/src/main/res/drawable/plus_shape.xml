@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Horizontal part of the plus -->
+    <item>
+        <shape android:shape="rectangle">
+            <size android:width="24dp" android:height="6dp" /> <!-- Smaller width and height -->
+            <solid android:color="@color/white" /> <!-- Set the color of the plus -->
+            <corners android:radius="2dp" /> <!-- Rounded corners (optional) -->
+        </shape>
+    </item>
+
+    <!-- Vertical part of the plus -->
+    <item>
+        <rotate
+            android:fromDegrees="90"
+            android:pivotX="50%"
+            android:pivotY="50%">
+            <shape android:shape="rectangle">
+                <size android:width="24dp" android:height="6dp" /> <!-- Smaller width and height -->
+                <solid android:color="@color/white" /> <!-- Set the color of the plus -->
+                <corners android:radius="2dp" /> <!-- Rounded corners (optional) -->
+            </shape>
+        </rotate>
+    </item>
+
+</layer-list>
