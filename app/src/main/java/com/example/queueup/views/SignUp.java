@@ -123,9 +123,9 @@ public class SignUp extends AppCompatActivity {
     private void redirectToRoleBasedActivity(String role, User user) {
         Intent intent = null;
         switch (role) {
-//            case "Admin":
-//                intent = new Intent(SignUp.this, AdminHome.class); // Navigate to AdminHome
-//                break;
+            case "Admin":
+                intent = new Intent(SignUp.this, AdminHome.class); // Navigate to AdminHome
+                break;
 //            case "Organizer":
 //                intent = new Intent(SignUp.this, OrganizerHome.class); // Navigate to OrganizerHome
 //                break;
