@@ -6,7 +6,7 @@
     android:layout_width="350dp"
     android:layout_height="60dp"
     android:layout_marginHorizontal="30dp"
-    android:layout_marginBottom="25dp"
+    android:layout_marginBottom="5dp"
     android:background="@drawable/home_event_bg"
     app:menu="@menu/admin_bottom_nav_menu"
     app:itemIconTint="#F5F3F3"

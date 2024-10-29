@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -38,6 +39,9 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
         TextView eventTitle = view.findViewById(R.id.event_name);
         TextView eventDate = view.findViewById(R.id.event_date);
         TextView eventLocation = view.findViewById(R.id.event_location);
+        ImageView eventImage = view.findViewById(R.id.event_image);
+        eventImage.setImageResource(R.drawable.ic_nav_users);
+
         eventTitle.setText(event.getName());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE MMM dd, uuuu");
         String date_text = event.getStartDate().format(formatter) + " to " + event.getEndDate().format(formatter);

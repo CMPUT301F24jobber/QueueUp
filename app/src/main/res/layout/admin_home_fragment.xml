@@ -1,18 +1,48 @@
 <!-- res/layout/admin_home_fragment.xml -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/backgroundColor"
+    android:orientation="vertical"
     android:padding="16dp">
 
 
-    <include layout="@layout/title_ui"/>
+    <include
+        android:id="@+id/queueup_title"
+
+        android:layout_width="match_parent"
+        android:layout_height="80sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        layout="@layout/title_ui"
+        />
 
     <ListView
         android:id="@+id/admin_event_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/queueup_title"
+
+        >
 
     </ListView>
-</LinearLayout>
+
+    <include
+        android:id="@+id/bottomNavigation"
+        android:layout_width="350dp"
+        android:layout_height="60dp"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginBottom="25dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        layout="@layout/admin_navigation_bar"
+        />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
