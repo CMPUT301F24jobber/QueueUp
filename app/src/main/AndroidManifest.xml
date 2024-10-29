@@ -37,7 +37,11 @@
             android:exported="true">
         </activity>
         <activity
-            android:name=".views.profiles.AttendeeProfileActivity"
+            android:name=".views.profiles.ProfileActivity"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".views.profiles.EditProfileActivity"
             android:exported="true">
         </activity>
         <activity
