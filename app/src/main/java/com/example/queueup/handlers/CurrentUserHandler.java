@@ -69,7 +69,10 @@ public class CurrentUserHandler {
      * @return The current User, or null if not available.
      */
     public LiveData<User> getCurrentUser() {
-        return userViewModel.getCurrentUser();
+        LiveData<User> userLiveData = userViewModel.getCurrentUser();
+        User user = userLiveData.getValue();
+        return user.getUuid() != null ? userLiveData : null;
+
     }
 
     /**
@@ -98,29 +101,6 @@ public class CurrentUserHandler {
     public void updateUser(User user) {
         userViewModel.updateUser(user);
     }
-
-    /**
-     * Checks and updates the FCM token for the current user.
-     */
-    public void checkAndUpdateFcmToken() {
-        String userId = getCurrentUserId();
-        if (userId == null) return;
-
-        FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        String newFcmToken = task.getResult();
-                        Log.d("CurrentUserHandler", "Retrieved FCM Token: " + newFcmToken);
-                        userController.updateNotificationPreferences(userId, true)
-                                .addOnSuccessListener(aVoid -> Log.d("CurrentUserHandler", "User FCM token successfully updated."))
-                                .addOnFailureListener(e -> Log.e("CurrentUserHandler", "Failed to update user FCM token.", e));
-                    } else {
-                        Log.e("CurrentUserHandler", "Failed to generate new FCM token.", task.getException());
-                    }
-                });
-    }
-
-    // Additional methods related to waiting lists and profile pictures can remain unchanged
 
     /**
      * Retrieves error messages from the ViewModel.
