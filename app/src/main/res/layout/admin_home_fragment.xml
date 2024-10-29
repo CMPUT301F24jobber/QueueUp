@@ -8,41 +8,14 @@
     android:padding="16dp">
 
 
-    <include
-        android:id="@+id/queueup_title"
-
-        android:layout_width="match_parent"
-        android:layout_height="80sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        layout="@layout/title_ui"
-        />
-
     <ListView
         android:id="@+id/admin_event_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/queueup_title"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        >
 
-    </ListView>
-
-        <include layout="@layout/admin_navigation_bar"
-            android:id="@+id/bottom_navigation"
-            android:layout_width="350dp"
-            android:layout_height="60dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/navigation_bar_bg"
-            app:itemIconTint="@drawable/navigation_bar_selector"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
