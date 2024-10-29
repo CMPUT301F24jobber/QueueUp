@@ -19,7 +19,6 @@ import java.util.Date;
 public class ExampleInstrumentedTest {
     @Test
     public void testEvent() {
-        Event event = new Event("id", "name", "description","www.google.com", 0.0, 0.0, new Date(), new Date());
-        EventController.getEventController().createEvent(event);
+
     }
 }

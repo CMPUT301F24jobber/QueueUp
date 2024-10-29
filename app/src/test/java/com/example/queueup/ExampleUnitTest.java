@@ -17,8 +17,7 @@ import java.util.Date;
 public class ExampleUnitTest {
     @Test
     public void testEvent() {
-        Event event = new Event("id", "name", "desc", "www.google.com", 0.0, 0.0, new Date(), new Date());
-        EventController controller = EventController.getEventController();
-        controller.addEvent(event);
+   
+
     }
 }

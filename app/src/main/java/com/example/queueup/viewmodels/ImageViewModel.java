@@ -12,16 +12,17 @@ import com.example.queueup.controllers.ImageController;
 import com.example.queueup.models.Image;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.FirebaseStorage;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
+import com.google.android.gms.tasks.Tasks;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ImageViewModel extends ViewModel {
     /**
@@ -68,74 +69,74 @@ public class ImageViewModel extends ViewModel {
      * Fetch all images from the specified paths
      */
     public void fetchAllImages() {
-        List<String> imagePaths = Arrays.asList("event/banner", "user/profile");
-        List<Image> fetchedImages = new ArrayList<>();
+        List<String> imagePaths = List.of("event/banner", "user/profile");
+        List<Task<ListResult>> tasks = new ArrayList<>();
 
         for (String path : imagePaths) {
-            imageController.getAllImages(path).addOnSuccessListener(new OnSuccessListener<ListResult>() {
-                @Override
-                public void onSuccess(ListResult listResult) {
-                    Log.d("ImageViewModel", "Fetched images from path: " + path);
-                    processImageListResult(listResult, fetchedImages);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    errorMessageLiveData.setValue("Failed to fetch images from path: " + path);
-                }
-            });
+            tasks.add(imageController.getAllImages(path));
         }
+
+        Tasks.whenAllSuccess(tasks).addOnSuccessListener(results -> {
+            List<Image> fetchedImages = new ArrayList<>();
+            for (Object result : results) {
+                if (result instanceof ListResult) {
+                    ListResult listResult = (ListResult) result;
+                    fetchedImages.addAll(processImageListResult(listResult));
+                }
+            }
+            allImagesLiveData.setValue(fetchedImages);
+        }).addOnFailureListener(e -> {
+            Log.e("ImageViewModel", "Failed to fetch all images", e);
+            errorMessageLiveData.setValue("Failed to fetch images: " + e.getMessage());
+        });
     }
 
     /**
-     * Processes the ListResult returned by Firebase and updates the LiveData with the fetched images
+     * Processes the ListResult returned by Firebase and converts it into a list of Image objects
      *
      * @param listResult the list of storage references
-     * @param fetchedImages the list to store the fetched images
+     * @return List<Image> fetched from the storage
      */
-    private void processImageListResult(ListResult listResult, List<Image> fetchedImages) {
-        for (StorageReference fileReference : listResult.getItems()) {
-            fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                @Override
-                public void onSuccess(Uri uri) {
-                    fetchImageMetadata(uri, fetchedImages);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    errorMessageLiveData.setValue("Failed to get image download URL");
-                }
-            });
-        }
-    }
+    private List<Image> processImageListResult(ListResult listResult) {
+        List<Image> images = new ArrayList<>();
+        List<Task<Image>> imageTasks = new ArrayList<>();
 
-    /**
-     * Fetches metadata for a given image URI and adds the image to the list
-     *
-     * @param uri the download URI of the image
-     * @param fetchedImages the list to store the fetched images
-     */
-    private void fetchImageMetadata(Uri uri, List<Image> fetchedImages) {
-        StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(uri.toString());
-        storageReference.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
-            @Override
-            public void onSuccess(StorageMetadata storageMetadata) {
-                Image image = createImageFromMetadata(uri, storageMetadata);
-                fetchedImages.add(image);
-                allImagesLiveData.setValue(fetchedImages);
+        for (StorageReference fileReference : listResult.getItems()) {
+            Task<Image> imageTask = fileReference.getDownloadUrl().continueWithTask(task -> {
+                if (!task.isSuccessful()) {
+                    throw task.getException();
+                }
+                Uri uri = task.getResult();
+                return fileReference.getMetadata().continueWith(metaTask -> {
+                    if (!metaTask.isSuccessful()) {
+                        throw metaTask.getException();
+                    }
+                    StorageMetadata metadata = metaTask.getResult();
+                    return createImageFromMetadata(uri, metadata);
+                });
+            });
+            imageTasks.add(imageTask);
+        }
+
+        try {
+            List<Object> completedTasks = Tasks.await(Tasks.whenAllSuccess(imageTasks));
+            for (Object obj : completedTasks) {
+                if (obj instanceof Image) {
+                    images.add((Image) obj);
+                }
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to get image metadata");
-            }
-        });
+        } catch (Exception e) {
+            Log.e("ImageViewModel", "Error processing image tasks", e);
+            errorMessageLiveData.setValue("Error processing images: " + e.getMessage());
+        }
+
+        return images;
     }
 
     /**
      * Creates an Image object from the given metadata and URI
      *
-     * @param uri the download URI of the image
+     * @param uri             the download URI of the image
      * @param storageMetadata the metadata of the image
      * @return an Image object
      */
@@ -149,7 +150,7 @@ public class ImageViewModel extends ViewModel {
 
         long creationTimeMillis = storageMetadata.getCreationTimeMillis();
         Date creationDate = new Date(creationTimeMillis);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
         image.setCreationDate(dateFormat.format(creationDate));
 
         return image;
@@ -167,24 +168,19 @@ public class ImageViewModel extends ViewModel {
     /**
      * Deletes an image and triggers the provided callback
      *
-     * @param image the image to delete
+     * @param image    the image to delete
      * @param callback the callback to trigger upon success or failure
      */
     public void deleteImage(Image image, DeleteImageCallback callback) {
-        imageController.deleteImage(image).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                if (callback != null) {
-                    callback.onImageDeleted();
-                }
+        imageController.deleteImage(image).addOnSuccessListener(aVoid -> {
+            if (callback != null) {
+                callback.onImageDeleted();
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Image deletion failed");
-                if (callback != null) {
-                    callback.onImageDeleteFailed();
-                }
+        }).addOnFailureListener(e -> {
+            Log.e("ImageViewModel", "Image deletion failed", e);
+            errorMessageLiveData.setValue("Image deletion failed: " + e.getMessage());
+            if (callback != null) {
+                callback.onImageDeleteFailed();
             }
         });
     }

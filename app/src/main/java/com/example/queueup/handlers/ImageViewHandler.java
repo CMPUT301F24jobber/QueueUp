@@ -3,7 +3,6 @@ package com.example.queueup.handlers;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -22,54 +21,53 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 public class ImageViewHandler {
-    private static int deviceScreenWidth;
-    private static int deviceScreenHeight;
     private static ImageViewHandler instance = null;
-    private static AppCompatActivity activityOwner;
-    private static final EventController eventController = EventController.getEventController();
+    private static final EventController eventController = EventController.getInstance();
     private static final UserController userController = UserController.getInstance();
 
     private ImageViewHandler() {
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        activityOwner.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        deviceScreenWidth = displayMetrics.widthPixels;
-        deviceScreenHeight = displayMetrics.heightPixels;
     }
 
-    public static void initializeInstance() {
-        if (activityOwner == null) {
-            throw new IllegalStateException("Activity owner must be set before initializing ImageViewHandler.");
-        }
-        instance = new ImageViewHandler();
-    }
-
+    /**
+     * Singleton instance getter for ImageViewHandler
+     */
     public static ImageViewHandler getInstance() {
         if (instance == null) {
-            initializeInstance();
+            synchronized (ImageViewHandler.class) {
+                if (instance == null) {
+                    instance = new ImageViewHandler();
+                }
+            }
         }
         return instance;
-    }
-
-    public static void setActivityOwner(AppCompatActivity activity) {
-        activityOwner = activity;
     }
 
     /**
      * Set the event image for the event
      *
-     * @param event The event for which the image is to be set
-     * @param eventImageView The ImageView where the event image will be displayed
+     * @param event           The event for which the image is to be set
+     * @param eventImageView  The ImageView where the event image will be displayed
+     * @param activity        The activity context for resource access
      */
-    public void setEventImage(Event event, ImageView eventImageView) {
+    public void setEventImage(Event event, ImageView eventImageView, AppCompatActivity activity) {
         // Fetch the event banner URL from the event object
-        String uriEventBanner = event.getImageUrl();
+        String uriEventBanner = event.getEventBannerImageUrl();
 
         // Initially hide the ImageView until we successfully load the image
         eventImageView.setVisibility(View.INVISIBLE);
 
         // If the event banner URL is not null, proceed to fetch it from Firebase Storage
         if (uriEventBanner != null && !uriEventBanner.isEmpty()) {
-            StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(uriEventBanner);
+            StorageReference storageRef;
+            try {
+                storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(uriEventBanner);
+            } catch (IllegalArgumentException e) {
+                Log.e("ImageViewHandler", "Invalid event banner URL: " + uriEventBanner, e);
+                eventImageView.setVisibility(View.VISIBLE);
+                eventImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                return;
+            }
+
             final long ONE_MEGABYTE = 1024 * 1024;
 
             // Attempt to fetch the image bytes from Firebase
@@ -78,7 +76,7 @@ public class ImageViewHandler {
                 Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
                 // Create a rounded drawable from the Bitmap
-                RoundedBitmapDrawable roundedDrawable = RoundedBitmapDrawableFactory.create(activityOwner.getResources(), bmp);
+                RoundedBitmapDrawable roundedDrawable = RoundedBitmapDrawableFactory.create(activity.getResources(), bmp);
                 roundedDrawable.setCornerRadius(20.0f); // Set corner radius for rounded effect (adjust as needed)
 
                 // Set the image drawable and adjust ImageView settings
@@ -90,7 +88,7 @@ public class ImageViewHandler {
                 Log.w("Event Image", "Error getting event image, removing reference", exception);
 
                 // Remove the event image reference if the fetch fails
-                eventController.updateEventbyId(event.getId(), "eventBannerImgUrl", null)
+                eventController.setEventBannerImage(event.getEventId(), null)
                         .addOnSuccessListener(aVoid -> Log.d("Event Image", "Event image reference successfully removed."))
                         .addOnFailureListener(e -> Log.e("Event Image", "Failed to remove event image reference.", e));
 
@@ -105,14 +103,13 @@ public class ImageViewHandler {
         }
     }
 
-
     /**
      * Set user profile image
      *
-     * @param user The user whose profile image is to be set
-     * @param profileImageView The ImageView where the profile image will be displayed
-     * @param resources The application resources
-     * @param imageDimension The dimensions for the profile image (optional)
+     * @param user              The user whose profile image is to be set
+     * @param profileImageView  The ImageView where the profile image will be displayed
+     * @param resources         The application resources
+     * @param imageDimension    The dimensions for the profile image (optional)
      */
     public void setUserProfileImage(User user, ImageView profileImageView, Resources resources, @Nullable ImageDimension imageDimension) {
         int targetWidth = (imageDimension != null) ? imageDimension.getWidth() : 72;
@@ -122,7 +119,16 @@ public class ImageViewHandler {
             String profileImageUrl = user.getProfileImageUrl();
 
             // Fetch image from Firebase storage
-            StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(profileImageUrl);
+            StorageReference storageReference;
+            try {
+                storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(profileImageUrl);
+            } catch (IllegalArgumentException e) {
+                Log.w("ImageViewHandler", "Invalid profile image URL: " + profileImageUrl, e);
+                // Optionally set a default image
+                profileImageView.setImageResource(android.R.drawable.ic_menu_camera); // Replace with your default image
+                return;
+            }
+
             final long ONE_MEGABYTE = 1024 * 1024;
 
             storageReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(imageBytes -> {
@@ -133,7 +139,12 @@ public class ImageViewHandler {
                 profileImageView.setImageDrawable(roundedDrawable);
             }).addOnFailureListener(exception -> {
                 Log.w("ImageViewHandler", "Failed to load profile image for user: " + user.getUsername(), exception);
+                // Optionally set a default image
+                profileImageView.setImageResource(android.R.drawable.ic_menu_camera); // Replace with your default image
             });
+        } else {
+            // Optionally set a default image or handle absence of profile image
+            profileImageView.setImageResource(android.R.drawable.ic_menu_camera); // Replace with your default image
         }
     }
 }
