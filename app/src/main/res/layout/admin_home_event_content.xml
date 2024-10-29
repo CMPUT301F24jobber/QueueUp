@@ -4,75 +4,81 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="150dp"
     android:layout_marginHorizontal="20dp"
     android:layout_marginVertical="5dp"
     android:background="@drawable/home_event_bg"
     >
 
     <!-- NEED TO ASSIGN @string RESOURCE-->
+
     <ImageView
         android:id="@+id/event_image"
-        android:layout_width="103dp"
-        android:layout_height="115dp"
-        android:layout_marginStart="24dp"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
         android:importantForAccessibility="no"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.103"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars"
-        />
+        tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
         android:id="@+id/event_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginStart="20dp"
         android:fontFamily="@font/poppins_bold"
-        android:text="@string/event_name"
 
+        android:text="@string/event_name"
+        android:textAlignment="textStart"
         android:textColor="@color/white"
         android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.141"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/event_image"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.046" />
 
     <TextView
         android:id="@+id/event_date"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="21dp"
         android:fontFamily="@font/poppins_extralight"
         android:text="Date"
+        android:textAlignment="textStart"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.282"
         app:layout_constraintStart_toEndOf="@+id/event_image"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.525" />
 
     <TextView
         android:id="@+id/event_location"
-        android:layout_width="200dp"
+        android:layout_width="160dp"
         android:layout_height="wrap_content"
 
+        android:layout_marginStart="8dp"
         android:fontFamily="@font/poppins_extralight"
         android:text="Location"
+        android:textAlignment="textStart"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/location_icon"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.874" />
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/location_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="132dp"
+        android:layout_marginStart="21dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/event_image"
         app:layout_constraintTop_toBottomOf="@+id/event_date"
-        app:layout_constraintVertical_bias="1.0"
+        app:layout_constraintVertical_bias="0.578"
         app:srcCompat="@drawable/map_pin" />
 </androidx.constraintlayout.widget.ConstraintLayout>
