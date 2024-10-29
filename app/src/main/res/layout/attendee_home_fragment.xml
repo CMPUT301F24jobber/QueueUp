@@ -27,6 +27,14 @@
             android:gravity="center"
             android:padding="5dp"
             android:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/profileImageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+           />
         </FrameLayout>
 
     <!-- Title -->

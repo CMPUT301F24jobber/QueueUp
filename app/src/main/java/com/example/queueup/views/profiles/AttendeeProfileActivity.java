@@ -2,9 +2,13 @@ package com.example.queueup.views.profiles;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.bumptech.glide.Glide;
 import com.example.queueup.R;
 import com.example.queueup.controllers.UserController;
 import com.example.queueup.models.User;
@@ -19,7 +23,7 @@ public class AttendeeProfileActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private String deviceId;
     private TextView profileNameTextView, profileUsernameTextView, profileEmailTextView, profilePhoneTextView, profileInitialsTextView;
-
+    private ImageView profileImageView;
     /**
      * Called when the activity is first created.
      *
@@ -37,7 +41,7 @@ public class AttendeeProfileActivity extends AppCompatActivity {
         profileEmailTextView = findViewById(R.id.profileEmailTextView);
         profilePhoneTextView = findViewById(R.id.profilePhoneTextView);
         profileInitialsTextView = findViewById(R.id.profileInitialsTextView); // Initials TextView
-
+        profileImageView = findViewById(R.id.profileImageView);
         // Get the deviceId from the intent or UserController
         deviceId = getIntent().getStringExtra("deviceId");
         if (deviceId == null || deviceId.isEmpty()) {
@@ -65,6 +69,9 @@ public class AttendeeProfileActivity extends AppCompatActivity {
                     if (task.isSuccessful() && !task.getResult().isEmpty()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             User user = document.toObject(User.class);
+                            String profileImageUrl = user.getProfileImageUrl();
+                            String firstName = user.getFirstName();
+                            String lastName = user.getLastName();
 
                             // Log the user data to make sure it's being retrieved correctly
                             Log.d("AttendeeProfile", "User retrieved: " + user.getFirstName() + " " + user.getLastName());
@@ -78,15 +85,24 @@ public class AttendeeProfileActivity extends AppCompatActivity {
                             profileEmailTextView.setText(user.getEmailAddress());
                             profilePhoneTextView.setText(user.getPhoneNumber());
 
-                            // Extract and set initials
-                            String initials = user.getFirstName().substring(0, 1).toUpperCase()
-                                    + user.getLastName().substring(0, 1).toUpperCase();
+                            // seeing if profile pic exists, if not then proceeding with initials
+                            if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+                                profileInitialsTextView.setVisibility(View.GONE);
+                                profileImageView.setVisibility(View.VISIBLE);  // show profile image
+                                Glide.with(this).load(profileImageUrl).circleCrop().into(profileImageView);  // Resource used: https://www.geeksforgeeks.org/image-loading-caching-library-android-set-2/
+                            } else {
+                                // if no profile image, then display initials instead
+                                profileImageView.setVisibility(View.GONE);
+                                profileInitialsTextView.setVisibility(View.VISIBLE);
 
-                            // Log the initials to ensure they are generated correctly
-                            Log.d("AttendeeProfile", "User initials: " + initials);
-
-                            // Set the initials in the TextView
-                            profileInitialsTextView.setText(initials);  // Display initials in circle
+                                // Setting initials
+                                if (firstName != null && lastName != null) {
+                                    String initials = firstName.substring(0, 1) + lastName.substring(0, 1);
+                                    profileInitialsTextView.setText(initials);
+                                } else if (firstName != null) {
+                                    profileInitialsTextView.setText(firstName.substring(0, 1));
+                                }
+                            }
                         }
                     } else {
                         // Log a message if no user is found
