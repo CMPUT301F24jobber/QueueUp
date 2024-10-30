@@ -1,8 +1,10 @@
 package com.example.queueup.views.organizer;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -35,12 +37,13 @@ public class OrganizerHome extends AppCompatActivity {
             deviceId = UserController.getInstance().getDeviceId(getApplicationContext());
         }
 
-        // Set a click listener for the plus button
-
+        // Set a click listener for the plus button to navigate to OrganizerCreateEvent
         plusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d("OrganizerHome", "Plus button clicked!");
+                Intent intent = new Intent(OrganizerHome.this, OrganizerCreateEvent.class);
+                startActivity(intent);
             }
         });
 

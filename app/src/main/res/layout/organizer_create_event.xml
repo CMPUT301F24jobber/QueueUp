@@ -7,6 +7,7 @@
     android:layout_height="match_parent">
 
 
+    <!-- Event image -->
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="wrap_content"
@@ -21,6 +22,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_nav_gallery" />
 
+
+    <!-- Back Button -->
     <ImageButton
         android:id="@+id/backButton"
         android:layout_width="48dp"
@@ -38,6 +41,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.038" />
 
+    <!-- Event name -->
     <EditText
         android:id="@+id/eventNameEditText"
         android:layout_width="200dp"
@@ -49,26 +53,31 @@
         app:layout_constraintTop_toBottomOf="@+id/imageView2"
         app:layout_constraintHorizontal_bias="0.5"/>
 
+    <!-- Event start date -->
     <EditText
         android:id="@+id/startDateEditText"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:text="Start Date"
         android:layout_marginTop="20dp"
+        android:inputType="date"
         app:layout_constraintTop_toBottomOf="@+id/eventNameEditText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
+    <!-- Event end date -->
     <EditText
         android:id="@+id/endDateEditText"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:text="End Date"
+        android:inputType="date"
         android:layout_marginTop="20dp"
         app:layout_constraintTop_toBottomOf="@+id/startDateEditText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
+    <!-- Event location -->
     <EditText
         android:id="@+id/locationEditText"
         android:layout_width="200dp"
@@ -79,6 +88,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
+    <!-- Event description -->
     <EditText
         android:id="@+id/descriptionEditText"
         android:layout_width="200dp"
@@ -89,6 +99,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
+    <!-- Event attendee limit number -->
     <EditText
         android:id="@+id/attendeeLimitEditText"
         android:layout_width="wrap_content"
@@ -97,9 +108,11 @@
         android:layout_marginTop="16dp"
         android:text="Attendee Limit"
         android:textSize="12sp"
+        android:inputType="number"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/descriptionEditText" />
 
+    <!-- Event unlimited attendee checkbox -->
     <CheckBox
         android:id="@+id/unlimitedAttendeeCheckBox"
         android:layout_width="wrap_content"
@@ -112,6 +125,7 @@
         app:layout_constraintStart_toEndOf="@+id/attendeeLimitEditText"
         app:layout_constraintTop_toBottomOf="@+id/descriptionEditText" />
 
+    <!-- Submit button -->
     <Button
         android:id="@+id/submitButton"
         android:layout_width="200dp"
