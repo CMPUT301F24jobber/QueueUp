@@ -26,6 +26,14 @@
             android:padding="10dp"
             android:visibility="visible" />
 
+        <ImageView
+            android:id="@+id/profileImageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            />
+
     </FrameLayout>
 
     <!-- Profile Full Name -->

@@ -22,6 +22,7 @@ public class User implements Parcelable {
     private boolean receiveNotifications;
     private List<String> waitingListEvents;
 
+
     // Default constructor required for Firestore
     public User() {
         this.notifications = new HashMap<>();
