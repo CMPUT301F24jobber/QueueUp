@@ -32,7 +32,7 @@ public class AttendeeProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.attendee_profile);
+        setContentView(R.layout.activity_edit_profile);
 
         // Initialize Firestore and UI elements
         db = FirebaseFirestore.getInstance();
