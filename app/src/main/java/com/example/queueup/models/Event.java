@@ -1,6 +1,6 @@
 package com.example.queueup.models;
 
-import java.util.Date;  
+import java.time.LocalDate;
 
 public class Event {
     private String id;
@@ -9,12 +9,12 @@ public class Event {
     private String imageUrl;
     private double longitude;
     private double latitude;
-    private Date startDate; 
-    private Date endDate;   
+    private LocalDate startDate; 
+    private LocalDate endDate;   
 
     public Event() {}
 
-    public Event(String id, String name, String description, String imageUrl, double longitude, double latitude, Date startDate, Date endDate) {
+    public Event(String id, String name, String description, String imageUrl, double longitude, double latitude, LocalDate startDate, LocalDate endDate) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -72,20 +72,29 @@ public class Event {
     public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
+    
+    public void setLocation(double longitude, double latitude) {
+        this.longitude = longitude;
+        this.latitude = latitude;
+    }
 
-    public Date getStartDate() {
+    public String getLocation() {
+        return this.longitude + " " + this.latitude;
+    }
+
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 
