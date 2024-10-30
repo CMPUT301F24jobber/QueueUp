@@ -39,7 +39,7 @@ public class UsersArrayAdapter extends ArrayAdapter<User> {
         TextView userPhone = view.findViewById(R.id.user_phone);
         TextView userEmail = view.findViewById(R.id.user_email);
         ImageView userImage = view.findViewById(R.id.user_image);
-        userName.setText(user.getFullName());
+        userName.setText(user.getFirstName() + " " + user.getLastName());
         userPhone.setText(user.getPhoneNumber());
         userEmail.setText(user.getEmailAddress());
         userImage.setImageResource(R.drawable.ic_nav_users);
