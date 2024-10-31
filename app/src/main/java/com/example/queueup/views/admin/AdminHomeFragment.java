@@ -36,17 +36,7 @@ public class AdminHomeFragment extends Fragment {
         dataList = new ArrayList<>();  // Proper initialization of ArrayList
         Event event = null;  // Completed constructor parameters
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            event = new Event(
-                    "1",
-                    "Event 1",
-                    "Description 1",
-                    "https://www.example.com/image1.jpg",
-                    0.0,
-                    0.0,
-                    Date.from(LocalDate.of(2021, 1, 1).atStartOfDay().toInstant(ZoneOffset.UTC)),
-                    Date.from(LocalDate.of(2021, 1, 2).atStartOfDay().toInstant(ZoneOffset.UTC))
-            );
-            dataList.add(event);
+
         }
 
         // Set up the ListView and its adapter

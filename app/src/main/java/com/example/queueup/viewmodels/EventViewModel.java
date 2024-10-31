@@ -105,7 +105,7 @@ public class EventViewModel extends ViewModel {
         return isLoadingLiveData;
     }
 
-    // -------------------- Event Fetching Methods --------------------
+
 
     /**
      * Fetches all events from the database.
@@ -458,7 +458,6 @@ public class EventViewModel extends ViewModel {
         });
     }
 
-    // -------------------- Lottery System Methods --------------------
 
     /**
      * Draws a lottery to select a specified number of attendees from the waiting list.
