@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.queueup.R;
 import com.example.queueup.models.User;
+import com.example.queueup.services.ImageUploader;
 import com.example.queueup.viewmodels.UserViewModel;
 import com.example.queueup.views.admin.AdminHome;
 import com.example.queueup.views.attendee.AttendeeHome;
@@ -133,19 +134,19 @@ public class SignUp extends AppCompatActivity {
             // Check if a profile image is selected
             if (profileImageUri != null) {
                 // Upload image to Firebase Storage
-                String imagePath = "profile_pics/" + UUID.randomUUID().toString();
-                FirebaseStorage.getInstance().getReference(imagePath).putFile(profileImageUri)
-                        .addOnSuccessListener(taskSnapshot -> {
-                            // Get download URL of the uploaded image
-                            taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(uri -> {
-                                // Store the image URL in user data and proceed with user creation
-                                user.setProfileImageUrl(uri.toString());
-                                saveUserToFirestore(user);
-                            });
-                        })
-                        .addOnFailureListener(e -> {
-                            Toast.makeText(SignUp.this, "Failed to upload profile picture", Toast.LENGTH_SHORT).show();
-                        });
+                ImageUploader imageUploader = new ImageUploader();
+                imageUploader.uploadImage("profile_pictures/", profileImageUri, new ImageUploader.UploadListener() {
+                    @Override
+                    public void onUploadSuccess(String imageUrl) {
+                        user.setProfileImageUrl(imageUrl);
+                        saveUserToFirestore(user);
+                    }
+
+                    @Override
+                    public void onUploadFailure(Exception exception) {
+                        Toast.makeText(SignUp.this, "Failed to upload profile picture: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
             } else {
                 // If no image, proceed without a profile picture
                 saveUserToFirestore(user);
