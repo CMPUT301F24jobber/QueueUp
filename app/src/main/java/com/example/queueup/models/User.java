@@ -1,14 +1,14 @@
 package com.example.queueup.models;
 
-import android.util.Log;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-import com.google.firebase.firestore.Exclude;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class User {
+public class User implements Parcelable {
     private String uuid;
     private String firstName;
     private String lastName;
@@ -21,6 +21,7 @@ public class User {
     private String deviceId;
     private boolean receiveNotifications;
     private List<String> waitingListEvents;
+
 
     // Default constructor required for Firestore
     public User() {
@@ -53,11 +54,6 @@ public class User {
     public String getFirstName() {
         return firstName;
     }
-
-    public String getInitials() {
-        return firstName.substring(0, 1).toUpperCase() + lastName.substring(0, 1).toUpperCase();
-    }
-
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
@@ -109,7 +105,6 @@ public class User {
 
     public void setProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
-        Log.d("User", "Profile Image URL set: " + profileImageUrl);
     }
 
     public HashMap<String, String> getNotifications() {
@@ -144,7 +139,11 @@ public class User {
         this.waitingListEvents = waitingListEvents;
     }
 
-    // Methods
+    public String getInitials() {
+        return firstName.substring(0, 1).toUpperCase() + lastName.substring(0, 1).toUpperCase();
+    }
+
+    // Additional helper methods
     public void addNotification(String notificationId, String notificationContent) {
         this.notifications.put(notificationId, notificationContent);
     }
@@ -171,16 +170,54 @@ public class User {
         this.profileImageUrl = null;
     }
 
-
-    public String pfp() {
-        return this.firstName.substring(0, 1);
+    // Parcelable implementation
+    protected User(Parcel in) {
+        uuid = in.readString();
+        firstName = in.readString();
+        lastName = in.readString();
+        username = in.readString();
+        emailAddress = in.readString();
+        phoneNumber = in.readString();
+        role = in.readString();
+        profileImageUrl = in.readString();
+        deviceId = in.readString();
+        receiveNotifications = in.readByte() != 0;
+        notifications = in.readHashMap(HashMap.class.getClassLoader());
+        waitingListEvents = in.createStringArrayList();
     }
 
-    // Exclude the full name from Firestore
-    @Exclude
-    public String getFullName() {
-        return this.firstName + " " + this.lastName;
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeString(uuid);
+        parcel.writeString(firstName);
+        parcel.writeString(lastName);
+        parcel.writeString(username);
+        parcel.writeString(emailAddress);
+        parcel.writeString(phoneNumber);
+        parcel.writeString(role);
+        parcel.writeString(profileImageUrl);
+        parcel.writeString(deviceId);
+        parcel.writeByte((byte) (receiveNotifications ? 1 : 0));
+        parcel.writeMap(notifications);
+        parcel.writeStringList(waitingListEvents);
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 
     @Override
     public String toString() {

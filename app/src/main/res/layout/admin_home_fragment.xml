@@ -1,17 +1,17 @@
-<!-- res/layout/admin_home_fragment.xml -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/backgroundColor"
     android:orientation="vertical"
     android:padding="16dp">
-
-    <TextView
-        android:id="@+id/adminHomeText"
-        android:layout_width="wrap_content"
+    <ListView
+        android:id="@+id/admin_event_list"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Welcome Admin!"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_gravity="center"
-        android:padding="16dp"/>
-</LinearLayout>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+

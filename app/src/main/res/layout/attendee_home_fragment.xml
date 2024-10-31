@@ -11,8 +11,8 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginTop="0dp"
         android:background="@drawable/circle_shape">
 
         <!-- Initials Text -->
@@ -27,6 +27,14 @@
             android:gravity="center"
             android:padding="5dp"
             android:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/profileImageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+           />
         </FrameLayout>
 
     <!-- Title -->
@@ -40,18 +48,19 @@
         android:textColor="#8C7466"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="20dp"
-        android:layout_below="@id/profileInitialsFrame"/>
+        android:layout_marginTop="20dp" />
 
     <!-- User Info Section -->
     <TextView
         android:id="@+id/userInfoTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Your Events"
-        android:textSize="18sp"
-        android:textColor="#333333"
+        android:text="Joined Events:"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textColor="#8C7466"
         android:layout_below="@id/titleTextView"
-        android:layout_marginBottom="20dp" />
+        android:layout_marginBottom="5dp" />
 
     <!-- ListView for Events -->
     <ListView

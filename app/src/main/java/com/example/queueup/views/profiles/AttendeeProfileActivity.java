@@ -2,9 +2,12 @@ package com.example.queueup.views.profiles;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import com.bumptech.glide.Glide;
 import com.example.queueup.R;
 import com.example.queueup.controllers.UserController;
 import com.example.queueup.models.User;
@@ -19,6 +22,7 @@ public class AttendeeProfileActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private String deviceId;
     private TextView profileNameTextView, profileUsernameTextView, profileEmailTextView, profilePhoneTextView, profileInitialsTextView;
+    private ImageView profileImageView;
 
     /**
      * Called when the activity is first created.
@@ -28,15 +32,11 @@ public class AttendeeProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.attendee_profile);
+        setContentView(R.layout.activity_edit_profile);
 
-        // Initialize Firestore and the TextViews
+        // Initialize Firestore and UI elements
         db = FirebaseFirestore.getInstance();
-        profileNameTextView = findViewById(R.id.profileNameTextView);
-        profileUsernameTextView = findViewById(R.id.profileUsernameTextView);
-        profileEmailTextView = findViewById(R.id.profileEmailTextView);
-        profilePhoneTextView = findViewById(R.id.profilePhoneTextView);
-        profileInitialsTextView = findViewById(R.id.profileInitialsTextView); // Initials TextView
+        initializeUI();
 
         // Get the deviceId from the intent or UserController
         deviceId = getIntent().getStringExtra("deviceId");
@@ -47,11 +47,23 @@ public class AttendeeProfileActivity extends AppCompatActivity {
         // Log the deviceId to ensure it's correct
         Log.d("AttendeeProfile", "Device ID: " + deviceId);
 
-        Button backButton = findViewById(R.id.backButton);
-        backButton.setOnClickListener(v -> finish()); // This will go back to the previous activity
-
         // Fetch and display the user data
         fetchUserData();
+    }
+
+    /**
+     * Initializes UI elements like TextViews, ImageView, and Button.
+     */
+    private void initializeUI() {
+        profileNameTextView = findViewById(R.id.profileNameTextView);
+        profileUsernameTextView = findViewById(R.id.profileUsernameTextView);
+        profileEmailTextView = findViewById(R.id.profileEmailTextView);
+        profilePhoneTextView = findViewById(R.id.profilePhoneTextView);
+        profileInitialsTextView = findViewById(R.id.profileInitialsTextView);
+        profileImageView = findViewById(R.id.profileImageView);
+
+        Button backButton = findViewById(R.id.backButton);
+        backButton.setOnClickListener(v -> finish()); // Go back to the previous activity
     }
 
     /**
@@ -65,28 +77,7 @@ public class AttendeeProfileActivity extends AppCompatActivity {
                     if (task.isSuccessful() && !task.getResult().isEmpty()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             User user = document.toObject(User.class);
-
-                            // Log the user data to make sure it's being retrieved correctly
-                            Log.d("AttendeeProfile", "User retrieved: " + user.getFirstName() + " " + user.getLastName());
-
-                            // Set full name
-                            String fullName = user.getFirstName() + " " + user.getLastName();
-                            profileNameTextView.setText(fullName);
-
-                            // Set username, email, and phone
-                            profileUsernameTextView.setText(user.getUsername());
-                            profileEmailTextView.setText(user.getEmailAddress());
-                            profilePhoneTextView.setText(user.getPhoneNumber());
-
-                            // Extract and set initials
-                            String initials = user.getFirstName().substring(0, 1).toUpperCase()
-                                    + user.getLastName().substring(0, 1).toUpperCase();
-
-                            // Log the initials to ensure they are generated correctly
-                            Log.d("AttendeeProfile", "User initials: " + initials);
-
-                            // Set the initials in the TextView
-                            profileInitialsTextView.setText(initials);  // Display initials in circle
+                            updateUIWithUserData(user);
                         }
                     } else {
                         // Log a message if no user is found
@@ -97,5 +88,54 @@ public class AttendeeProfileActivity extends AppCompatActivity {
                     // Log any error that occurs during Firestore retrieval
                     Log.e("AttendeeProfile", "Error fetching user data", e);
                 });
+    }
+
+    /**
+     * Updates the UI with the user's profile information.
+     *
+     * @param user The User object containing profile information.
+     */
+    private void updateUIWithUserData(User user) {
+        String firstName = user.getFirstName();
+        String lastName = user.getLastName();
+        String profileImageUrl = user.getProfileImageUrl();
+
+        // Log the user data to ensure it is being retrieved correctly
+        Log.d("AttendeeProfile", "User retrieved: " + firstName + " " + lastName);
+
+        // Set full name
+        String fullName = firstName + " " + lastName;
+        profileNameTextView.setText(fullName);
+
+        // Set username, email, and phone
+        profileUsernameTextView.setText(user.getUsername());
+        profileEmailTextView.setText(user.getEmailAddress());
+        profilePhoneTextView.setText(user.getPhoneNumber());
+
+        // Set profile picture or initials
+        if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+            profileInitialsTextView.setVisibility(View.GONE);
+            profileImageView.setVisibility(View.VISIBLE);
+            Glide.with(this).load(profileImageUrl).circleCrop().into(profileImageView);
+        } else {
+            profileImageView.setVisibility(View.GONE);
+            profileInitialsTextView.setVisibility(View.VISIBLE);
+            setInitials(firstName, lastName);
+        }
+    }
+
+    /**
+     * Sets the initials TextView based on the user's first and last name.
+     *
+     * @param firstName The user's first name.
+     * @param lastName The user's last name.
+     */
+    private void setInitials(String firstName, String lastName) {
+        if (firstName != null && lastName != null) {
+            String initials = firstName.substring(0, 1).toUpperCase() + lastName.substring(0, 1).toUpperCase();
+            profileInitialsTextView.setText(initials);
+        } else if (firstName != null) {
+            profileInitialsTextView.setText(firstName.substring(0, 1).toUpperCase());
+        }
     }
 }

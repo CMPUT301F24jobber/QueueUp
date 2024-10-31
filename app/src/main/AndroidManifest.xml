@@ -3,6 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <!-- Resource used: https://developer.android.com/about/versions/14/changes/partial-photo-video-access -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
 
     <application
         android:allowBackup="true"
@@ -37,7 +42,11 @@
             android:exported="true">
         </activity>
         <activity
-            android:name=".views.profiles.AttendeeProfileActivity"
+            android:name=".views.profiles.ProfileActivity"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".views.profiles.EditProfileActivity"
             android:exported="true">
         </activity>
 

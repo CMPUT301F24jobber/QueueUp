@@ -26,6 +26,14 @@
             android:padding="10dp"
             android:visibility="visible" />
 
+        <ImageView
+            android:id="@+id/profileImageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            />
+
     </FrameLayout>
 
     <!-- Profile Full Name -->
@@ -93,5 +101,18 @@
         android:layout_below="@id/profilePhoneTextView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp" />
+
+    <!-- Edit Button -->
+    <Button
+        android:id="@+id/editButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edit"
+        android:textColor="@android:color/white"
+        android:backgroundTint="#8C7466"
+        android:layout_below="@id/profilePhoneTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="75dp" />
+
 
 </RelativeLayout>
