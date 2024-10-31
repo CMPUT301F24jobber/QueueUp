@@ -6,11 +6,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.queueup.controllers.EventController;
 import com.example.queueup.controllers.QRController;
 import com.example.queueup.models.QRCode;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
 
 public class QRViewModel extends ViewModel {
     private static final String TAG = QRViewModel.class.getSimpleName();
