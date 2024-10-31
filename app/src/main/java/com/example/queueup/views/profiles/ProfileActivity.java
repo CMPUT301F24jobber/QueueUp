@@ -64,7 +64,12 @@ public class ProfileActivity extends AppCompatActivity {
             startActivityForResult(intent, EDIT_PROFILE_REQUEST_CODE);  // Use a request code to identify the result
         });
 
-        // Fetch and display the user data
+        onResume();
+    }
+
+    @Override
+    protected void onResume() { // Resource used: https://stackoverflow.com/questions/15658687/how-to-use-onresume
+        super.onResume();
         fetchUserData();
     }
 

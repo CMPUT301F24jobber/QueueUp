@@ -61,8 +61,12 @@ public class AttendeeHome extends AppCompatActivity {
             startActivity(intent);
         });
 
+        onResume();
+    }
 
-        // Fetch user data
+    @Override
+    protected void onResume() { // Resource used: https://stackoverflow.com/questions/15658687/how-to-use-onresume
+        super.onResume();
         fetchUserData();
     }
 
