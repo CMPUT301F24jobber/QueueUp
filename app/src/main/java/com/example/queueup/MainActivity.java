@@ -14,7 +14,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.queueup.viewmodels.UserViewModel;
 import com.example.queueup.views.SignUp;
-
 import com.example.queueup.views.admin.AdminHome;
 import com.example.queueup.views.attendee.AttendeeHome;
 import com.example.queueup.views.organizer.OrganizerHome;
@@ -97,17 +96,18 @@ public class MainActivity extends AppCompatActivity {
     private void redirectToRoleBasedActivity(String role) {
         Intent intent = null;
         switch (role) {
-//            case "Admin":
-//                intent = new Intent(MainActivity.this, AdminHome.class);
-//                break;
+            case "Admin":
+                intent = new Intent(MainActivity.this, AdminHome.class);
+                intent.putExtra("deviceId", userViewModel.getDeviceId());
+                break;
             case "Organizer":
                 intent = new Intent(MainActivity.this, OrganizerHome.class);
                 break;
-//            case "Attendee":
-//            default:
-//                intent = new Intent(MainActivity.this, AttendeeHome.class);
-//                intent.putExtra("deviceId", userViewModel.getDeviceId());
-//                break;
+            case "Attendee":
+            default:
+                intent = new Intent(MainActivity.this, AttendeeHome.class);
+                intent.putExtra("deviceId", userViewModel.getDeviceId());
+                break;
         }
         startActivity(intent);
         finish(); // Close MainActivity to prevent going back

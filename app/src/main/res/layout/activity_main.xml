@@ -66,7 +66,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
         android:layout_marginBottom="16dp"
-        android:text="I am organizer"
+        android:text="I am organizing"
         android:textColor="@android:color/black"
         android:textAllCaps="false"
         android:textSize="18sp"

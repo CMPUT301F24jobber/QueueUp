@@ -3,7 +3,9 @@ package com.example.queueup.views.attendee;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,6 +16,7 @@ import com.example.queueup.models.User;
 import com.example.queueup.views.profiles.ProfileActivity;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.bumptech.glide.Glide;
 
 /**
  * The AttendeeHome class represents the home screen for attendees.
@@ -25,6 +28,7 @@ public class AttendeeHome extends AppCompatActivity {
     private TextView profileInitialsTextView;  // TextView to hold the initials
     private FrameLayout profileInitialsFrame;  // FrameLayout for the initials circle
     private String deviceId;
+    private ImageView profileImageView;  // ImageView to display the profile picture
 
     /**
      * Called when the activity is first created.
@@ -36,11 +40,12 @@ public class AttendeeHome extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.attendee_home_fragment);
 
-        // Initialize Firestore and TextView
+        // Initialize Firebase and TextView
         db = FirebaseFirestore.getInstance();
         titleTextView = findViewById(R.id.titleTextView);
         profileInitialsTextView = findViewById(R.id.profileInitialsTextView);  // Find the initials TextView
         profileInitialsFrame = findViewById(R.id.profileInitialsFrame);  // Find the FrameLayout
+        profileImageView = findViewById(R.id.profileImageView);  // Find the ImageView for profile picture
 
         // Get deviceId from intent or UserController
         deviceId = getIntent().getStringExtra("deviceId");
@@ -69,6 +74,7 @@ public class AttendeeHome extends AppCompatActivity {
                             User user = document.toObject(User.class);
                             String firstName = user.getFirstName();
                             String lastName = user.getLastName();
+                            String profileImageUrl = user.getProfileImageUrl();  // getting profile image URL
 
                             // Set the welcome text
                             if (firstName != null && !firstName.isEmpty()) {
@@ -77,12 +83,23 @@ public class AttendeeHome extends AppCompatActivity {
                                 titleTextView.setText("Welcome, Attendee!");
                             }
 
-                            // Set the initials in the TextView
-                            if (firstName != null && lastName != null) {
-                                String initials = firstName.substring(0, 1) + lastName.substring(0, 1);
-                                profileInitialsTextView.setText(initials);  // Set the extracted initials
-                            } else if (firstName != null) {
-                                profileInitialsTextView.setText(firstName.substring(0, 1));  // Only first name available
+                            // seeing if profile pic exists, if not then proceeding with initials
+                            if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+                                profileInitialsTextView.setVisibility(View.GONE);
+                                profileImageView.setVisibility(View.VISIBLE);  // show profile image
+                                Glide.with(this).load(profileImageUrl).circleCrop().into(profileImageView); // Resource used: https://www.geeksforgeeks.org/image-loading-caching-library-android-set-2/
+                            } else {
+                                // if no profile image, then display initials instead
+                                profileImageView.setVisibility(View.GONE);
+                                profileInitialsTextView.setVisibility(View.VISIBLE);
+
+                                // Setting initials
+                                if (firstName != null && lastName != null) {
+                                    String initials = firstName.substring(0, 1) + lastName.substring(0, 1);
+                                    profileInitialsTextView.setText(initials);
+                                } else if (firstName != null) {
+                                    profileInitialsTextView.setText(firstName.substring(0, 1));
+                                }
                             }
                         }
                     } else {
