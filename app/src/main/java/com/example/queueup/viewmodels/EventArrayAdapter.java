@@ -42,11 +42,11 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
         ImageView eventImage = view.findViewById(R.id.event_image);
         eventImage.setImageResource(R.drawable.ic_nav_users);
 
-        eventTitle.setText(event.getName());
+        eventTitle.setText(event.getEventName());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE MMM dd, uuuu");
-        String date_text = event.getStartDate().format(formatter) + " to " + event.getEndDate().format(formatter);
+            String date_text = event.getEventStartDate().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate().format(formatter);
         eventDate.setText(date_text);
-        eventLocation.setText(event.getLocation());
+        eventLocation.setText(event.getEventLocation());
         return view;
     }
 

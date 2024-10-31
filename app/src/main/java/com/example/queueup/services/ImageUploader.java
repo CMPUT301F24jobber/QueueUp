@@ -3,7 +3,6 @@ package com.example.queueup.services;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
@@ -31,12 +30,11 @@ public class ImageUploader {
     /**
      * Upload an image to Firebase Cloud Storage
      *
-     * @param context      The context for accessing resources
-     * @param storagePath  The path to store the image in Firebase Cloud Storage (e.g., user/profile, event/banner, etc.)
-     * @param imageUri     The URI of the image to upload
-     * @param listener     The listener to handle the upload success or failure
+     * @param storagePath The path to store the image in Firebase Cloud Storage (e.g., user/profile, event/banner, etc.)
+     * @param imageUri    The URI of the image to upload
+     * @param listener    The listener to handle the upload success or failure
      */
-    public void uploadImage(Context context, String storagePath, Uri imageUri, UploadListener listener) {
+    public void uploadImage(String storagePath, Uri imageUri, UploadListener listener) {
         if (imageUri == null) {
             listener.onUploadFailure(new IllegalArgumentException("Image URI cannot be null"));
             return;
