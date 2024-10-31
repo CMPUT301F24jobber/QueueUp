@@ -2,13 +2,13 @@ package com.example.queueup.models;
 
 import java.util.UUID;
 
-public class QrCode {
+public class QRCode {
     private String id;
     private String eventId;
 
-    QrCode() {}
+    public QRCode() {}
 
-    public QrCode(String eventId) {
+    public QRCode(String eventId) {
         this.id = UUID.randomUUID().toString();
         this.eventId = eventId;
     }
@@ -17,15 +17,16 @@ public class QrCode {
         return id;
     }
 
-    public void setID(String id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public String getEventID() {
+    public String getEventId() {
         return eventId;
     }
 
-    public void setEventID(String eventId) {
+    public void setEventId(String eventId) {
         this.eventId = eventId;
     }
+
 }
