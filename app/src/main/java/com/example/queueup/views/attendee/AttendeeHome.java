@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,7 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.queueup.R;
 import com.example.queueup.controllers.UserController;
 import com.example.queueup.models.User;
-import com.example.queueup.views.profiles.AttendeeProfileActivity;
+//import com.example.queueup.views.profiles.AttendeeProfileActivity;
+import com.example.queueup.views.profiles.EditProfileActivity;
+import com.example.queueup.views.profiles.ProfileActivity;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.bumptech.glide.Glide;
@@ -53,10 +56,11 @@ public class AttendeeHome extends AppCompatActivity {
 
         // Set up listener for profile initials (similar to a button)
         profileInitialsFrame.setOnClickListener(v -> {
-            Intent intent = new Intent(AttendeeHome.this, AttendeeProfileActivity.class);
+            Intent intent = new Intent(AttendeeHome.this, ProfileActivity.class);
             intent.putExtra("deviceId", deviceId);
             startActivity(intent);
         });
+
 
         // Fetch user data
         fetchUserData();
@@ -83,6 +87,9 @@ public class AttendeeHome extends AppCompatActivity {
                             } else {
                                 titleTextView.setText("Welcome, Attendee!");
                             }
+
+                            //profileInitialsTextView.setVisibility(View.GONE); // test to see if view doesn't lag between initals and profile image
+                            //profileImageView.setVisibility(View.VISIBLE);
 
                             // seeing if profile pic exists, if not then proceeding with initials
                             if (profileImageUrl != null && !profileImageUrl.isEmpty()) {

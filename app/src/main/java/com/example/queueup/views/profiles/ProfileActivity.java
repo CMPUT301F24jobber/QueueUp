@@ -1,5 +1,6 @@
 package com.example.queueup.views.profiles;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,11 +20,13 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
  * The AttendeeProfileActivity class represents the profile screen for an attendee.
  * It displays the attendee's full profile information, including name, username, email, and phone number.
  */
-public class AttendeeProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private String deviceId;
     private TextView profileNameTextView, profileUsernameTextView, profileEmailTextView, profilePhoneTextView, profileInitialsTextView;
     private ImageView profileImageView;
+    private User currentUser;
+    private static final int EDIT_PROFILE_REQUEST_CODE = 1;
     /**
      * Called when the activity is first created.
      *
@@ -54,6 +57,13 @@ public class AttendeeProfileActivity extends AppCompatActivity {
         Button backButton = findViewById(R.id.backButton);
         backButton.setOnClickListener(v -> finish()); // This will go back to the previous activity
 
+        Button editButton = findViewById(R.id.editButton);
+        editButton.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileActivity.this, EditProfileActivity.class);
+            intent.putExtra("user", currentUser);  // Pass currentUser to EditProfileActivity
+            startActivityForResult(intent, EDIT_PROFILE_REQUEST_CODE);  // Use a request code to identify the result
+        });
+
         // Fetch and display the user data
         fetchUserData();
     }
@@ -68,6 +78,7 @@ public class AttendeeProfileActivity extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && !task.getResult().isEmpty()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
+                            currentUser = document.toObject(User.class); // Assign user to currentUser
                             User user = document.toObject(User.class);
                             String profileImageUrl = user.getProfileImageUrl();
                             String firstName = user.getFirstName();

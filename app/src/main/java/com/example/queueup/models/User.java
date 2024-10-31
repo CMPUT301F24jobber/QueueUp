@@ -1,6 +1,10 @@
 package com.example.queueup.models;
 
+import android.os.Parcelable;
+import android.os.Parcel;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.google.firebase.firestore.Exclude;
 import java.util.ArrayList;
@@ -8,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-public class User {
+public class User implements Parcelable {
     private String uuid;
     private String firstName;
     private String lastName;
@@ -41,6 +45,32 @@ public class User {
         this.deviceId = deviceId;
         this.role = "admin"; // Default role set during creation
     }
+
+    protected User(Parcel in) {
+        uuid = in.readString();
+        firstName = in.readString();
+        lastName = in.readString();
+        username = in.readString();
+        emailAddress = in.readString();
+        phoneNumber = in.readString();
+        role = in.readString();
+        profileImageUrl = in.readString();
+        deviceId = in.readString();
+        receiveNotifications = in.readByte() != 0;
+        waitingListEvents = in.createStringArrayList();
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 
     // Getters and setters
     public String getUuid() {
@@ -195,5 +225,25 @@ public class User {
                 ", role='" + role + '\'' +
                 ", receiveNotifications=" + receiveNotifications +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel parcel, int i) {
+        parcel.writeString(uuid);
+        parcel.writeString(firstName);
+        parcel.writeString(lastName);
+        parcel.writeString(username);
+        parcel.writeString(emailAddress);
+        parcel.writeString(phoneNumber);
+        parcel.writeString(role);
+        parcel.writeString(profileImageUrl);
+        parcel.writeString(deviceId);
+        parcel.writeByte((byte) (receiveNotifications ? 1 : 0));
+        parcel.writeStringList(waitingListEvents);
     }
 }

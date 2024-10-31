@@ -102,4 +102,15 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp" />
 
+    <Button
+        android:id="@+id/editButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edit"
+        android:textColor="@android:color/white"
+        android:backgroundTint="#8C7466"
+        android:layout_below="@id/profilePhoneTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80dp" />
+
 </RelativeLayout>
