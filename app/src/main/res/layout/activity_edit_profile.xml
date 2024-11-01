@@ -36,6 +36,20 @@
         android:hint="Phone Number" />
 
     <Button
+        android:id="@+id/editPicButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#8C7466"
+        android:text="Add/Edit Profile Picture" />
+
+    <Button
+        android:id="@+id/removePicButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#8C7466"
+        android:text="Remove Profile Picture" />
+
+    <Button
         android:id="@+id/saveButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
