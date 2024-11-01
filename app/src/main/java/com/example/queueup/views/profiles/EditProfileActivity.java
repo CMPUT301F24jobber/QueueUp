@@ -9,11 +9,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.example.queueup.R;
 import com.example.queueup.models.User;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -25,15 +27,11 @@ public class EditProfileActivity extends AppCompatActivity {
     private User currentUser;
 
     private EditText editFirstName, editLastName, editUsername, editEmail, editPhone;
-
+    private ImageView profileImageView;
+    private TextView profileInitialsTextView;
     private static final int PICK_IMAGE_REQUEST = 1;
     private Uri imageUri;
     private FirebaseStorage storage;
-
-
-    private ImageView profileImageView;
-    //private Button uploadImageButton;
-    private Uri profileImageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,33 +43,33 @@ public class EditProfileActivity extends AppCompatActivity {
 
         if (currentUser == null) {
             Toast.makeText(this, "Failed to load user data", Toast.LENGTH_SHORT).show();
-            finish();  // Exit the activity if data is missing
+            finish();
             return;
         }
 
-        // Initialize Firestore and UI elements, then load data
+        // Initialize Firestore, Firebase Storage, and UI components
         db = FirebaseFirestore.getInstance();
-        storage = FirebaseStorage.getInstance(); // Initialize Firebase Storage
+        storage = FirebaseStorage.getInstance();
+
+        profileImageView = findViewById(R.id.profileImageView);
+        profileInitialsTextView = findViewById(R.id.profileInitialsTextView);
         editFirstName = findViewById(R.id.editFirstName);
         editLastName = findViewById(R.id.editLastName);
         editUsername = findViewById(R.id.editUsername);
         editEmail = findViewById(R.id.editEmail);
         editPhone = findViewById(R.id.editPhone);
+
         Button saveButton = findViewById(R.id.saveButton);
         Button removePicButton = findViewById(R.id.removePicButton);
         Button editPicButton = findViewById(R.id.editPicButton);
 
-        // Load the user data into the fields
+        // Load the user data into the fields and display profile image or initials
         loadUserData();
 
-        // Set up the save button
+        // Set up button listeners
         saveButton.setOnClickListener(v -> saveProfileChanges());
-
-        // Set up the remove profile picture button
         removePicButton.setOnClickListener(v -> removeProfilePicture());
-
         editPicButton.setOnClickListener(v -> selectImage());
-
     }
 
     private void selectImage() {
@@ -86,23 +84,24 @@ public class EditProfileActivity extends AppCompatActivity {
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             imageUri = data.getData();
             Log.d("EditProfileActivity", "Selected Image URI: " + imageUri.toString());
-            Toast.makeText(this, "Image selected. Save changes to apply.", Toast.LENGTH_SHORT).show();
+
+            // Display the selected image immediately
+            profileInitialsTextView.setVisibility(View.GONE);
+            profileImageView.setVisibility(View.VISIBLE);
+            Glide.with(this).load(imageUri).circleCrop().into(profileImageView);
+
+            Toast.makeText(this, "Image selected. Save changes to apply permanently.", Toast.LENGTH_SHORT).show();
         }
     }
 
-
     private void removeProfilePicture() {
-        // checking to see if profile pic exists
         if (currentUser.getProfileImageUrl() != null && !currentUser.getProfileImageUrl().isEmpty()) {
-
-            // setting the profile image URL to null for the user
             currentUser.setProfileImageUrl(null);
-
-            // removing profile pic URl from firestore
             db.collection("users").document(currentUser.getUuid())
                     .update("profileImageUrl", null)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(EditProfileActivity.this, "Profile picture removed successfully", Toast.LENGTH_SHORT).show();
+                        displayProfileImageOrInitials();  // Update UI to show initials
                     })
                     .addOnFailureListener(e -> Toast.makeText(EditProfileActivity.this, "Failed to remove profile picture", Toast.LENGTH_SHORT).show());
         } else {
@@ -111,7 +110,7 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     /**
-     * Loads the current user's data into the EditText fields.
+     * Loads the current user's data into the EditText fields and displays profile image or initials.
      */
     private void loadUserData() {
         if (currentUser != null) {
@@ -120,6 +119,26 @@ public class EditProfileActivity extends AppCompatActivity {
             editUsername.setText(currentUser.getUsername());
             editEmail.setText(currentUser.getEmailAddress());
             editPhone.setText(currentUser.getPhoneNumber());
+            displayProfileImageOrInitials();  // Display image or initials after loading user data
+        }
+    }
+
+    /**
+     * Displays the profile image if available; otherwise, displays user initials.
+     */
+    private void displayProfileImageOrInitials() {
+        if (currentUser.getProfileImageUrl() != null && !currentUser.getProfileImageUrl().isEmpty()) {
+            profileInitialsTextView.setVisibility(View.GONE);
+            profileImageView.setVisibility(View.VISIBLE);
+            Glide.with(this).load(currentUser.getProfileImageUrl()).circleCrop().into(profileImageView);
+        } else {
+            profileImageView.setVisibility(View.GONE);
+            profileInitialsTextView.setVisibility(View.VISIBLE);
+
+            // Display initials if no profile image
+            String initials = (currentUser.getFirstName() != null ? currentUser.getFirstName().substring(0, 1) : "") +
+                    (currentUser.getLastName() != null ? currentUser.getLastName().substring(0, 1) : "");
+            profileInitialsTextView.setText(initials);
         }
     }
 
@@ -127,7 +146,6 @@ public class EditProfileActivity extends AppCompatActivity {
      * Saves the profile changes made by the user and updates Firestore.
      */
     private void saveProfileChanges() {
-        // Update the currentUser object with the new values
         currentUser.setFirstName(editFirstName.getText().toString().trim());
         currentUser.setLastName(editLastName.getText().toString().trim());
         currentUser.setUsername(editUsername.getText().toString().trim());
@@ -135,7 +153,6 @@ public class EditProfileActivity extends AppCompatActivity {
         currentUser.setPhoneNumber(editPhone.getText().toString().trim());
 
         if (imageUri != null) {
-            // Upload the new profile image to Firebase Storage
             StorageReference fileReference = storage.getReference("profileImages").child(currentUser.getUuid() + ".jpg");
 
             fileReference.putFile(imageUri)
@@ -143,8 +160,8 @@ public class EditProfileActivity extends AppCompatActivity {
                             .addOnSuccessListener(uri -> {
                                 String downloadUrl = uri.toString();
                                 Log.d("EditProfileActivity", "Download URL: " + downloadUrl);
-                                currentUser.setProfileImageUrl(downloadUrl);  // Update profile picture URL in currentUser
-                                updateFirestoreUser();  // Save all changes to Firestore
+                                currentUser.setProfileImageUrl(downloadUrl);
+                                updateFirestoreUser();
                             })
                             .addOnFailureListener(e -> {
                                 Log.e("EditProfileActivity", "Failed to get image URL", e);
@@ -155,7 +172,6 @@ public class EditProfileActivity extends AppCompatActivity {
                         Toast.makeText(EditProfileActivity.this, "Failed to upload profile picture", Toast.LENGTH_SHORT).show();
                     });
         } else {
-            // No new image selected, directly update Firestore with other profile changes
             updateFirestoreUser();
         }
     }
