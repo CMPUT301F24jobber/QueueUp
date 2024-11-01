@@ -2,9 +2,6 @@ package com.example.queueup.views.organizer;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -12,81 +9,84 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.queueup.R;
 import com.example.queueup.controllers.UserController;
-import com.example.queueup.models.User;
-import com.example.queueup.views.attendee.AttendeeHome;
-import com.example.queueup.views.profiles.ProfileActivity;
+import com.example.queueup.views.organizer.OrganizerGalleryFragment;
+import com.example.queueup.views.organizer.OrganizerHomeFragment;
+import com.example.queueup.views.organizer.OrganizerProfileFragment;
+import com.example.queueup.views.organizer.OrganizerUsersFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 public class OrganizerHome extends AppCompatActivity {
+
     private FirebaseFirestore db;
     private TextView titleTextView;
-    private TextView profileInitialsTextView;
-    private FrameLayout profileInitialsFrame;
     private String deviceId;
+    private BottomNavigationView navigationView;
+    private ImageButton plusButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.organizer_home_fragment);
+        setContentView(R.layout.organizer_activity);
 
+        // Initialize views
+        navigationView = findViewById(R.id.bottom_navigation);
         db = FirebaseFirestore.getInstance();
+        titleTextView = findViewById(R.id.titleTextView);  // Assuming you have a TextView for the title
+        plusButton = findViewById(R.id.plusButton);  // Add the plusButton from layout
 
-        // Initialize local variables for views
-        TextView titleTextView = findViewById(R.id.organizerHomeText);
-        ImageButton plusButton = findViewById(R.id.plusButton);
-        profileInitialsTextView = findViewById(R.id.profileInitialsTextView);  // Find the initials TextView
-        profileInitialsFrame = findViewById(R.id.profileInitialsFrame);
-
-        // Get device ID from intent or from UserController
+        // Get deviceId from intent or UserController
         deviceId = getIntent().getStringExtra("deviceId");
         if (deviceId == null || deviceId.isEmpty()) {
-            deviceId = UserController.getInstance().getDeviceId(getApplicationContext());
+            deviceId = UserController.getInstance().getDeviceId(getApplicationContext());  // Fetch from UserController if not passed
         }
 
-
-
-        profileInitialsFrame.setOnClickListener(v -> {
-            Intent intent = new Intent(OrganizerHome.this, ProfileActivity.class);
-            intent.putExtra("deviceId", deviceId);
+        // Set the OnClickListener to navigate to OrganizerCreateEvent
+        plusButton.setOnClickListener(v -> {
+            Intent intent = new Intent(OrganizerHome.this, OrganizerCreateEvent.class);
             startActivity(intent);
         });
 
+        // Set default fragment
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .add(R.id.organizer_activity_fragment, OrganizerHomeFragment.class, null)
+                    .commit();
+        }
 
-        plusButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("OrganizerHome", "Plus button clicked!");
+        // Set navigation view item selected listener
+        navigationView.setOnItemSelectedListener(menuItem -> {
+            String title = String.valueOf(menuItem.getTitle());
+            switch (title) {
+                case "Home":
+                    getSupportFragmentManager().beginTransaction()
+                            .setReorderingAllowed(true)
+                            .replace(R.id.organizer_activity_fragment, OrganizerHomeFragment.class, null)
+                            .commit();
+                    break;
+                case "Users":
+                    getSupportFragmentManager().beginTransaction()
+                            .setReorderingAllowed(true)
+                            .replace(R.id.organizer_activity_fragment, OrganizerUsersFragment.class, null)
+                            .commit();
+                    break;
+                case "Gallery":
+                    getSupportFragmentManager().beginTransaction()
+                            .setReorderingAllowed(true)
+                            .replace(R.id.organizer_activity_fragment, OrganizerGalleryFragment.class, null)
+                            .commit();
+                    break;
+                case "Profile":
+                    getSupportFragmentManager().beginTransaction()
+                            .setReorderingAllowed(true)
+                            .replace(R.id.organizer_activity_fragment, OrganizerProfileFragment.class, null)
+                            .commit();
+                    break;
+                default:
+                    break;
             }
+            return true;
         });
-
-
-        // Fetch user data and update the title text
-        fetchUserData(titleTextView);
-    }
-
-    private void fetchUserData(TextView titleTextView) {
-        db.collection("users")
-                .whereEqualTo("deviceId", deviceId)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                        // Device ID found in Firestore
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            User user = document.toObject(User.class);
-                            String firstName = user.getFirstName();
-
-                            if (firstName != null && !firstName.isEmpty()) {
-                                titleTextView.setText("Welcome, " + firstName + "!");
-                            } else {
-                                titleTextView.setText("Welcome, Organizer!");  // Fallback if first name is null
-                            }
-                        }
-                    } else {
-                        Log.d("OrganizerHome", "No user found with this device ID");
-                        titleTextView.setText("Welcome, Organizer!");  // Fallback if no user document found
-                    }
-                })
-                .addOnFailureListener(e -> Log.e("OrganizerHome", "Error fetching user data", e));
     }
 }

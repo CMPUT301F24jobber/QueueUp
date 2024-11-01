@@ -1,54 +1,17 @@
-<!-- res/layout/admin_home_fragment.xml -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/backgroundColor"
+    android:orientation="vertical"
     android:padding="16dp">
-
-    <!-- Profile Initials in Circle (Top Right) -->
-    <FrameLayout
-        android:id="@+id/profileInitialsFrame"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="0dp"
-        android:layout_marginTop="0dp"
-        android:background="@drawable/circle_shape">
-
-        <!-- Initials Text -->
-        <TextView
-            android:id="@+id/profileInitialsTextView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Initials"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:gravity="center"
-            android:padding="5dp"
-            android:visibility="visible" />
-    </FrameLayout>
-
-    <!-- Welcome Text -->
-    <TextView
-        android:id="@+id/organizerHomeText"
-        android:layout_width="wrap_content"
+    <ListView
+        android:id="@+id/organizer_event_list"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Welcome Organizer!"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp" />
-
-    <!-- Plus Button (Bottom Right) -->
-    <ImageButton
-        android:id="@+id/plusButton"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="16dp"
-        android:background="@drawable/circle_shape"
-        android:scaleType="centerInside"
-        android:src="@drawable/plus_shape" />
-
-</RelativeLayout>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
