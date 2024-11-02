@@ -1,4 +1,5 @@
 package com.example.queueup.models;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,6 +9,7 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -31,38 +33,6 @@ public class Image {
         this.imageSize = imageSize;
         this.imageType = imageType;
         this.creationDate = creationDate;
-    }
-
-    public long getImageSize() {
-        return imageSize;
-    }
-
-    public void setImageSize(long imageSize) {
-        this.imageSize = imageSize;
-    }
-
-    public String getImageType() {
-        return imageType;
-    }
-
-    public void setImageType(String imageType) {
-        this.imageType = imageType;
-    }
-
-    public String getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public String getImageId() {
-        return imageId;
-    }
-
-    public void setImageId(String imageId) {
-        this.imageId = imageId;
     }
 
     public String getImageUrl() {
@@ -89,18 +59,57 @@ public class Image {
         this.storageReferenceId = storageReferenceId;
     }
 
+    public String getImageId() {
+        return imageId;
+    }
+
+    public void setImageId(String imageId) {
+        this.imageId = imageId;
+    }
+
+    public long getImageSize() {
+        return imageSize;
+    }
+
+    public void setImageSize(long imageSize) {
+        this.imageSize = imageSize;
+    }
+
+    public String getImageType() {
+        return imageType;
+    }
+
+    public void setImageType(String imageType) {
+        this.imageType = imageType;
+    }
+
+    public String getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(String creationDate) {
+        this.creationDate = creationDate;
+    }
+
     /**
-     * Get the image from the storage
+     * Get the image from the storage as a RoundedBitmapDrawable (Thumbnail)
      * @param context The context of the activity
-     * @return  An image in the form of a RoundedBitmapDrawable
+     * @return A Task containing the RoundedBitmapDrawable
      */
     public Task<RoundedBitmapDrawable> getRoundedThumbnailImage(Context context){
         if(imageUrl == null) {
             Log.d("Image", "Image URL is null");
-            return null;
+            return Tasks.forException(new IllegalArgumentException("Image URL is null"));
         }
 
-        StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
+        StorageReference storageRef;
+        try {
+            storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
+        } catch (IllegalArgumentException e) {
+            Log.e("Image", "Invalid image URL: " + imageUrl, e);
+            return Tasks.forException(e);
+        }
+
         final long ONE_MEGABYTE = 1024 * 1024;
         return storageRef.getBytes(ONE_MEGABYTE).continueWith(task -> {
             if (!task.isSuccessful()) {
@@ -115,13 +124,25 @@ public class Image {
         });
     }
 
+    /**
+     * Get the image from the storage as a RoundedBitmapDrawable (Full Image)
+     * @param context The context of the activity
+     * @return A Task containing the RoundedBitmapDrawable
+     */
     public Task<RoundedBitmapDrawable> getFullRoundedImage(Context context){
         if(imageUrl == null) {
             Log.d("Image", "Image URL is null");
-            return null;
+            return Tasks.forException(new IllegalArgumentException("Image URL is null"));
         }
 
-        StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
+        StorageReference storageRef;
+        try {
+            storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
+        } catch (IllegalArgumentException e) {
+            Log.e("Image", "Invalid image URL: " + imageUrl, e);
+            return Tasks.forException(e);
+        }
+
         final long ONE_MEGABYTE = 1024 * 1024;
         return storageRef.getBytes(ONE_MEGABYTE).continueWith(task -> {
             if (!task.isSuccessful()) {

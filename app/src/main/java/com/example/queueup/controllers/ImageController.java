@@ -31,7 +31,11 @@ public class ImageController {
      */
     public static ImageController getSingleton() {
         if (instance == null) {
-            instance = new ImageController();
+            synchronized (ImageController.class) {
+                if (instance == null) {
+                    instance = new ImageController();
+                }
+            }
         }
         return instance;
     }
@@ -69,9 +73,10 @@ public class ImageController {
      */
     public Task<String> addImage(String storagePath, Uri imageUri) {
         String uuid = UUID.randomUUID().toString();
-        StorageReference storageRef = storage.getReference().child(storagePath + uuid);
+        StorageReference storageRef = storage.getReference().child(storagePath + "/" + uuid);
 
-        return storageRef.putFile(imageUri).continueWithTask(task -> {
+        return storageRef.putFile(imageUri)
+                .continueWithTask(task -> {
                     if (!task.isSuccessful()) {
                         throw task.getException();
                     }
@@ -82,16 +87,17 @@ public class ImageController {
                         throw task.getException();
                     }
                     String downloadUrl = task.getResult().toString();
-                    Log.d("ImageController", downloadUrl);
+                    Log.d("ImageController", "Download URL: " + downloadUrl);
 
                     // Create an Image object and add it to Firestore
-                    Image image = new Image(downloadUrl, storagePath, uuid, uuid, 0, "image/jpeg", "");
-                    return imageRef.document(uuid).set(image).continueWith(innerTask -> {
-                        if (!innerTask.isSuccessful()) {
-                            throw innerTask.getException();
-                        }
-                        return downloadUrl;
-                    });
+                    Image image = new Image(downloadUrl, storagePath, uuid, uuid, 0, "image/jpeg", String.valueOf(System.currentTimeMillis()));
+                    return imageRef.document(uuid).set(image)
+                            .continueWith(innerTask -> {
+                                if (!innerTask.isSuccessful()) {
+                                    throw innerTask.getException();
+                                }
+                                return downloadUrl;
+                            });
                 });
     }
 
@@ -103,7 +109,7 @@ public class ImageController {
     public Task<Void> removeReference(Image image) {
         if (image.getImageId() == null) {
             Log.d("ImageController", "Image ID is null");
-            return null;
+            return Tasks.forException(new IllegalArgumentException("Image ID is null"));
         }
         Map<String, Object> updates = new HashMap<>();
         updates.put("storageReferenceId", null);
@@ -117,21 +123,35 @@ public class ImageController {
      * @return A Task representing the deletion operation
      */
     public Task<Void> deleteImage(Image image) {
-        StorageReference storageRef = storage.getReferenceFromUrl(image.getImageUrl());
-        Task<Void> deleteImage = storageRef.delete();
-        Task<Void> deletedocument = imageRef.document(image.getImageId()).delete();
-
-        if(image.getStorageReferenceId() != null){
-           removeReference(image);
+        if (image == null || image.getImageUrl() == null || image.getImageId() == null) {
+            Log.e("ImageController", "Invalid image object");
+            return Tasks.forException(new IllegalArgumentException("Invalid image object"));
         }
 
-        // If its the user's own profile picture
-        if (currentUserHandler.getCurrentUser().getValue().getProfileImageUrl().contains(image.getImageId())) {
+        StorageReference storageRef;
+        try {
+            storageRef = storage.getReferenceFromUrl(image.getImageUrl());
+        } catch (IllegalArgumentException e) {
+            Log.e("ImageController", "Invalid image URL: " + image.getImageUrl(), e);
+            return Tasks.forException(e);
+        }
+
+        Task<Void> deleteImageTask = storageRef.delete();
+        Task<Void> deleteDocumentTask = imageRef.document(image.getImageId()).delete();
+
+        if (image.getStorageReferenceId() != null) {
+            Task<Void> removeReferenceTask = removeReference(image);
+            return Tasks.whenAll(deleteImageTask, deleteDocumentTask, removeReferenceTask);
+        }
+
+        // If it's the user's own profile picture
+        User currentUser = currentUserHandler.getCurrentUser().getValue();
+        if (currentUser != null && currentUser.getProfileImageUrl() != null && currentUser.getProfileImageUrl().contains(image.getImageId())) {
             Log.d("ImageController", "Deleting user profile image.");
-            User user = currentUserHandler.getCurrentUser().getValue();
-            user.setProfileImageUrl(null);
-            currentUserHandler.updateUser(user);
+            currentUser.setProfileImageUrl(null);
+            currentUserHandler.updateUser(currentUser);
         }
-        return Tasks.whenAll(deleteImage, deletedocument);
+
+        return Tasks.whenAll(deleteImageTask, deleteDocumentTask);
     }
 }
