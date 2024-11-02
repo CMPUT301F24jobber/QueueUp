@@ -9,10 +9,8 @@ public class Event {
     private String imageUrl;
     private double longitude;
     private double latitude;
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private int attendeeLimit;
-    private boolean unlimitedAttendee;
+    private LocalDate startDate; 
+    private LocalDate endDate;   
 
     public Event() {}
 
@@ -25,33 +23,6 @@ public class Event {
         this.latitude = latitude;
         this.startDate = startDate;
         this.endDate = endDate;
-    }
-
-    public Event(String name, String description, String location, LocalDate startDate, LocalDate endDate, int attendeeLimit, boolean unlimitedAttendee) {
-        this.name = name;
-        this.description = description;
-        this.longitude = 0.0;
-        this.latitude = 0.0;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.attendeeLimit = attendeeLimit;
-        this.unlimitedAttendee = unlimitedAttendee;
-    }
-
-    public int getAttendeeLimit() {
-        return attendeeLimit;
-    }
-
-    public void setAttendeeLimit(int attendeeLimit) {
-        this.attendeeLimit = attendeeLimit;
-    }
-
-    public boolean isUnlimitedAttendee() {
-        return unlimitedAttendee;
-    }
-
-    public void setUnlimitedAttendee(boolean unlimitedAttendee) {
-        this.unlimitedAttendee = unlimitedAttendee;
     }
 
     public String getId() {
@@ -101,7 +72,7 @@ public class Event {
     public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
-
+    
     public void setLocation(double longitude, double latitude) {
         this.longitude = longitude;
         this.latitude = latitude;
@@ -134,12 +105,10 @@ public class Event {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", imageURL='" + imageUrl + '\'' +
-                ", longitude=" + longitude +
-                ", latitude=" + latitude +
-                ", startDate=" + startDate +
+                ", longitude='" + longitude + '\'' +
+                ", latitude='" + latitude + '\'' +
+                ", startDate='" + startDate + '\'' +
                 ", endDate=" + endDate +
-                ", attendeeLimit=" + attendeeLimit +
-                ", unlimitedAttendee=" + unlimitedAttendee +
                 '}';
     }
 }

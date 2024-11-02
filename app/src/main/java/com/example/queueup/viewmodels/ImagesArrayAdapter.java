@@ -29,7 +29,7 @@ public class ImagesArrayAdapter extends ArrayAdapter<User> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View view;
         if (convertView == null) {
-            view = LayoutInflater.from(getContext()).inflate(R.layout.organizer_image_content,
+            view = LayoutInflater.from(getContext()).inflate(R.layout.admin_image_content,
                     parent, false);
         } else {
             view = convertView;

@@ -29,7 +29,7 @@ public class UsersArrayAdapter extends ArrayAdapter<User> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View view;
         if (convertView == null) {
-            view = LayoutInflater.from(getContext()).inflate(R.layout.organizer_user_content,
+            view = LayoutInflater.from(getContext()).inflate(R.layout.admin_user_content,
                     parent, false);
         } else {
             view = convertView;
@@ -39,7 +39,7 @@ public class UsersArrayAdapter extends ArrayAdapter<User> {
         TextView userPhone = view.findViewById(R.id.user_phone);
         TextView userEmail = view.findViewById(R.id.user_email);
         ImageView userImage = view.findViewById(R.id.user_image);
-        userName.setText(user.getFirstName() + " " + user.getLastName());
+        userName.setText(user.getFullName());
         userPhone.setText(user.getPhoneNumber());
         userEmail.setText(user.getEmailAddress());
         userImage.setImageResource(R.drawable.ic_nav_users);
