@@ -12,14 +12,13 @@ import com.example.queueup.R;
 import com.example.queueup.models.Event;
 import com.example.queueup.viewmodels.EventArrayAdapter;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class OrganizerHomeFragment extends Fragment {
 
     // Constructor for the fragment, loading the layout file
     public OrganizerHomeFragment() {
-        super(R.layout.organizer_home_fragment);
+        super(R.layout.organizer_home_fragment);  // Use a layout specific to the organizer's home screen
     }
 
     private ArrayList<Event> dataList;
@@ -30,16 +29,14 @@ public class OrganizerHomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Initialize the data list and add an event
+        // Initialize the data list and add events
         dataList = new ArrayList<>();  // Proper initialization of ArrayList
-        Event event = null;  // Completed constructor parameters
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            event = new Event("id", "Sample Event", "Event description", "image_url", 1.2, 1.2, LocalDate.now(), LocalDate.now().plusDays(1));
+            // Add sample events or logic to retrieve events for the organizer
         }
-        dataList.add(event);
 
         // Set up the ListView and its adapter
-        eventList = view.findViewById(R.id.organizer_event_list);  // Use 'view' to find the ListView in the fragment's layout
+        eventList = view.findViewById(R.id.organizer_event_list);  // Ensure ID matches the organizer's ListView in XML
         eventAdapter = new EventArrayAdapter(view.getContext(), dataList);  // Initialize the adapter with the context and data list
         eventList.setAdapter(eventAdapter);  // Set the adapter to the ListView
     }

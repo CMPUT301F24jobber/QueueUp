@@ -102,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case "Organizer":
                 intent = new Intent(MainActivity.this, OrganizerHome.class);
+                intent.putExtra("deviceId", userViewModel.getDeviceId());
                 break;
             case "Attendee":
             default:

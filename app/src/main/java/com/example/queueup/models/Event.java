@@ -30,7 +30,24 @@ public class Event implements Serializable {
     /**
      * Constructs a new {@code Event} instance with default values.
      */
-    public Event() {}
+    public Event(String eventId, String eventName, String eventDescription, String eventBannerImageUrl,
+                 String eventLocation, String organizerId, Date eventStartDate, Date eventEndDate,
+                 int maxCapacity, Boolean isActive) {
+        this.eventId = eventId;
+        this.eventName = eventName;
+        this.eventDescription = eventDescription;
+        this.eventBannerImageUrl = eventBannerImageUrl;
+        this.eventLocation = eventLocation;
+        this.organizerId = organizerId;
+        this.eventStartDate = eventStartDate;
+        this.eventEndDate = eventEndDate;
+        this.maxCapacity = maxCapacity;
+        this.isActive = isActive;
+        this.attendeeIds = new ArrayList<>();
+        this.announcementList = new ArrayList<>();
+        this.currentCapacity = 0; // Initialize current capacity to 0
+        this.creationDate = new Date(); // Set creation date to current date
+    }
 
     /**
      * Retrieves the name of the event.
