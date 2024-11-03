@@ -102,49 +102,4 @@ public class ImageViewHandler {
             eventImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
         }
     }
-
-    /**
-     * Set user profile image
-     *
-     * @param user              The user whose profile image is to be set
-     * @param profileImageView  The ImageView where the profile image will be displayed
-     * @param resources         The application resources
-     * @param imageDimension    The dimensions for the profile image (optional)
-     */
-    public void setUserProfileImage(User user, ImageView profileImageView, Resources resources, @Nullable ImageDimension imageDimension) {
-        int targetWidth = (imageDimension != null) ? imageDimension.getWidth() : 72;
-        int targetHeight = (imageDimension != null) ? imageDimension.getHeight() : 72;
-
-        if (user.getProfileImageUrl() != null) {
-            String profileImageUrl = user.getProfileImageUrl();
-
-            // Fetch image from Firebase storage
-            StorageReference storageReference;
-            try {
-                storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(profileImageUrl);
-            } catch (IllegalArgumentException e) {
-                Log.w("ImageViewHandler", "Invalid profile image URL: " + profileImageUrl, e);
-                // Optionally set a default image
-                profileImageView.setImageResource(android.R.drawable.ic_menu_camera); // Replace with your default image
-                return;
-            }
-
-            final long ONE_MEGABYTE = 1024 * 1024;
-
-            storageReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(imageBytes -> {
-                Bitmap originalBitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                Bitmap scaledBitmap = Bitmap.createScaledBitmap(originalBitmap, targetWidth, targetHeight, false);
-                RoundedBitmapDrawable roundedDrawable = RoundedBitmapDrawableFactory.create(resources, scaledBitmap);
-                roundedDrawable.setCornerRadius(Math.min(targetWidth, targetHeight) / 2.0f);
-                profileImageView.setImageDrawable(roundedDrawable);
-            }).addOnFailureListener(exception -> {
-                Log.w("ImageViewHandler", "Failed to load profile image for user: " + user.getUsername(), exception);
-                // Optionally set a default image
-                profileImageView.setImageResource(android.R.drawable.ic_menu_camera); // Replace with your default image
-            });
-        } else {
-            // Optionally set a default image or handle absence of profile image
-            profileImageView.setImageResource(android.R.drawable.ic_menu_camera); // Replace with your default image
-        }
-    }
 }
