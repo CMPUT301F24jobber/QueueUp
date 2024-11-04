@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import com.bumptech.glide.Glide;
 import com.example.queueup.R;
 import com.example.queueup.models.User;
 
@@ -39,10 +40,42 @@ public class UsersArrayAdapter extends ArrayAdapter<User> {
         TextView userPhone = view.findViewById(R.id.user_phone);
         TextView userEmail = view.findViewById(R.id.user_email);
         ImageView userImage = view.findViewById(R.id.user_image);
+        TextView userRole = view.findViewById(R.id.user_role);
+
+
         userName.setText(user.getFirstName() + " " + user.getLastName());
         userPhone.setText(user.getPhoneNumber());
         userEmail.setText(user.getEmailAddress());
-        userImage.setImageResource(R.drawable.ic_nav_users);
+        TextView userInitials = view.findViewById(R.id.user_initials);
+        userRole.setText(user.getRole());
+
+        String profileImageUrl = user.getProfileImageUrl();
+        if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+            // Load image using Glide if the URL is available
+            Glide.with(getContext())
+                    .load(profileImageUrl)
+                    .circleCrop()
+                    .into(userImage);
+
+            // Show ImageView and hide TextView for initials
+            userImage.setVisibility(View.VISIBLE);
+            userInitials.setVisibility(View.GONE);
+        } else {
+            // No profile image, display initials
+            userImage.setVisibility(View.GONE);
+            userInitials.setVisibility(View.VISIBLE);
+
+            // Set initials based on the first and last name
+            String initials = "";
+            if (user.getFirstName() != null && !user.getFirstName().isEmpty()) {
+                initials += user.getFirstName().substring(0, 1).toUpperCase();
+            }
+            if (user.getLastName() != null && !user.getLastName().isEmpty()) {
+                initials += user.getLastName().substring(0, 1).toUpperCase();
+            }
+            userInitials.setText(initials);
+        }
+
         return view;
     }
 
