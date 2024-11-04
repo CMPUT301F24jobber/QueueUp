@@ -49,7 +49,7 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE MMM dd, uuuu");
         String date_text = event.getStartDate().format(formatter) + " to " + event.getEndDate().format(formatter);
         eventDate.setText(date_text);
-        eventLocation.setText(event.getLocation());
+        eventLocation.setText(event.getEventLocation());
         view.setOnClickListener( (v) -> {
             AppCompatActivity activity = (AppCompatActivity) view.getContext();
             activity.getSupportFragmentManager().beginTransaction()
