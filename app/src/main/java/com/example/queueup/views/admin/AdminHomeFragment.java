@@ -21,7 +21,7 @@ public class AdminHomeFragment extends Fragment {
 
     // Constructor for the fragment, loading the layout file
     public AdminHomeFragment() {
-        super(R.layout.admin_home_fragment);
+        super(R.layout.home_fragment);
     }
 
     private ArrayList<Event> dataList;
@@ -43,5 +43,6 @@ public class AdminHomeFragment extends Fragment {
         eventList = view.findViewById(R.id.admin_event_list);  // Use 'view' to find the ListView in the fragment's layout
         eventAdapter = new EventArrayAdapter(view.getContext(), dataList);  // Initialize the adapter with the context and data list
         eventList.setAdapter(eventAdapter);  // Set the adapter to the ListView
+
     }
 }

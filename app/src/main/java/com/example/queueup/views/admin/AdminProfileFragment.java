@@ -11,12 +11,12 @@ import com.example.queueup.models.User;
 
 public class AdminProfileFragment extends Fragment {
     public AdminProfileFragment() {
-        super(R.layout.admin_user_profile);
+        super(R.layout.admin_profile);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        User e = new User("e","e","e","e","e","e");
+        super.onViewCreated(view, savedInstanceState);
     }
 
 }

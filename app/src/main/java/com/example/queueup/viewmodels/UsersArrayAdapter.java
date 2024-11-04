@@ -1,7 +1,10 @@
 package com.example.queueup.viewmodels;
 
+import static android.app.PendingIntent.getActivity;
+
 import android.content.Context;
 import android.os.Build;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +15,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.queueup.R;
 import com.example.queueup.models.User;
+import com.example.queueup.views.admin.AdminGalleryFragment;
+import com.example.queueup.views.admin.AdminProfileFragment;
 
 import java.util.ArrayList;
 
@@ -22,6 +28,7 @@ public class UsersArrayAdapter extends ArrayAdapter<User> {
     public UsersArrayAdapter(Context context, ArrayList<User> user) {
         super(context, 0, user);
     }
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @NonNull
@@ -43,6 +50,13 @@ public class UsersArrayAdapter extends ArrayAdapter<User> {
         userPhone.setText(user.getPhoneNumber());
         userEmail.setText(user.getEmailAddress());
         userImage.setImageResource(R.drawable.ic_nav_users);
+        view.setOnClickListener( (v) -> {
+            AppCompatActivity activity = (AppCompatActivity) view.getContext();
+            activity.getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.admin_activity_fragment, AdminProfileFragment.class, null)
+                    .addToBackStack(null)
+                    .commit();
+        });
         return view;
     }
 
