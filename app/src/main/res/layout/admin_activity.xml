@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:background="@color/backgroundColor"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:id="@+id/admin_activity_id">
 
     <include
         android:id="@+id/queueup_title"
@@ -16,13 +17,18 @@
         app:layout_constraintTop_toTopOf="parent"
         layout="@layout/title_ui" />
 
-    <androidx.fragment.app.FragmentContainerView
+    <fragment
         android:id="@+id/admin_activity_fragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/queueup_title"/>
+        app:navGraph="@navigation/admin_nav_graph"
+        app:layout_constraintTop_toBottomOf="@id/queueup_title">
+
+    </fragment>
+
     <include
         layout="@layout/admin_navigation_bar"
         android:id="@+id/bottom_navigation"
@@ -30,13 +36,13 @@
         android:layout_height="60dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="20dp"
+        android:paddingBottom="0dp"
+        android:maxHeight="20dp"
         android:background="@drawable/navigation_bar_bg"
 
         app:itemIconTint="@drawable/navigation_bar_selector"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

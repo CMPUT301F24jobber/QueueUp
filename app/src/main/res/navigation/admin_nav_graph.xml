@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/admin_activity_animation"
+    app:startDestination="@id/adminHomeFragment">
+
+    <fragment
+        android:id="@+id/adminGalleryFragment"
+        android:name="com.example.queueup.views.admin.AdminGalleryFragment"
+        android:label="AdminGalleryFragment" >
+        <action
+            android:id="@+id/action_adminGalleryFragment_to_adminProfileFragment"
+            app:destination="@id/adminProfileFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popExitAnim="@anim/nav_slide_out_right"
+            app:popEnterAnim="@anim/nav_slide_in_left"/>
+    </fragment>
+    <fragment
+        android:id="@+id/adminHomeFragment"
+        android:name="com.example.queueup.views.admin.AdminHomeFragment"
+        android:label="AdminHomeFragment" >
+        <action
+            android:id="@+id/action_adminHomeFragment_to_adminUsersFragment"
+            app:destination="@id/adminUsersFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popExitAnim="@anim/nav_slide_out_right"
+            app:popEnterAnim="@anim/nav_slide_in_left" />
+    </fragment>
+    <fragment
+        android:id="@+id/adminUsersFragment"
+        android:name="com.example.queueup.views.admin.AdminUsersFragment"
+        android:label="AdminUsersFragment" >
+        <action
+            android:id="@+id/action_adminUsersFragment_to_adminGalleryFragment"
+            app:destination="@id/adminGalleryFragment"
+            app:enterAnim="@anim/nav_slide_in_right"
+            app:exitAnim="@anim/nav_slide_out_left"
+            app:popExitAnim="@anim/nav_slide_out_right"
+            app:popEnterAnim="@anim/nav_slide_in_left"/>
+    </fragment>
+    <fragment
+        android:id="@+id/adminProfileFragment"
+        android:name="com.example.queueup.views.admin.AdminProfileFragment"
+        android:label="AdminProfileFragment" />
+</navigation>
