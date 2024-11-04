@@ -1,6 +1,8 @@
 package com.example.queueup.views.admin;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
@@ -39,18 +41,16 @@ public class AdminUsersFragment extends Fragment {
         usersAdapter = new UsersArrayAdapter(view.getContext(), dataList);
         userList.setAdapter(usersAdapter);
 
+        userList.setOnItemClickListener((parent, view1, position, id) -> {
+            User selectedUser = dataList.get(position);
+
+            Intent intent = new Intent(getContext(), AdminClickUserFragment.class);
+            intent.putExtra("user", (Parcelable) selectedUser);
+            startActivity(intent);
+        });
+
         fetchUsersFromFirestore();
 
-
-        //User e = new User("Test","Last","Monger","test@test.ca","1234567890","e");
-        //dataList = new ArrayList<User>();
-        //dataList.add(e);
-
-        fetchUsersFromFirestore();
-
-        //userList = getView().findViewById(R.id.admin_user_list);
-        //usersAdapter = new UsersArrayAdapter(view.getContext(), dataList);
-        //userList.setAdapter(usersAdapter);
     }
 
     private void fetchUsersFromFirestore() {

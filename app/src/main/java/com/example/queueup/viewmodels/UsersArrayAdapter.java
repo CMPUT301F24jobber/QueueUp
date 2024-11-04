@@ -42,8 +42,14 @@ public class UsersArrayAdapter extends ArrayAdapter<User> {
         ImageView userImage = view.findViewById(R.id.user_image);
         TextView userRole = view.findViewById(R.id.user_role);
 
-
-        userName.setText(user.getFirstName() + " " + user.getLastName());
+        if (user != null) {
+            String firstName = user.getFirstName() != null ? user.getFirstName() : "";
+            String lastName = user.getLastName() != null ? user.getLastName() : "";
+            userName.setText(String.format("%s %s", firstName, lastName).trim());
+        } else {
+            userName.setText("");
+        }
+        assert user != null;
         userPhone.setText(user.getPhoneNumber());
         userEmail.setText(user.getEmailAddress());
         TextView userInitials = view.findViewById(R.id.user_initials);
@@ -51,21 +57,17 @@ public class UsersArrayAdapter extends ArrayAdapter<User> {
 
         String profileImageUrl = user.getProfileImageUrl();
         if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
-            // Load image using Glide if the URL is available
             Glide.with(getContext())
                     .load(profileImageUrl)
                     .circleCrop()
                     .into(userImage);
-
-            // Show ImageView and hide TextView for initials
             userImage.setVisibility(View.VISIBLE);
             userInitials.setVisibility(View.GONE);
         } else {
-            // No profile image, display initials
+            // if no profile pic then display initials
             userImage.setVisibility(View.GONE);
             userInitials.setVisibility(View.VISIBLE);
 
-            // Set initials based on the first and last name
             String initials = "";
             if (user.getFirstName() != null && !user.getFirstName().isEmpty()) {
                 initials += user.getFirstName().substring(0, 1).toUpperCase();

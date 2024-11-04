@@ -60,7 +60,6 @@
         <activity
             android:name=".views.organizer.OrganizerCreateEvent" >
         </activity>
-
     </application>
 
 </manifest>
