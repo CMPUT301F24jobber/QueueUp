@@ -21,6 +21,7 @@ import com.example.queueup.R;
 import com.example.queueup.models.User;
 import com.example.queueup.views.admin.AdminGalleryFragment;
 import com.example.queueup.views.admin.AdminProfileFragment;
+import com.example.queueup.views.admin.AdminUserFragment;
 
 import java.util.ArrayList;
 
@@ -53,7 +54,7 @@ public class UsersArrayAdapter extends ArrayAdapter<User> {
         view.setOnClickListener( (v) -> {
             AppCompatActivity activity = (AppCompatActivity) view.getContext();
             activity.getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.admin_activity_fragment, AdminProfileFragment.class, null)
+                    .replace(R.id.admin_activity_fragment, AdminUserFragment.class, null)
                     .addToBackStack(null)
                     .commit();
         });
