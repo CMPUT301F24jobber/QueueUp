@@ -44,9 +44,13 @@ public class AdminUsersFragment extends Fragment {
         userList.setOnItemClickListener((parent, view1, position, id) -> {
             User selectedUser = dataList.get(position);
 
-            Intent intent = new Intent(getContext(), AdminClickUserFragment.class);
-            intent.putExtra("user", (Parcelable) selectedUser);
-            startActivity(intent);
+            AdminClickUserFragment fragment = new AdminClickUserFragment();
+
+            Bundle args = new Bundle();
+            args.putParcelable("user", selectedUser);
+            fragment.setArguments(args);
+
+            fragment.show(getParentFragmentManager(), "AdminClickUserFragment");
         });
 
         fetchUsersFromFirestore();
@@ -59,14 +63,14 @@ public class AdminUsersFragment extends Fragment {
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        dataList.clear(); // Clear any old data
+                        dataList.clear();
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             User user = document.toObject(User.class);
-                            dataList.add(user); // Add the user to the list
+                            dataList.add(user);
                         }
-                        usersAdapter.notifyDataSetChanged(); // Refresh the adapter
+                        usersAdapter.notifyDataSetChanged();
                     } else {
-                        // Handle the error
+
                         Log.d("AdminUsersFragment", "Error fetching users: ", task.getException());
                     }
                 });

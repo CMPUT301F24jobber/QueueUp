@@ -32,22 +32,19 @@ public class AdminClickUserFragment extends DialogFragment {
 
         db = FirebaseFirestore.getInstance();
 
-        // Retrieve the Parcelable User object from arguments
         User user = getArguments() != null ? getArguments().getParcelable("user") : null;
 
         if (user == null) {
             Log.e("AdminClickUserFragment", "User data is null");
-            return super.onCreateDialog(savedInstanceState); // Return a default dialog if user is null
+            return super.onCreateDialog(savedInstanceState);
         }
 
-        // Initialize views using view.findViewById()
         userName = view.findViewById(R.id.user_name);
         userEmail = view.findViewById(R.id.user_email);
         userPhone = view.findViewById(R.id.user_phone);
         userRole = view.findViewById(R.id.user_role);
         deleteUserButton = view.findViewById(R.id.delete_user_button);
 
-        // Populate the views with user data
         String firstName = user.getFirstName() != null ? user.getFirstName() : "";
         String lastName = user.getLastName() != null ? user.getLastName() : "";
         userName.setText(String.format("%s %s", firstName, lastName).trim());
@@ -56,10 +53,8 @@ public class AdminClickUserFragment extends DialogFragment {
         userPhone.setText(user.getPhoneNumber() != null ? user.getPhoneNumber() : "");
         userRole.setText(user.getRole() != null ? user.getRole() : "");
 
-        // Set up delete button listener
         deleteUserButton.setOnClickListener(v -> deleteUser(user));
 
-        // Build the dialog using AlertDialog.Builder
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setView(view)
                 .setTitle("User Details")
@@ -71,7 +66,7 @@ public class AdminClickUserFragment extends DialogFragment {
     private void deleteUser(User user) {
         String email = user.getEmailAddress();
         if (email != null) {
-            db.collection("users").whereEqualTo("email", email).limit(1)
+            db.collection("users").whereEqualTo("emailAddress", email).limit(1)
                     .get()
                     .addOnSuccessListener(querySnapshot -> {
                         if (querySnapshot.isEmpty()) {
@@ -89,12 +84,9 @@ public class AdminClickUserFragment extends DialogFragment {
                                 .addOnFailureListener(e ->
                                         Toast.makeText(requireContext(), "Failed to delete user", Toast.LENGTH_SHORT).show()
                                 );
-                    })
-                    .addOnFailureListener(e ->
-                            Toast.makeText(requireContext(), "Failed to search for user", Toast.LENGTH_SHORT).show()
-                    );
+                    });
         } else {
-            Toast.makeText(requireContext(), "User email is null, cannot delete", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "User is null, cannot delete", Toast.LENGTH_SHORT).show();
         }
     }
 }
