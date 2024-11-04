@@ -1,4 +1,4 @@
-package com.example.queueup.views.admin;
+package com.example.queueup.views.attendee;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -10,23 +10,20 @@ import androidx.fragment.app.Fragment;
 
 import com.example.queueup.R;
 import com.example.queueup.models.Event;
-import com.example.queueup.viewmodels.EventArrayAdapter;
+import com.example.queueup.viewmodels.AttendeeEventArrayAdapter;
 
-import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Date;
 
-public class AdminHomeFragment extends Fragment {
+public class AttendeeHomeFragment extends Fragment {
 
     // Constructor for the fragment, loading the layout file
-    public AdminHomeFragment() {
+    public AttendeeHomeFragment() {
         super(R.layout.home_fragment);
     }
 
     private ArrayList<Event> dataList;
     private ListView eventList;
-    private EventArrayAdapter eventAdapter;
+    private AttendeeEventArrayAdapter eventAdapter;
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
@@ -41,7 +38,7 @@ public class AdminHomeFragment extends Fragment {
 
         // Set up the ListView and its adapter
         eventList = view.findViewById(R.id.event_list);  // Use 'view' to find the ListView in the fragment's layout
-        eventAdapter = new EventArrayAdapter(view.getContext(), dataList);  // Initialize the adapter with the context and data list
+        eventAdapter = new AttendeeEventArrayAdapter(view.getContext(), dataList);  // Initialize the adapter with the context and data list
         eventList.setAdapter(eventAdapter);  // Set the adapter to the ListView
 
     }
