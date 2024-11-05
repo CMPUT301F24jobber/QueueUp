@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import com.example.queueup.R;
 import com.example.queueup.models.Event;
 import com.example.queueup.viewmodels.EventArrayAdapter;
+import com.example.queueup.viewmodels.OrganizerEventArrayAdapter;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -30,7 +31,7 @@ public class OrganizerHomeFragment extends Fragment {
 
     private ArrayList<Event> dataList;
     private ListView eventList;
-    private EventArrayAdapter eventAdapter;
+    private OrganizerEventArrayAdapter eventAdapter;
     private FirebaseFirestore db;
 
     @Override
@@ -45,11 +46,10 @@ public class OrganizerHomeFragment extends Fragment {
 
         db = FirebaseFirestore.getInstance();
         Event eventee = new Event("id","name", "ee", "hi", "ee", "ee", new Date(1), new Date(2), 5, true);
-        // Set up the ListView and its adapter
         dataList.add(eventee);
         // Set up the ListView and its adapter
         eventList = view.findViewById(R.id.organizer_event_list);  // Ensure ID matches the organizer's ListView in XML
-        eventAdapter = new EventArrayAdapter(view.getContext(), dataList);  // Initialize the adapter with the context and data list
+        eventAdapter = new OrganizerEventArrayAdapter(view.getContext(), dataList);  // Initialize the adapter with the context and data list
         eventList.setAdapter(eventAdapter);  // Set the adapter to the ListView
 
         //listenForEvents();
@@ -64,7 +64,6 @@ public class OrganizerHomeFragment extends Fragment {
                             Log.e("OrganizerHome", "Error listening to events", error);
                             return;
                         }
-
                         if (value != null) {
                             dataList.clear();
                             for (QueryDocumentSnapshot document : value) {
