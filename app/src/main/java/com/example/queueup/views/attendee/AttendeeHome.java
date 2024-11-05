@@ -71,31 +71,15 @@ public class AttendeeHome extends AppCompatActivity {
                 case "Home":
                     getSupportFragmentManager().beginTransaction()
                             .setReorderingAllowed(true)
-                            .replace(R.id.admin_activity_fragment, AdminHomeFragment.class, null)
+                            .replace(R.id.attendee_activity_fragment, AttendeeHomeFragment.class, null)
                             .addToBackStack("Home")
-
-                            .commit();
-                    break;
-                case "Users":
-                    getSupportFragmentManager().beginTransaction()
-                            .setReorderingAllowed(true)
-                            .replace(R.id.admin_activity_fragment, AdminUsersFragment.class, null)
-                            .addToBackStack("Users")
-                            .commit();
-                    break;
-                case "Gallery":
-                    getSupportFragmentManager().beginTransaction()
-                            .setReorderingAllowed(true)
-
-                            .replace(R.id.admin_activity_fragment, AdminGalleryFragment.class, null)
-                            .addToBackStack("Gallery")
 
                             .commit();
                     break;
                 case "Profile":
                     getSupportFragmentManager().beginTransaction()
                             .setReorderingAllowed(true)
-                            .replace(R.id.admin_activity_fragment, AdminProfileFragment.class, null)
+                            .replace(R.id.attendee_activity_fragment, AttendeeProfileFragment.class, null)
                             .addToBackStack("Profile")
 
                             .commit();
