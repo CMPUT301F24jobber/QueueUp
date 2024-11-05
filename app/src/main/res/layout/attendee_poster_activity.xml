@@ -85,19 +85,21 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
+        android:id="@+id/description_box"
         android:layout_width="409dp"
         android:layout_height="264dp"
         android:layout_marginTop="4dp"
-        android:elevation="3dp"
-
         android:background="@drawable/outlined_round_box"
+
+        android:elevation="3dp"
         android:orientation="vertical"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
 
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+        app:layout_constraintVertical_bias="0.307">
 
         <TextView
             android:id="@+id/title"
@@ -118,8 +120,15 @@
             android:text="TextView"
             android:textAllCaps="false"
             android:textColor="@color/offblack" />
-
-
     </LinearLayout>
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/attendee_event_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/description_box" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
