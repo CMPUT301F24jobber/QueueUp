@@ -12,9 +12,8 @@ import androidx.fragment.app.Fragment;
 import com.example.queueup.R;
 import com.example.queueup.models.Event;
 import com.example.queueup.viewmodels.EventArrayAdapter;
-import com.example.queueup.viewmodels.EventViewModel;
 import com.google.firebase.firestore.FirebaseFirestore;
-import androidx.lifecycle.ViewModelProvider;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 
@@ -28,38 +27,43 @@ public class OrganizerHomeFragment extends Fragment {
     private ArrayList<Event> dataList;
     private ListView eventList;
     private EventArrayAdapter eventAdapter;
-
-    private EventViewModel eventViewModel;
+    private FirebaseFirestore db;
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        try {
-            // Initialize the data list and add events
-            dataList = new ArrayList<>();  // Proper initialization of ArrayList
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                // Add sample events or logic to retrieve events for the organizer
-            }
-
-            // Set up the ListView and its adapter
-            eventList = view.findViewById(R.id.organizer_event_list);  // Ensure ID matches the organizer's ListView in XML
-            if (eventList == null) {
-                Log.e("OrganizerHomeFragment", "ListView not found in layout");
-            }
-            eventAdapter = new EventArrayAdapter(view.getContext(), dataList);  // Initialize the adapter with the context and data list
-            eventList.setAdapter(eventAdapter);  // Set the adapter to the ListView
-
-            eventViewModel = new ViewModelProvider(this).get(EventViewModel.class);
-            eventViewModel.getAllEventsLiveData().observe(getViewLifecycleOwner(), events -> {
-                dataList.clear();
-                dataList.addAll(events);
-                eventAdapter.notifyDataSetChanged();
-            });
-        } catch (Exception e) {
-            Log.e("OrganizerHomeFragment", "Error in onViewCreated", e);
+        // Initialize the data list and add events
+        dataList = new ArrayList<>();  // Proper initialization of ArrayList
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // Add sample events or logic to retrieve events for the organizer
         }
+
+        db = FirebaseFirestore.getInstance();
+
+        // Set up the ListView and its adapter
+        eventList = view.findViewById(R.id.organizer_event_list);  // Ensure ID matches the organizer's ListView in XML
+        eventAdapter = new EventArrayAdapter(view.getContext(), dataList);  // Initialize the adapter with the context and data list
+        eventList.setAdapter(eventAdapter);  // Set the adapter to the ListView
+
+        fetchEvents();
     }
 
-
+    private void fetchEvents() {
+        db.collection("events")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        dataList.clear();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Event event = document.toObject(Event.class);
+                            dataList.add(event);
+                        }
+                        eventAdapter.notifyDataSetChanged();
+                    }
+                    else {
+                        Log.e("OrganizerHome", "Error fetching events", task.getException());
+                    }
+                });
+    }
 }
