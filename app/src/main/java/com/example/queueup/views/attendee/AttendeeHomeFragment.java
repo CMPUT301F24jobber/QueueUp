@@ -13,6 +13,7 @@ import com.example.queueup.models.Event;
 import com.example.queueup.viewmodels.AttendeeEventArrayAdapter;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class AttendeeHomeFragment extends Fragment {
 
@@ -35,8 +36,9 @@ public class AttendeeHomeFragment extends Fragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
         }
-
+        Event eventee = new Event("id","name", "ee", "hi", "ee", "ee", new Date(1), new Date(2), 5, true);
         // Set up the ListView and its adapter
+        dataList.add(eventee);
         eventList = view.findViewById(R.id.event_list);  // Use 'view' to find the ListView in the fragment's layout
         eventAdapter = new AttendeeEventArrayAdapter(view.getContext(), dataList);  // Initialize the adapter with the context and data list
         eventList.setAdapter(eventAdapter);  // Set the adapter to the ListView

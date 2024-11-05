@@ -17,6 +17,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.queueup.R;
 import com.example.queueup.models.Event;
 import com.example.queueup.views.admin.AdminEventFragment;
+import com.example.queueup.views.attendee.AttendeeEventFragment;
+import com.example.queueup.views.attendee.AttendeeHomeFragment;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -49,7 +51,13 @@ public class AttendeeEventArrayAdapter extends ArrayAdapter<Event> {
             String date_text = event.getEventStartDate().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate().format(formatter);
         eventDate.setText(date_text);
         eventLocation.setText(event.getEventLocation());
-
+        view.setOnClickListener( (v) -> {
+            AppCompatActivity activity = (AppCompatActivity) view.getContext();
+            activity.getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.attendee_activity_fragment, AttendeeEventFragment.class, null)
+                    .addToBackStack(null)
+                    .commit();
+        });
         return view;
     }
 
