@@ -1,9 +1,12 @@
 package com.example.queueup.models;
 
-import android.os.Parcel;
 import android.os.Parcelable;
+import android.os.Parcel;
+import android.util.Log;
 
-import java.io.Serializable;
+import androidx.annotation.NonNull;
+
+import com.google.firebase.firestore.Exclude;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +46,32 @@ public class User implements Parcelable {
         this.role = "admin"; // Default role set during creation
     }
 
+    protected User(Parcel in) {
+        uuid = in.readString();
+        firstName = in.readString();
+        lastName = in.readString();
+        username = in.readString();
+        emailAddress = in.readString();
+        phoneNumber = in.readString();
+        role = in.readString();
+        profileImageUrl = in.readString();
+        deviceId = in.readString();
+        receiveNotifications = in.readByte() != 0;
+        waitingListEvents = in.createStringArrayList();
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
+
     // Getters and setters
     public String getUuid() {
         return uuid;
@@ -55,6 +84,11 @@ public class User implements Parcelable {
     public String getFirstName() {
         return firstName;
     }
+
+    public String getInitials() {
+        return firstName.substring(0, 1).toUpperCase() + lastName.substring(0, 1).toUpperCase();
+    }
+
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
@@ -106,6 +140,7 @@ public class User implements Parcelable {
 
     public void setProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
+        Log.d("User", "Profile Image URL set: " + profileImageUrl);
     }
 
     public HashMap<String, String> getNotifications() {
@@ -140,11 +175,7 @@ public class User implements Parcelable {
         this.waitingListEvents = waitingListEvents;
     }
 
-    public String getInitials() {
-        return firstName.substring(0, 1).toUpperCase() + lastName.substring(0, 1).toUpperCase();
-    }
-
-    // Additional helper methods
+    // Methods
     public void addNotification(String notificationId, String notificationContent) {
         this.notifications.put(notificationId, notificationContent);
     }
@@ -171,54 +202,16 @@ public class User implements Parcelable {
         this.profileImageUrl = null;
     }
 
-    // Parcelable implementation
-    protected User(Parcel in) {
-        uuid = in.readString();
-        firstName = in.readString();
-        lastName = in.readString();
-        username = in.readString();
-        emailAddress = in.readString();
-        phoneNumber = in.readString();
-        role = in.readString();
-        profileImageUrl = in.readString();
-        deviceId = in.readString();
-        receiveNotifications = in.readByte() != 0;
-        notifications = in.readHashMap(HashMap.class.getClassLoader());
-        waitingListEvents = in.createStringArrayList();
+
+    public String pfp() {
+        return this.firstName.substring(0, 1);
     }
 
-    @Override
-    public void writeToParcel(Parcel parcel, int flags) {
-        parcel.writeString(uuid);
-        parcel.writeString(firstName);
-        parcel.writeString(lastName);
-        parcel.writeString(username);
-        parcel.writeString(emailAddress);
-        parcel.writeString(phoneNumber);
-        parcel.writeString(role);
-        parcel.writeString(profileImageUrl);
-        parcel.writeString(deviceId);
-        parcel.writeByte((byte) (receiveNotifications ? 1 : 0));
-        parcel.writeMap(notifications);
-        parcel.writeStringList(waitingListEvents);
+    // Exclude the full name from Firestore
+    @Exclude
+    public String getFullName() {
+        return this.firstName + " " + this.lastName;
     }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    public static final Creator<User> CREATOR = new Creator<User>() {
-        @Override
-        public User createFromParcel(Parcel in) {
-            return new User(in);
-        }
-
-        @Override
-        public User[] newArray(int size) {
-            return new User[size];
-        }
-    };
 
     @Override
     public String toString() {
@@ -232,5 +225,25 @@ public class User implements Parcelable {
                 ", role='" + role + '\'' +
                 ", receiveNotifications=" + receiveNotifications +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel parcel, int i) {
+        parcel.writeString(uuid);
+        parcel.writeString(firstName);
+        parcel.writeString(lastName);
+        parcel.writeString(username);
+        parcel.writeString(emailAddress);
+        parcel.writeString(phoneNumber);
+        parcel.writeString(role);
+        parcel.writeString(profileImageUrl);
+        parcel.writeString(deviceId);
+        parcel.writeByte((byte) (receiveNotifications ? 1 : 0));
+        parcel.writeStringList(waitingListEvents);
     }
 }
