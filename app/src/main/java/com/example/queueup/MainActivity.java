@@ -35,11 +35,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         FirebaseApp.initializeApp(this);
+        // Initialize Firestore and UserViewModel
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        db = FirebaseFirestore.getInstance();
+        // Auto-redirect based on device ID
+
+
         setContentView(R.layout.activity_main);
 
-        // Initialize Firestore and UserViewModel
-        db = FirebaseFirestore.getInstance();
-        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+
+
 
         adminButton = findViewById(R.id.adminButton);
         organizerButton = findViewById(R.id.organizerButton);
@@ -48,8 +53,6 @@ public class MainActivity extends AppCompatActivity {
         // Set up role selection buttons
         setupRoleSelection();
 
-        // Auto-redirect based on device ID
-        checkDeviceIdAndRedirect();
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -61,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Checks if the device ID exists in Firestore and redirects the user accordingly.
      */
-    private void checkDeviceIdAndRedirect() {
+    private void checkDeviceIdAndRedirect(String role) {
         String deviceId = userViewModel.getDeviceId();  // Get the device ID from the ViewModel
 
         // Check Firestore for a document with the current device ID
@@ -72,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
                     if (task.isSuccessful() && !task.getResult().isEmpty()) {
                         // Device ID found in Firestore
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            String role = document.getString("role");
                             Log.d("MainActivity", "Device ID found with role: " + role);
                             if (role != null) {
                                 redirectToRoleBasedActivity(role);
@@ -85,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> {
                     Log.e("MainActivity", "Error checking device ID: ", e);
                     Toast.makeText(MainActivity.this, "Error checking device ID", Toast.LENGTH_SHORT).show();
+                    navigateToSignupPage(role);
                 });
     }
 
@@ -130,10 +133,10 @@ public class MainActivity extends AppCompatActivity {
      * Sets up button click listeners for role selection and navigation to the signup page.
      */
     private void setupRoleSelection() {
-        adminButton.setOnClickListener(v -> navigateToSignupPage("Admin"));
+        adminButton.setOnClickListener(v -> checkDeviceIdAndRedirect("Admin"));
 
-        organizerButton.setOnClickListener(v -> navigateToSignupPage("Organizer"));
+        organizerButton.setOnClickListener(v -> checkDeviceIdAndRedirect("Organizer"));
 
-        attendeeButton.setOnClickListener(v -> navigateToSignupPage("Attendee"));
+        attendeeButton.setOnClickListener(v -> checkDeviceIdAndRedirect("Attendee"));
     }
 }
