@@ -31,7 +31,7 @@ public class OrganizerHomeFragment extends Fragment {
 
     private ArrayList<Event> dataList;
     private ListView eventList;
-    private EventArrayAdapter eventAdapter;
+    private OrganizerEventArrayAdapter eventAdapter;
     private FirebaseFirestore db;
 
     @Override
@@ -46,7 +46,6 @@ public class OrganizerHomeFragment extends Fragment {
 
         db = FirebaseFirestore.getInstance();
         Event eventee = new Event("id","name", "ee", "hi", "ee", "ee", new Date(1), new Date(2), 5, true);
-        // Set up the ListView and its adapter
         dataList.add(eventee);
         // Set up the ListView and its adapter
         eventList = view.findViewById(R.id.organizer_event_list);  // Ensure ID matches the organizer's ListView in XML
@@ -65,7 +64,6 @@ public class OrganizerHomeFragment extends Fragment {
                             Log.e("OrganizerHome", "Error listening to events", error);
                             return;
                         }
-
                         if (value != null) {
                             dataList.clear();
                             for (QueryDocumentSnapshot document : value) {

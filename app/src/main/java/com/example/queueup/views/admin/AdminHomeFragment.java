@@ -35,11 +35,8 @@ public class AdminHomeFragment extends Fragment {
 
         // Initialize the data list and add an event
         dataList = new ArrayList<>();  // Proper initialization of ArrayList
-        Event event = null;  // Completed constructor parameters
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
-        }
-
+        Event eventee = new Event("id","name", "ee", "hi", "ee", "ee", new Date(1), new Date(2), 5, true);
+        dataList.add(eventee);
         // Set up the ListView and its adapter
         eventList = view.findViewById(R.id.event_list);  // Use 'view' to find the ListView in the fragment's layout
         eventAdapter = new AdminEventArrayAdapter(view.getContext(), dataList);  // Initialize the adapter with the context and data list

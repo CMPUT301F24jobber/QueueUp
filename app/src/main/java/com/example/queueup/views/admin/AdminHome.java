@@ -58,6 +58,7 @@ public class AdminHome extends AppCompatActivity {
                     .commit();
         }
 
+
         navigationView.setOnItemSelectedListener( menuItem -> {
             String title = String.valueOf(menuItem.getTitle());
             switch (title) {
