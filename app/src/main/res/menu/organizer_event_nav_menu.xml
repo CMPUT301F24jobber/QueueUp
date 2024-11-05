@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/waiting_list"
+        android:icon="@drawable/waiting_list"
+        android:title="Waiting List" />
+    <item
+        android:id="@+id/draw_attendee"
+        android:icon="@drawable/ic_action_name"
+        android:title="Draw Winner" />
+    <!--THIS IS GEOLOCATION STUFF    <item-->
+    <!--        android:id="@+id/location"-->
+    <!--        android:icon="@drawable/map_pin"-->
+    <!--        android:title="Profile" />-->
+</menu>

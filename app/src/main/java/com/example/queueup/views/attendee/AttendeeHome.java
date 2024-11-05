@@ -14,8 +14,12 @@ import androidx.fragment.app.Fragment;
 import com.example.queueup.R;
 import com.example.queueup.controllers.UserController;
 import com.example.queueup.models.User;
+import com.example.queueup.views.admin.AdminGalleryFragment;
 import com.example.queueup.views.admin.AdminHomeFragment;
+import com.example.queueup.views.admin.AdminProfileFragment;
+import com.example.queueup.views.admin.AdminUsersFragment;
 import com.example.queueup.views.profiles.ProfileActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.bumptech.glide.Glide;
@@ -31,6 +35,7 @@ public class AttendeeHome extends AppCompatActivity {
     private FrameLayout profileInitialsFrame;  // FrameLayout for the initials circle
     private String deviceId;
     private ImageView profileImageView;  // ImageView to display the profile picture
+    private BottomNavigationView navigationView;
 
     /**
      * Called when the activity is first created.
@@ -44,6 +49,7 @@ public class AttendeeHome extends AppCompatActivity {
 
         // Initialize Firebase and TextView
         db = FirebaseFirestore.getInstance();
+        navigationView = findViewById(R.id.bottom_navigation);
 
 
         // Get deviceId from intent or UserController
@@ -57,10 +63,32 @@ public class AttendeeHome extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
                     .replace(R.id.attendee_activity_fragment, AttendeeHomeFragment.class, null)
-                    .addToBackStack("Home")
                     .commit();
         }
+        navigationView.setOnItemSelectedListener( menuItem -> {
+            String title = String.valueOf(menuItem.getTitle());
+            switch (title) {
+                case "Home":
+                    getSupportFragmentManager().beginTransaction()
+                            .setReorderingAllowed(true)
+                            .replace(R.id.attendee_activity_fragment, AttendeeHomeFragment.class, null)
+                            .addToBackStack("Home")
 
+                            .commit();
+                    break;
+                case "Profile":
+                    getSupportFragmentManager().beginTransaction()
+                            .setReorderingAllowed(true)
+                            .replace(R.id.attendee_activity_fragment, AttendeeProfileFragment.class, null)
+                            .addToBackStack("Profile")
+
+                            .commit();
+                    break;
+                default:
+                    break;
+            }
+            return true;
+        });
 //        // Set up listener for profile initials (similar to a button)
 //        profileInitialsFrame.setOnClickListener(v -> {
 //            Intent intent = new Intent(AttendeeHome.this, ProfileActivity.class);

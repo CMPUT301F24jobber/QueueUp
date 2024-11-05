@@ -1,21 +1,18 @@
 package com.example.queueup.views.attendee;
 
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
 import com.example.queueup.R;
-import com.example.queueup.views.admin.AdminHomeFragment;
 
 public class AttendeeEvent extends AppCompatActivity {
     private ImageButton backButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.attendee_poster_activity);
+        setContentView(R.layout.attendee_event_activity);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
