@@ -77,11 +77,11 @@ public class OrganizerCreateEvent extends AppCompatActivity {
         String attendeeLimit = attendeeLimitEditText.getText().toString().trim();
         boolean unlimitedAttendees = unlimitedAttendeeCheckBox.isChecked();
 
-//        // Check for required fields
-//        if (eventName.isEmpty() || startDate.isEmpty() || endDate.isEmpty() || location.isEmpty()) {
-//            Toast.makeText(this, "Please fill in all required fields", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
+        // Check for required fields
+        if (eventName.isEmpty() || location.isEmpty()) {
+            Toast.makeText(this, "Please fill in all required fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         // Initialize date format
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
