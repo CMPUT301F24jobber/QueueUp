@@ -5,13 +5,9 @@
         android:icon="@drawable/ic_nav_home"
         android:title="Home" />
     <item
-        android:id="@+id/nav_users"
-        android:icon="@drawable/ic_nav_users"
+        android:id="@+id/nav_QRCode"
+        android:icon="@drawable/ic_nav_qrcode"
         android:title="Users" />
-    <item
-        android:id="@+id/nav_gallery"
-        android:icon="@drawable/ic_nav_gallery"
-        android:title="Gallery" />
     <item
         android:id="@+id/nav_profile"
         android:icon="@drawable/ic_nav_profile"

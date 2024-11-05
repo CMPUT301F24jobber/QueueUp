@@ -2,6 +2,7 @@ package com.example.queueup.views.organizer;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
@@ -11,8 +12,14 @@ import androidx.fragment.app.Fragment;
 import com.example.queueup.R;
 import com.example.queueup.models.Event;
 import com.example.queueup.viewmodels.EventArrayAdapter;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class OrganizerHomeFragment extends Fragment {
 
@@ -24,6 +31,7 @@ public class OrganizerHomeFragment extends Fragment {
     private ArrayList<Event> dataList;
     private ListView eventList;
     private EventArrayAdapter eventAdapter;
+    private FirebaseFirestore db;
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
@@ -35,9 +43,37 @@ public class OrganizerHomeFragment extends Fragment {
             // Add sample events or logic to retrieve events for the organizer
         }
 
+        db = FirebaseFirestore.getInstance();
+        Event eventee = new Event("id","name", "ee", "hi", "ee", "ee", new Date(1), new Date(2), 5, true);
+        // Set up the ListView and its adapter
+        dataList.add(eventee);
         // Set up the ListView and its adapter
         eventList = view.findViewById(R.id.organizer_event_list);  // Ensure ID matches the organizer's ListView in XML
         eventAdapter = new EventArrayAdapter(view.getContext(), dataList);  // Initialize the adapter with the context and data list
         eventList.setAdapter(eventAdapter);  // Set the adapter to the ListView
+
+        //listenForEvents();
+    }
+
+    private void listenForEvents() {
+        db.collection("events")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(QuerySnapshot value, FirebaseFirestoreException error) {
+                        if (error != null) {
+                            Log.e("OrganizerHome", "Error listening to events", error);
+                            return;
+                        }
+
+                        if (value != null) {
+                            dataList.clear();
+                            for (QueryDocumentSnapshot document : value) {
+                                Event event = document.toObject(Event.class);
+                                dataList.add(event);
+                            }
+                            eventAdapter.notifyDataSetChanged();
+                        }
+                    }
+                });
     }
 }
