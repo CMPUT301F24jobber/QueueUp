@@ -8,34 +8,45 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.queueup.R;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.example.queueup.handlers.CurrentUserHandler;
+import com.example.queueup.models.Event;
+import com.example.queueup.viewmodels.EventViewModel;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
+import java.util.UUID;
 
 public class OrganizerCreateEvent extends AppCompatActivity {
+
+    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm";
 
     private EditText eventNameEditText, startDateEditText, endDateEditText, locationEditText, descriptionEditText, attendeeLimitEditText;
     private CheckBox unlimitedAttendeeCheckBox;
     private Button submitButton;
-    private FirebaseFirestore db;
+    private EventViewModel eventViewModel;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.organizer_create_event);
 
-        // Initialize Firestore
-        db = FirebaseFirestore.getInstance();
+        eventViewModel = new ViewModelProvider(this).get(EventViewModel.class);
+        initializeUIComponents();
+        setupObservers();
 
-        // Initialize UI components
+        findViewById(R.id.backButton).setOnClickListener(v -> finish());
+        unlimitedAttendeeCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> toggleAttendeeLimit(isChecked));
+        submitButton.setOnClickListener(v -> handleSubmit());
+    }
+
+    private void initializeUIComponents() {
         eventNameEditText = findViewById(R.id.eventNameEditText);
         startDateEditText = findViewById(R.id.startDateEditText);
         endDateEditText = findViewById(R.id.endDateEditText);
@@ -44,31 +55,39 @@ public class OrganizerCreateEvent extends AppCompatActivity {
         attendeeLimitEditText = findViewById(R.id.attendeeLimitEditText);
         unlimitedAttendeeCheckBox = findViewById(R.id.unlimitedAttendeeCheckBox);
         submitButton = findViewById(R.id.submitButton);
+    }
 
-        // back button to navigate back to previous activity
-        ImageButton backButton = findViewById(R.id.backButton);
-        backButton.setOnClickListener(v -> finish());
-
-        // Unlimited attendee checkBox listener
-        unlimitedAttendeeCheckBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (unlimitedAttendeeCheckBox.isChecked()) {   // if checkBox is selected then disable attendee limit and erase any previously written values
-                    attendeeLimitEditText.setText("");
-                    attendeeLimitEditText.setEnabled(false);
-                }
-                else {
-                    attendeeLimitEditText.setEnabled(true);  // Enable attendee limit Edit text field if checkBox is unselected.
-                }
+    private void setupObservers() {
+        eventViewModel.getErrorMessageLiveData().observe(this, errorMessage -> {
+            if (errorMessage != null && !errorMessage.isEmpty()) {
+                showToast(errorMessage);
             }
         });
 
-        // Set OnClickListener for submit button
-        submitButton.setOnClickListener(v -> saveEventToFirestore());
+        eventViewModel.getIsLoadingLiveData().observe(this, isLoading -> {
+            if (Boolean.TRUE.equals(isLoading)) {
+                showToast("Loading...");
+            }
+        });
+
+        eventViewModel.getAllEventsLiveData().observe(this, events -> {
+            if (events != null) {
+                showToast("Event created successfully");
+                finish();
+            } else {
+                showToast("Event creation failed. Please try again.");
+            }
+        });
     }
 
-    private void saveEventToFirestore() {
-        // Retrieve input data
+    private void toggleAttendeeLimit(boolean isChecked) {
+        attendeeLimitEditText.setEnabled(!isChecked);
+        if (isChecked) {
+            attendeeLimitEditText.setText("");
+        }
+    }
+
+    private synchronized void handleSubmit() {
         String eventName = eventNameEditText.getText().toString().trim();
         String startDateStr = startDateEditText.getText().toString().trim();
         String endDateStr = endDateEditText.getText().toString().trim();
@@ -77,59 +96,72 @@ public class OrganizerCreateEvent extends AppCompatActivity {
         String attendeeLimit = attendeeLimitEditText.getText().toString().trim();
         boolean unlimitedAttendees = unlimitedAttendeeCheckBox.isChecked();
 
-        // Check for required fields
-        if (eventName.isEmpty() || location.isEmpty()) {
-            Toast.makeText(this, "Please fill in all required fields", Toast.LENGTH_SHORT).show();
+        if (!areRequiredFieldsFilled(eventName, location)) {
+            showToast("Please fill in all required fields");
             return;
         }
 
-        // Initialize date format
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+        Date startDate = parseDate(startDateStr);
+        Date endDate = parseDate(endDateStr);
+        if (startDate == null || endDate == null) {
+            showToast("Invalid date format. Please use yyyy-MM-dd HH:mm");
+            return;
+        }
 
-        // Initialize Date variables
-        Date startDate;
-        Date endDate;
+        int attendeeLimitValue = unlimitedAttendees ? Integer.MAX_VALUE : parseAttendeeLimit(attendeeLimit);
+        if (attendeeLimitValue == -1) {
+            showToast("Invalid attendee limit. Please enter a valid number.");
+            return;
+        }
 
-        // Parse the start and end dates
+        String organizerId = CurrentUserHandler.getSingleton().getCurrentUserId();
+        if (organizerId == null || organizerId.isEmpty()) {
+            showToast("Organizer ID is missing. Please make sure you are logged in.");
+            return;
+        }
+
+        // Debugging Log to Check the Organizer ID
+        System.out.println("Organizer ID: " + organizerId);
+
+        Event newEvent = new Event(
+                UUID.randomUUID().toString(),
+                eventName,
+                description,
+                null, // eventBannerImageUrl can be null for now.
+                location,
+                organizerId,
+                startDate,
+                endDate,
+                attendeeLimitValue,
+                true // Setting the event as active by default.
+        );
+
+        eventViewModel.createEvent(newEvent);
+    }
+
+
+    private boolean areRequiredFieldsFilled(String eventName, String location) {
+        return !eventName.isEmpty() && !location.isEmpty();
+    }
+
+    private Date parseDate(String dateStr) {
         try {
-            startDate = sdf.parse(startDateEditText.getText().toString().trim());
-            endDate = sdf.parse(endDateEditText.getText().toString().trim());
+            return new SimpleDateFormat(DATE_FORMAT, Locale.getDefault()).parse(dateStr);
         } catch (ParseException e) {
             e.printStackTrace();
-            Toast.makeText(this, "Invalid date format. Please use yyyy-MM-dd HH:mm", Toast.LENGTH_SHORT).show();
-            return;
+            return null;
         }
+    }
 
-        // Check for required fields
-        if (eventName.isEmpty() || startDate == null || endDate == null || location.isEmpty()) {
-            Toast.makeText(this, "Please fill in all required fields", Toast.LENGTH_SHORT).show();
-            return;
+    private int parseAttendeeLimit(String attendeeLimit) {
+        try {
+            return attendeeLimit.isEmpty() ? -1 : Integer.parseInt(attendeeLimit);
+        } catch (NumberFormatException e) {
+            return -1;
         }
+    }
 
-
-        // Create a map to store event data
-        Map<String, Object> event = new HashMap<>();
-        event.put("eventName", eventName);
-        event.put("eventStartDate", startDate);
-        event.put("eventEndDate", endDate);
-        event.put("eventLocation", location);
-        event.put("description", description);
-        event.put("unlimitedAttendees", unlimitedAttendees);
-
-        // If unlimited attendees is unchecked, store the attendee limit
-        if (!unlimitedAttendees) {
-            event.put("attendeeLimit", attendeeLimit.isEmpty() ? "0" : attendeeLimit);
-        }
-
-        // Save to Firestore
-        db.collection("events")
-                .add(event)
-                .addOnSuccessListener(documentReference -> {
-                    Toast.makeText(OrganizerCreateEvent.this, "Event created successfully!", Toast.LENGTH_SHORT).show();
-                    finish();  // Close the activity after successful submission
-                })
-                .addOnFailureListener(e ->
-                        Toast.makeText(OrganizerCreateEvent.this, "Failed to create event. Please try again.", Toast.LENGTH_SHORT).show()
-                );
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }

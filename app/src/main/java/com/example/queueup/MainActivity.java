@@ -22,6 +22,8 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import com.example.queueup.handlers.CurrentUserHandler; // Import the handler
+
 public class MainActivity extends AppCompatActivity {
 
     private MaterialButton adminButton;
@@ -44,6 +46,10 @@ public class MainActivity extends AppCompatActivity {
         adminButton = findViewById(R.id.adminButton);
         organizerButton = findViewById(R.id.organizerButton);
         attendeeButton = findViewById(R.id.attendeeButton);
+
+        // **Initialize CurrentUserHandler Singleton**
+        CurrentUserHandler.setOwnerActivity(this);
+        CurrentUserHandler.getSingleton(); // Ensure singleton is initialized
 
         // Set up role selection buttons
         setupRoleSelection();
@@ -80,6 +86,9 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(MainActivity.this, "User role not found.", Toast.LENGTH_SHORT).show();
                             }
                         }
+                    } else {
+                        // Device ID not found; prompt user to sign up
+                        Toast.makeText(MainActivity.this, "Device not registered. Please sign up.", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -98,18 +107,16 @@ public class MainActivity extends AppCompatActivity {
         switch (role) {
             case "Admin":
                 intent = new Intent(MainActivity.this, AdminHome.class);
-                intent.putExtra("deviceId", userViewModel.getDeviceId());
                 break;
             case "Organizer":
                 intent = new Intent(MainActivity.this, OrganizerHome.class);
-                intent.putExtra("deviceId", userViewModel.getDeviceId());
                 break;
             case "Attendee":
             default:
                 intent = new Intent(MainActivity.this, AttendeeHome.class);
-                intent.putExtra("deviceId", userViewModel.getDeviceId());
                 break;
         }
+        intent.putExtra("deviceId", userViewModel.getDeviceId());
         startActivity(intent);
         finish(); // Close MainActivity to prevent going back
     }
@@ -131,9 +138,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void setupRoleSelection() {
         adminButton.setOnClickListener(v -> navigateToSignupPage("Admin"));
-
         organizerButton.setOnClickListener(v -> navigateToSignupPage("Organizer"));
-
         attendeeButton.setOnClickListener(v -> navigateToSignupPage("Attendee"));
     }
 }
