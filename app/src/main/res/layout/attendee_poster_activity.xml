@@ -14,6 +14,20 @@
         app:layout_constraintTop_toTopOf="parent"
         layout="@layout/title_ui" />
 
+    <TextView
+        android:id="@+id/win_lose_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/poppins_extrabold"
+        android:text="Description"
+        android:textColor="@color/offblack"
+        android:textSize="0sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/queueup_title"
+        app:layout_constraintBottom_toTopOf="@id/poster_image"/>
     <ImageView
         android:id="@+id/poster_image"
         android:layout_width="wrap_content"
