@@ -12,17 +12,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.queueup.R;
 import com.example.queueup.models.Event;
-import com.example.queueup.views.admin.AdminEventFragment;
-import com.example.queueup.views.admin.AdminProfileFragment;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-public class EventArrayAdapter extends ArrayAdapter<Event> {
+public abstract class EventArrayAdapter extends ArrayAdapter<Event> {
     public EventArrayAdapter(Context context, ArrayList<Event> event) {
         super(context, 0, event);
     }
@@ -51,14 +48,9 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
         eventDate.setText(date_text);
         eventLocation.setText(event.getEventLocation());
 
-        view.setOnClickListener( (v) -> {
-            AppCompatActivity activity = (AppCompatActivity) view.getContext();
-            activity.getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.admin_activity_fragment, AdminEventFragment.class, null)
-                    .addToBackStack(null)
-                    .commit();
-        });
+        view.setOnClickListener(onClickListener(view));
         return view;
     }
 
+    protected abstract View.OnClickListener onClickListener(View view);
 }
