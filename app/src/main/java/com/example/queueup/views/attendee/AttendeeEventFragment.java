@@ -11,7 +11,7 @@ import com.example.queueup.R;
 
 public class AttendeeEventFragment extends Fragment {
     public AttendeeEventFragment() {
-        super(R.layout.attendee_poster_activity);
+        super(R.layout.attendee_event_activity);
     }
     ImageView poster;
     @Override

@@ -1,4 +1,4 @@
-package com.example.queueup.views.attendee;
+package com.example.queueup.views.organizer;
 
 import android.os.Bundle;
 import android.widget.ImageButton;
@@ -6,18 +6,19 @@ import android.widget.ImageButton;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.queueup.R;
+import com.example.queueup.views.attendee.AttendeeWaitlistFragment;
 
-public class AttendeeEvent extends AppCompatActivity {
+public class OrganizerEvent extends AppCompatActivity {
     private ImageButton backButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.attendee_event_activity);
+        setContentView(R.layout.organizer_event_activity);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
-                    .replace(R.id.attendee_event_fragment, AttendeeWaitlistFragment.class, null)
+                    .replace(R.id.organizer_event_fragment, OrganizerWaitingListFragment.class, null)
                     .commit();
         }
         backButton = findViewById(R.id.back_button);
