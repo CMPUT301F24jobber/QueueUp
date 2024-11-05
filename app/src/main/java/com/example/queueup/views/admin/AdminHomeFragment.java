@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.queueup.R;
 import com.example.queueup.models.Event;
+import com.example.queueup.viewmodels.AdminEventArrayAdapter;
 import com.example.queueup.viewmodels.EventArrayAdapter;
 
 import java.time.LocalDate;
@@ -26,7 +27,7 @@ public class AdminHomeFragment extends Fragment {
 
     private ArrayList<Event> dataList;
     private ListView eventList;
-    private EventArrayAdapter eventAdapter;
+    private AdminEventArrayAdapter eventAdapter;
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
@@ -41,7 +42,7 @@ public class AdminHomeFragment extends Fragment {
 
         // Set up the ListView and its adapter
         eventList = view.findViewById(R.id.event_list);  // Use 'view' to find the ListView in the fragment's layout
-        eventAdapter = new EventArrayAdapter(view.getContext(), dataList);  // Initialize the adapter with the context and data list
+        eventAdapter = new AdminEventArrayAdapter(view.getContext(), dataList);  // Initialize the adapter with the context and data list
         eventList.setAdapter(eventAdapter);  // Set the adapter to the ListView
 
     }
