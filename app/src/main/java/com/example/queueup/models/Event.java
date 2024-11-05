@@ -27,6 +27,8 @@ public class Event implements Serializable {
     private int maxCapacity;
     private int currentCapacity;
 
+    public Event() {
+    }
     /**
      * Constructs a new {@code Event} instance with default values.
      */
