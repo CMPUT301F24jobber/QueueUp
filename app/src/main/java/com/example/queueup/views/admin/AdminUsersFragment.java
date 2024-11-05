@@ -1,8 +1,6 @@
 package com.example.queueup.views.admin;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
@@ -19,7 +17,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 
-public class AdminUsersFragment extends Fragment {
+public class AdminUsersFragment extends Fragment implements AdminClickUserFragment.RefreshUsersListener {
 
     public AdminUsersFragment() {
         super(R.layout.admin_users_fragment);
@@ -51,8 +49,23 @@ public class AdminUsersFragment extends Fragment {
             fragment.setArguments(args);
 
             fragment.show(getParentFragmentManager(), "AdminClickUserFragment");
+            fetchUsersFromFirestore();
         });
 
+        getParentFragmentManager().setFragmentResultListener("userDeletedKey", this, (requestKey, bundle) -> {
+            if (bundle.getBoolean("userDeleted")) {
+                fetchUsersFromFirestore();
+            }
+        });
+
+        fetchUsersFromFirestore();
+
+    }
+
+
+    @Override
+    public void refreshFragment() {
+        usersAdapter.notifyDataSetChanged();
         fetchUsersFromFirestore();
 
     }
