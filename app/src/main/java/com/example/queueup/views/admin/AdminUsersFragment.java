@@ -49,44 +49,36 @@ public class AdminUsersFragment extends Fragment implements AdminClickUserFragme
             fragment.setArguments(args);
 
             fragment.show(getParentFragmentManager(), "AdminClickUserFragment");
-            fetchUsersFromFirestore();
         });
 
-        getParentFragmentManager().setFragmentResultListener("userDeletedKey", this, (requestKey, bundle) -> {
-            if (bundle.getBoolean("userDeleted")) {
-                fetchUsersFromFirestore();
-            }
-        });
-
-        fetchUsersFromFirestore();
-
+        listenToUsersCollection();
     }
 
-
-    @Override
-    public void refreshFragment() {
-        usersAdapter.notifyDataSetChanged();
-        fetchUsersFromFirestore();
-
-    }
-
-    private void fetchUsersFromFirestore() {
+    /**
+     * Method to listen for real-time changes in the Firestore 'users' collection.
+     */
+    private void listenToUsersCollection() {
         db.collection("users")
                 .whereIn("role", new ArrayList<String>() {{ add("attendee"); add("organizer"); }})
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
+                .addSnapshotListener((snapshots, error) -> {
+                    if (error != null) {
+                        Log.w("AdminUsersFragment", "Listen failed.", error);
+                        return;
+                    }
+
+                    if (snapshots != null) {
                         dataList.clear();
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            User user = document.toObject(User.class);
+                        for (QueryDocumentSnapshot doc : snapshots) {
+                            User user = doc.toObject(User.class);
                             dataList.add(user);
                         }
                         usersAdapter.notifyDataSetChanged();
-                    } else {
-
-                        Log.d("AdminUsersFragment", "Error fetching users: ", task.getException());
                     }
                 });
     }
 
+    @Override
+    public void refreshFragment() {
+        usersAdapter.notifyDataSetChanged();
+    }
 }
