@@ -13,9 +13,9 @@ import com.example.queueup.viewmodels.UsersArrayAdapter;
 
 import java.util.ArrayList;
 
-public class OrganizerUsersFragment extends Fragment {
-    public OrganizerUsersFragment() {
-        super(R.layout.organizer_users_fragment);
+public class OrganizerQRCodesFragment extends Fragment {
+    public OrganizerQRCodesFragment() {
+        super(R.layout.organizer_qrcodes_fragment);
     }
 
     private ArrayList<User> dataList;
@@ -28,7 +28,7 @@ public class OrganizerUsersFragment extends Fragment {
         dataList = new ArrayList<>();
         dataList.add(exampleUser);
 
-        userList = getView().findViewById(R.id.organizer_user_list);
+        userList = getView().findViewById(R.id.organizer_qrcodes_list);
         usersAdapter = new UsersArrayAdapter(view.getContext(), dataList);
         userList.setAdapter(usersAdapter);
     }

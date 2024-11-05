@@ -19,6 +19,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class OrganizerHomeFragment extends Fragment {
 
@@ -43,13 +44,15 @@ public class OrganizerHomeFragment extends Fragment {
         }
 
         db = FirebaseFirestore.getInstance();
-
+        Event eventee = new Event("id","name", "ee", "hi", "ee", "ee", new Date(1), new Date(2), 5, true);
+        // Set up the ListView and its adapter
+        dataList.add(eventee);
         // Set up the ListView and its adapter
         eventList = view.findViewById(R.id.organizer_event_list);  // Ensure ID matches the organizer's ListView in XML
         eventAdapter = new EventArrayAdapter(view.getContext(), dataList);  // Initialize the adapter with the context and data list
         eventList.setAdapter(eventAdapter);  // Set the adapter to the ListView
 
-        listenForEvents();
+        //listenForEvents();
     }
 
     private void listenForEvents() {
