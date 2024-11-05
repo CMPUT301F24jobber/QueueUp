@@ -12,8 +12,11 @@ import androidx.fragment.app.Fragment;
 import com.example.queueup.R;
 import com.example.queueup.models.Event;
 import com.example.queueup.viewmodels.EventArrayAdapter;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -46,23 +49,27 @@ public class OrganizerHomeFragment extends Fragment {
         eventAdapter = new EventArrayAdapter(view.getContext(), dataList);  // Initialize the adapter with the context and data list
         eventList.setAdapter(eventAdapter);  // Set the adapter to the ListView
 
-        fetchEvents();
+        listenForEvents();
     }
 
-    private void fetchEvents() {
+    private void listenForEvents() {
         db.collection("events")
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        dataList.clear();
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            Event event = document.toObject(Event.class);
-                            dataList.add(event);
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(QuerySnapshot value, FirebaseFirestoreException error) {
+                        if (error != null) {
+                            Log.e("OrganizerHome", "Error listening to events", error);
+                            return;
                         }
-                        eventAdapter.notifyDataSetChanged();
-                    }
-                    else {
-                        Log.e("OrganizerHome", "Error fetching events", task.getException());
+
+                        if (value != null) {
+                            dataList.clear();
+                            for (QueryDocumentSnapshot document : value) {
+                                Event event = document.toObject(Event.class);
+                                dataList.add(event);
+                            }
+                            eventAdapter.notifyDataSetChanged();
+                        }
                     }
                 });
     }
