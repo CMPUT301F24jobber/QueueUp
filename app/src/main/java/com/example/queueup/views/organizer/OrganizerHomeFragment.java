@@ -56,6 +56,7 @@ public class OrganizerHomeFragment extends Fragment {
             Toast.makeText(getContext(), "Organizer ID is missing. Please log in again.", Toast.LENGTH_SHORT).show();
             Log.e(TAG, "Organizer ID is null or empty.");
         }
+
     }
 
     /**

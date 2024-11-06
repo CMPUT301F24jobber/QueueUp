@@ -146,7 +146,6 @@ public class OrganizerCreateEvent extends AppCompatActivity {
                 attendeeLimitValue,
                 true // Setting the event as active by default.
         );
-
         eventViewModel.createEvent(newEvent);
     }
 

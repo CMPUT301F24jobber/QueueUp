@@ -61,7 +61,7 @@ public class OrganizerHome extends AppCompatActivity {
                             .replace(R.id.organizer_activity_fragment, OrganizerHomeFragment.class, null)
                             .commit();
                     break;
-                case "Users":
+                case "QR Code":
                     getSupportFragmentManager().beginTransaction()
                             .setReorderingAllowed(true)
                             .replace(R.id.organizer_activity_fragment, OrganizerQRCodesFragment.class, null)
