@@ -14,6 +14,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
         android:text="Example Name's Profile"
+        android:fontFamily="@font/poppins"
         android:textColor="#000000"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -49,6 +50,7 @@
         android:text="Example Name"
         android:textColor="#B4A7A7"
         android:textSize="20sp"
+        android:fontFamily="@font/poppins_bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/profile_image_container" />
@@ -58,7 +60,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="example_user"
+        android:fontFamily="@font/poppins_extralight"
+        android:text="\@example_user"
         android:textColor="#000000"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -70,6 +73,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
+        android:fontFamily="@font/poppins_extralight"
+
         android:text="Email: example@email.com"
         android:textColor="#000000"
         android:textSize="16sp"
@@ -82,6 +87,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:fontFamily="@font/poppins_extralight"
+
         android:text="Phone Number: 1234567890"
         android:textColor="#000000"
         android:textSize="16sp"
@@ -97,6 +104,8 @@
         android:backgroundTint="@color/red"
         android:paddingHorizontal="48dp"
         android:text="Delete"
+        android:fontFamily="@font/poppins_extralight"
+
         android:textColor="#FFFFFF"
         app:cornerRadius="8dp"
         app:layout_constraintEnd_toEndOf="parent"

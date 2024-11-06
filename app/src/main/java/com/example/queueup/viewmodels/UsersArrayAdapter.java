@@ -12,10 +12,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.queueup.R;
 import com.example.queueup.models.User;
+import com.example.queueup.views.admin.AdminUserFragment;
 
 import java.util.ArrayList;
 

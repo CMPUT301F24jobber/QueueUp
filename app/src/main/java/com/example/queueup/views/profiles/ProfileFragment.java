@@ -50,9 +50,8 @@ public class ProfileFragment extends Fragment {
         profileInitialsTextView = view.findViewById(R.id.profileInitialsTextView);
         profileImageView = view.findViewById(R.id.profileImageView);
         switchRoleButton = view.findViewById(R.id.switch_role);
-
         deviceId = UserController.getInstance().getDeviceId(requireContext());
-
+        fetchUserData();
         Button editButton = view.findViewById(R.id.editButton);
         editButton.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), EditProfileActivity.class);
@@ -66,7 +65,7 @@ public class ProfileFragment extends Fragment {
             getActivity().finish();
         });
 
-        fetchUserData();
+
         return view;
     }
 

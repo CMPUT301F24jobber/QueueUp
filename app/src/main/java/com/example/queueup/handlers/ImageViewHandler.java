@@ -1,13 +1,11 @@
 package com.example.queueup.handlers;
 
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -15,8 +13,6 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import com.example.queueup.controllers.EventController;
 import com.example.queueup.controllers.UserController;
 import com.example.queueup.models.Event;
-import com.example.queueup.models.ImageDimension;
-import com.example.queueup.models.User;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 

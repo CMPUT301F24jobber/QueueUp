@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/black"
                 app:tint="@color/black"
-                tools:srcCompat="@drawable/map_pin" />
+                app:srcCompat="@drawable/map_pin" />
 
             <TextView
                 android:id="@+id/event_location"
