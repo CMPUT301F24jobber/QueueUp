@@ -50,11 +50,10 @@
             android:exported="true">
         </activity>
         <activity
-            android:name=".views.profiles.OrganizerProfileActivity"
-            android:exported="true">
+            android:name=".views.organizer.OrganizerCreateEvent" >
         </activity>
         <activity
-            android:name=".views.organizer.OrganizerCreateEvent" >
+            android:name=".views.organizer.OrganizerEvent" >
         </activity>
 
     </application>
