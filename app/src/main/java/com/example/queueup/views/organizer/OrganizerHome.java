@@ -11,8 +11,8 @@ import com.example.queueup.R;
 import com.example.queueup.controllers.UserController;
 import com.example.queueup.views.organizer.OrganizerGalleryFragment;
 import com.example.queueup.views.organizer.OrganizerHomeFragment;
-import com.example.queueup.views.organizer.OrganizerProfileFragment;
 import com.example.queueup.views.organizer.OrganizerUsersFragment;
+import com.example.queueup.views.profiles.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -78,9 +78,10 @@ public class OrganizerHome extends AppCompatActivity {
                             .commit();
                     break;
                 case "Profile":
+                    // Load ProfileFragment instead of launching a new activity
                     getSupportFragmentManager().beginTransaction()
                             .setReorderingAllowed(true)
-                            .replace(R.id.organizer_activity_fragment, OrganizerProfileFragment.class, null)
+                            .replace(R.id.organizer_activity_fragment, new ProfileFragment())
                             .commit();
                     break;
                 default:
