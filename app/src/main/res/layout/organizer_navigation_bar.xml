@@ -10,7 +10,7 @@
     android:layout_marginBottom="16dp"
     android:background="@drawable/navigation_bar_bg"
     android:elevation="8dp"
-    app:itemIconSize="30dp"
+    app:itemIconSize="40dp"
     app:itemActiveIndicatorStyle="@style/BottomNavigationView.ActiveIndicator"
     app:itemIconTint="@color/white"
     app:labelVisibilityMode="unlabeled"

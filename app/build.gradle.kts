@@ -36,8 +36,8 @@ android {
 
 dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
-    implementation ("com.google.android.gms:play-services-base:18.3.0")
-
+    implementation("com.google.android.gms:play-services-base:18.3.0")
+    implementation("com.google.android.gms:play-services-vision:20.0.0")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)

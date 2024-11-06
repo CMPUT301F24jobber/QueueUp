@@ -8,6 +8,7 @@
     android:layout_marginHorizontal="20dp"
     android:layout_marginVertical="5dp"
     android:background="@drawable/home_event_bg"
+    android:layout_marginBottom="20dp"
     >
 
     <!-- NEED TO ASSIGN @string RESOURCE-->

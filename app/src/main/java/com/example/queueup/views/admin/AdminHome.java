@@ -30,7 +30,6 @@ public class AdminHome extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.admin_activity);
-        EdgeToEdge.enable(this);
 
         navigationView = findViewById(R.id.bottom_navigation);
         db = FirebaseFirestore.getInstance();
@@ -51,7 +50,6 @@ public class AdminHome extends AppCompatActivity {
 
 
         if (savedInstanceState == null) {
-            Fragment fragment = new AdminHomeFragment();
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
                     .replace(R.id.admin_activity_fragment, AdminHomeFragment.class, null)

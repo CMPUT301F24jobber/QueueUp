@@ -1,5 +1,6 @@
 package com.example.queueup.views.attendee;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -50,7 +51,6 @@ public class AttendeeHome extends AppCompatActivity {
         }
 
         if (savedInstanceState == null) {
-            Fragment fragment = new AdminHomeFragment();
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
                     .replace(R.id.attendee_activity_fragment, AttendeeHomeFragment.class, null)
@@ -66,6 +66,10 @@ public class AttendeeHome extends AppCompatActivity {
                             .addToBackStack("Home")
 
                             .commit();
+                    break;
+                case "Camera":
+                    Intent intent = new Intent(AttendeeHome.this, AttendeeQRscanFragment.class);
+                    startActivity(intent);
                     break;
                 case "Profile":
                     getSupportFragmentManager().beginTransaction()
