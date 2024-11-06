@@ -13,23 +13,22 @@ import com.example.queueup.viewmodels.UsersArrayAdapter;
 
 import java.util.ArrayList;
 
-public class OrganizerUsersFragment extends Fragment {
-    public OrganizerUsersFragment() {
-        super(R.layout.organizer_users_fragment);
+public class OrganizerWaitingListFragment extends Fragment {
+    public OrganizerWaitingListFragment() {
+        super(R.layout.organizer_waiting_list_fragment);
     }
-
     private ArrayList<User> dataList;
     private ListView userList;
     private UsersArrayAdapter usersAdapter;
-
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        User exampleUser = new User("example", "example", "example", "example", "example", "example");
-        dataList = new ArrayList<>();
-        dataList.add(exampleUser);
+        User e = new User("e","e","e","e","e","e");
+        dataList = new ArrayList<User>();
+        dataList.add(e);
 
-        userList = getView().findViewById(R.id.organizer_user_list);
+        userList = getView().findViewById(R.id.event_waiting_list);
         usersAdapter = new UsersArrayAdapter(view.getContext(), dataList);
         userList.setAdapter(usersAdapter);
     }
+
 }

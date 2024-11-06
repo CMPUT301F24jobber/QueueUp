@@ -54,9 +54,9 @@ public class AdminHome extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
                     .replace(R.id.admin_activity_fragment, AdminHomeFragment.class, null)
-                    .addToBackStack("Home")
                     .commit();
         }
+
 
         navigationView.setOnItemSelectedListener( menuItem -> {
             String title = String.valueOf(menuItem.getTitle());

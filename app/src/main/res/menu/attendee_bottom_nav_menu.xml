@@ -5,9 +5,9 @@
         android:icon="@drawable/ic_nav_home"
         android:title="Home" />
     <item
-        android:id="@+id/nav_QRCode"
-        android:icon="@drawable/ic_nav_qrcode"
-        android:title="QR Code" />
+        android:id="@+id/nav_camera"
+        android:icon="@drawable/camera"
+        android:title="camera" />
     <item
         android:id="@+id/nav_profile"
         android:icon="@drawable/ic_nav_profile"

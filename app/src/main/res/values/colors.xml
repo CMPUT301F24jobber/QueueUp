@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="black">#FF000000</color>
+    <color name="offblack">#393939</color>
+
     <color name="white">#FFFFFFFF</color>
     <color name='backgroundColor'>#FBF6F2</color>
     <color name='beige'>#E5C09D</color>
     <color name='light_beige'>#E4CCB6</color>
     <color name='grey_beige'>#F1E8E1</color>
     <color name='light_brown'>#AA927A</color>
+    <color name='posterBg'>#E4CCB6</color>
     <color name='grey'>#828282</color>
     <color name="red">#CD4B4B</color>
     <color name="brownish_text_color">#393939</color>
