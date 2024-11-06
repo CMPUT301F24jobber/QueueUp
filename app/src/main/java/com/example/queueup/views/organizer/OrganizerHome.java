@@ -9,10 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.queueup.R;
 import com.example.queueup.controllers.UserController;
-import com.example.queueup.views.organizer.OrganizerGalleryFragment;
-import com.example.queueup.views.organizer.OrganizerHomeFragment;
-import com.example.queueup.views.organizer.OrganizerProfileFragment;
-import com.example.queueup.views.organizer.OrganizerUsersFragment;
+import com.example.queueup.views.profiles.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -32,7 +29,6 @@ public class OrganizerHome extends AppCompatActivity {
         // Initialize views
         navigationView = findViewById(R.id.bottom_navigation);
         db = FirebaseFirestore.getInstance();
-        titleTextView = findViewById(R.id.titleTextView);  // Assuming you have a TextView for the title
         plusButton = findViewById(R.id.plusButton);  // Add the plusButton from layout
 
         // Get deviceId from intent or UserController
@@ -68,19 +64,13 @@ public class OrganizerHome extends AppCompatActivity {
                 case "Users":
                     getSupportFragmentManager().beginTransaction()
                             .setReorderingAllowed(true)
-                            .replace(R.id.organizer_activity_fragment, OrganizerUsersFragment.class, null)
-                            .commit();
-                    break;
-                case "Gallery":
-                    getSupportFragmentManager().beginTransaction()
-                            .setReorderingAllowed(true)
-                            .replace(R.id.organizer_activity_fragment, OrganizerGalleryFragment.class, null)
+                            .replace(R.id.organizer_activity_fragment, OrganizerQRCodesFragment.class, null)
                             .commit();
                     break;
                 case "Profile":
                     getSupportFragmentManager().beginTransaction()
                             .setReorderingAllowed(true)
-                            .replace(R.id.organizer_activity_fragment, OrganizerProfileFragment.class, null)
+                            .replace(R.id.organizer_activity_fragment, ProfileFragment.class, null) // Changed to ProfileFragment
                             .commit();
                     break;
                 default:
@@ -88,5 +78,6 @@ public class OrganizerHome extends AppCompatActivity {
             }
             return true;
         });
+
     }
 }

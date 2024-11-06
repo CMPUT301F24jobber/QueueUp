@@ -15,11 +15,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.example.queueup.MainActivity;
 import com.example.queueup.R;
 import com.example.queueup.controllers.UserController;
 import com.example.queueup.models.User;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.android.material.button.MaterialButton;
 
 public class ProfileFragment extends Fragment {
     private static final int EDIT_PROFILE_REQUEST_CODE = 1;
@@ -29,6 +31,7 @@ public class ProfileFragment extends Fragment {
     private TextView profileNameTextView, profileUsernameTextView, profileEmailTextView, profilePhoneTextView, profileInitialsTextView;
     private ImageView profileImageView;
     private User currentUser;
+    private MaterialButton switchRoleButton;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -46,18 +49,24 @@ public class ProfileFragment extends Fragment {
         profilePhoneTextView = view.findViewById(R.id.profilePhoneTextView);
         profileInitialsTextView = view.findViewById(R.id.profileInitialsTextView);
         profileImageView = view.findViewById(R.id.profileImageView);
+        switchRoleButton = view.findViewById(R.id.switch_role);
 
         deviceId = UserController.getInstance().getDeviceId(requireContext());
 
         Button editButton = view.findViewById(R.id.editButton);
         editButton.setOnClickListener(v -> {
-            // Start EditProfileActivity for result
             Intent intent = new Intent(getActivity(), EditProfileActivity.class);
-            intent.putExtra("deviceId", deviceId);  // Pass the device ID if needed
+            intent.putExtra("deviceId", deviceId);
             startActivityForResult(intent, EDIT_PROFILE_REQUEST_CODE);
         });
 
-        fetchUserData();  // Initial data fetch
+        switchRoleButton.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), MainActivity.class);
+            startActivity(intent);
+            getActivity().finish();
+        });
+
+        fetchUserData();
         return view;
     }
 
@@ -66,7 +75,6 @@ public class ProfileFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == EDIT_PROFILE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            // Profile was updated, so re-fetch user data to display the latest changes
             fetchUserData();
         }
     }
@@ -102,8 +110,6 @@ public class ProfileFragment extends Fragment {
         } else {
             profileImageView.setVisibility(View.GONE);
             profileInitialsTextView.setVisibility(View.VISIBLE);
-
-            // Display initials if no profile image
             String initials = (currentUser.getFirstName() != null ? currentUser.getFirstName().substring(0, 1) : "") +
                     (currentUser.getLastName() != null ? currentUser.getLastName().substring(0, 1) : "");
             profileInitialsTextView.setText(initials);

@@ -15,6 +15,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.queueup.R;
 import com.example.queueup.controllers.UserController;
+import com.example.queueup.views.profiles.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -58,7 +59,7 @@ public class AdminHome extends AppCompatActivity {
         }
 
 
-        navigationView.setOnItemSelectedListener( menuItem -> {
+        navigationView.setOnItemSelectedListener(menuItem -> {
             String title = String.valueOf(menuItem.getTitle());
             switch (title) {
                 case "Home":
@@ -66,7 +67,6 @@ public class AdminHome extends AppCompatActivity {
                             .setReorderingAllowed(true)
                             .replace(R.id.admin_activity_fragment, AdminHomeFragment.class, null)
                             .addToBackStack("Home")
-
                             .commit();
                     break;
                 case "Users":
@@ -79,18 +79,15 @@ public class AdminHome extends AppCompatActivity {
                 case "Gallery":
                     getSupportFragmentManager().beginTransaction()
                             .setReorderingAllowed(true)
-
                             .replace(R.id.admin_activity_fragment, AdminGalleryFragment.class, null)
                             .addToBackStack("Gallery")
-
                             .commit();
                     break;
                 case "Profile":
                     getSupportFragmentManager().beginTransaction()
                             .setReorderingAllowed(true)
-                            .replace(R.id.admin_activity_fragment, AdminProfileFragment.class, null)
+                            .replace(R.id.admin_activity_fragment, ProfileFragment.class, null) // Changed to ProfileFragment
                             .addToBackStack("Profile")
-
                             .commit();
                     break;
                 default:
