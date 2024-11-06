@@ -51,8 +51,6 @@ public class AttendeeViewModel extends ViewModel {
         this.attendeeController = AttendeeController.getInstance();
     }
 
-    // -------------------- LiveData Getters --------------------
-
     /**
      * Returns LiveData containing all attendance records for the current user.
      */
@@ -88,7 +86,6 @@ public class AttendeeViewModel extends ViewModel {
         return isLoadingLiveData;
     }
 
-    // -------------------- Attendee Fetching Methods --------------------
 
     /**
      * Fetches all attendance records for the current user.
@@ -183,7 +180,6 @@ public class AttendeeViewModel extends ViewModel {
         });
     }
 
-    // -------------------- Attendee Management Methods --------------------
 
     /**
      * Joins the waiting list for a specific event.
@@ -326,7 +322,6 @@ public class AttendeeViewModel extends ViewModel {
         });
     }
 
-    // -------------------- Check-In Methods --------------------
 
     /**
      * Checks in the current user to a specific event.
@@ -354,7 +349,6 @@ public class AttendeeViewModel extends ViewModel {
         });
     }
 
-    // -------------------- Lottery System Methods --------------------
 
     /**
      * Handles the replacement of an attendee if they decline the invitation.
