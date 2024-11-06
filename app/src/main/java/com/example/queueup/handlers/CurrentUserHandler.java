@@ -17,6 +17,7 @@ public class CurrentUserHandler {
     public static UserViewModel userViewModel;
     private static AppCompatActivity ownerActivity;
     private static UserController userController = UserController.getInstance();
+    private String cachedUserId = null;
 
     /**
      * Initializes the singleton instance of CurrentUserHandler.
@@ -27,7 +28,15 @@ public class CurrentUserHandler {
         }
         singleInstance = new CurrentUserHandler();
         userViewModel = new ViewModelProvider(ownerActivity).get(UserViewModel.class);
+
+        // cache current user Id
+        userViewModel.getCurrentUser().observe(ownerActivity, User -> {
+            if (User != null) {
+                singleInstance.cachedUserId = User.getUuid();
+            }
+        });
     }
+
 
     /**
      * Retrieves the singleton instance of CurrentUserHandler.
@@ -58,9 +67,7 @@ public class CurrentUserHandler {
      * @return The current user's UUID, or null if not available.
      */
     public String getCurrentUserId() {
-        LiveData<User> userLiveData = userViewModel.getCurrentUser();
-        User user = userLiveData.getValue();
-        return user != null ? user.getUuid() : null;
+        return cachedUserId;
     }
 
     /**
@@ -69,18 +76,26 @@ public class CurrentUserHandler {
      * @return The current User, or null if not available.
      */
     public LiveData<User> getCurrentUser() {
-        LiveData<User> userLiveData = userViewModel.getCurrentUser();
-        User user = userLiveData.getValue();
-        return user.getUuid() != null ? userLiveData : null;
+        return userViewModel.getCurrentUser();
 
     }
 
     /**
      * Initiates login by device ID.
      */
-    public void loginWithDeviceId() {
+    public void loginWithDeviceId(Runnable loginCallback) {
         String deviceId = userViewModel.getDeviceId();
-        userViewModel.loadUserByDeviceId(deviceId);
+        userViewModel.loadUserByDeviceId(deviceId); // Triggers the user data load
+
+        // Observe for the loaded user data
+        userViewModel.getCurrentUser().observe(ownerActivity, user -> {
+            if (user != null) {
+                singleInstance.cachedUserId = user.getUuid();
+                if (loginCallback != null) {
+                    loginCallback.run();
+                }
+            }
+        });
     }
 
     /**
@@ -128,4 +143,5 @@ public class CurrentUserHandler {
     public String getDeviceId() {
         return userViewModel.getDeviceId();
     }
+
 }
