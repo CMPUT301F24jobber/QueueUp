@@ -83,9 +83,7 @@ public class EventController {
      */
     public Task<QuerySnapshot> getAllEventsByOrganizer(String organizerId) {
         return eventCollectionReference
-                .whereEqualTo("organizerId", organizerId)
-                .orderBy("eventStartDate", Query.Direction.ASCENDING)
-                .get();
+                .whereEqualTo("organizerId", organizerId).get();
     }
 
     /**

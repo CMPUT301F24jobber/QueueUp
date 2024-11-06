@@ -1,78 +1,88 @@
 package com.example.queueup.views.organizer;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.queueup.R;
 import com.example.queueup.models.Event;
-import com.example.queueup.viewmodels.EventArrayAdapter;
+import com.example.queueup.viewmodels.EventViewModel;
 import com.example.queueup.viewmodels.OrganizerEventArrayAdapter;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.example.queueup.handlers.CurrentUserHandler;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.List;
 
 public class OrganizerHomeFragment extends Fragment {
 
-    // Constructor for the fragment, loading the layout file
-    public OrganizerHomeFragment() {
-        super(R.layout.organizer_home_fragment);  // Use a layout specific to the organizer's home screen
-    }
+    private static final String TAG = "OrganizerHomeFragment";
 
     private ArrayList<Event> dataList;
     private ListView eventList;
     private OrganizerEventArrayAdapter eventAdapter;
-    private FirebaseFirestore db;
+    private EventViewModel eventViewModel;
+
+    public OrganizerHomeFragment() {
+        super(R.layout.organizer_home_fragment);  // Ensure this layout exists
+    }
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Initialize the data list and add events
-        dataList = new ArrayList<>();  // Proper initialization of ArrayList
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Add sample events or logic to retrieve events for the organizer
+        // Initialize ViewModel
+        eventViewModel = new ViewModelProvider(this).get(EventViewModel.class);
+
+        // Initialize ListView and Adapter
+        eventList = view.findViewById(R.id.organizer_event_list);  // Ensure this ID matches your XML
+        dataList = new ArrayList<>();
+        eventAdapter = new OrganizerEventArrayAdapter(requireContext(), dataList);
+        eventList.setAdapter(eventAdapter);
+
+        // Observe LiveData from ViewModel
+        observeViewModel();
+
+        // Fetch events for the current organizer
+        String organizerId = CurrentUserHandler.getSingleton().getCurrentUserId();
+        if (organizerId != null && !organizerId.isEmpty()) {
+            eventViewModel.fetchEventsByOrganizer(organizerId);
+        } else {
+            Toast.makeText(getContext(), "Organizer ID is missing. Please log in again.", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Organizer ID is null or empty.");
         }
-
-        db = FirebaseFirestore.getInstance();
-        Event eventee = new Event("id","name", "ee", "hi", "ee", "ee", new Date(1), new Date(2), 5, true);
-        dataList.add(eventee);
-        // Set up the ListView and its adapter
-        eventList = view.findViewById(R.id.organizer_event_list);  // Ensure ID matches the organizer's ListView in XML
-        eventAdapter = new OrganizerEventArrayAdapter(view.getContext(), dataList);  // Initialize the adapter with the context and data list
-        eventList.setAdapter(eventAdapter);  // Set the adapter to the ListView
-
-        //listenForEvents();
     }
 
-    private void listenForEvents() {
-        db.collection("events")
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(QuerySnapshot value, FirebaseFirestoreException error) {
-                        if (error != null) {
-                            Log.e("OrganizerHome", "Error listening to events", error);
-                            return;
-                        }
-                        if (value != null) {
-                            dataList.clear();
-                            for (QueryDocumentSnapshot document : value) {
-                                Event event = document.toObject(Event.class);
-                                dataList.add(event);
-                            }
-                            eventAdapter.notifyDataSetChanged();
-                        }
-                    }
-                });
+    /**
+     * Observes LiveData from EventViewModel to update the UI accordingly.
+     */
+    private void observeViewModel() {
+        // Observe events by organizer
+        eventViewModel.getEventsByOrganizerLiveData().observe(getViewLifecycleOwner(), events -> {
+            dataList.clear();
+            if (events != null && !events.isEmpty()) {
+                dataList.addAll(events);
+            }
+            eventAdapter.notifyDataSetChanged();
+        });
+
+        // Observe error messages
+        eventViewModel.getErrorMessageLiveData().observe(getViewLifecycleOwner(), errorMessage -> {
+            if (errorMessage != null && !errorMessage.isEmpty()) {
+                Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // Optionally, perform cleanup here
     }
 }
