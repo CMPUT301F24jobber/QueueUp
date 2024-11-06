@@ -1,6 +1,7 @@
 package com.example.queueup.viewmodels;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,11 +18,13 @@ public class AdminEventArrayAdapter extends EventArrayAdapter {
         super(context, event);
     }
 
-    protected View.OnClickListener onClickListener(View view) {
+    protected View.OnClickListener onClickListener(View view, int position) {
         return (v) -> {
             AppCompatActivity activity = (AppCompatActivity) view.getContext();
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("event", getItem(position));
             activity.getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.admin_activity_fragment, AdminEventFragment.class, null)
+                    .replace(R.id.admin_activity_fragment, AdminEventFragment.class, bundle)
                     .addToBackStack(null)
                     .commit();
         };

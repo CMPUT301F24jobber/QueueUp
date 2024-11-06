@@ -48,9 +48,9 @@ public abstract class EventArrayAdapter extends ArrayAdapter<Event> {
         eventDate.setText(date_text);
         eventLocation.setText(event.getEventLocation());
 
-        view.setOnClickListener(onClickListener(view));
+        view.setOnClickListener(onClickListener(view, position));
         return view;
     }
 
-    protected abstract View.OnClickListener onClickListener(View view);
+    protected abstract View.OnClickListener onClickListener(View view, int position);
 }

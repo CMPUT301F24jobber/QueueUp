@@ -35,9 +35,10 @@ public class AttendeeEventArrayAdapter extends EventArrayAdapter {
         super(context, event);
     }
 
-    protected View.OnClickListener onClickListener(View view) {
+    protected View.OnClickListener onClickListener(View view, int position) {
         return (v) -> {
             Intent intent = new Intent(view.getContext(), AttendeeEvent.class);
+            intent.putExtra("event", getItem(position));
             view.getContext().startActivity(intent);
         };
     }
