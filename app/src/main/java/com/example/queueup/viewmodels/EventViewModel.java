@@ -10,12 +10,10 @@ import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.models.Event;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -43,7 +41,7 @@ public class EventViewModel extends ViewModel {
     // LiveData for error messages
     private final MutableLiveData<String> errorMessageLiveData = new MutableLiveData<>();
 
-    // LiveData for loading states (optional)
+    // LiveData for loading states
     private final MutableLiveData<Boolean> isLoadingLiveData = new MutableLiveData<>(false);
 
     // Instance of EventController
@@ -105,35 +103,40 @@ public class EventViewModel extends ViewModel {
         return isLoadingLiveData;
     }
 
-
-
     /**
      * Fetches all events from the database.
      * Updates allEventsLiveData upon success or errorMessageLiveData upon failure.
      */
     public void fetchAllEvents() {
         isLoadingLiveData.setValue(true);
-        eventController.getAllEvents().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                List<Event> events = new ArrayList<>();
-                for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
-                    Event event = doc.toObject(Event.class);
-                    if (event != null) {
-                        event.setEventId(doc.getId()); // Ensure eventId is set
-                        events.add(event);
+        eventController.getAllEvents()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        List<Event> events = new ArrayList<>();
+                        if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
+                            for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                                Event event = doc.toObject(Event.class);
+                                if (event != null) {
+                                    event.setEventId(doc.getId()); // Ensure eventId is set
+                                    events.add(event);
+                                }
+                            }
+                            allEventsLiveData.setValue(events);
+                        } else {
+                            allEventsLiveData.setValue(new ArrayList<>());
+                            errorMessageLiveData.setValue("No events found.");
+                        }
+                        isLoadingLiveData.setValue(false);
                     }
-                }
-                allEventsLiveData.setValue(events);
-                isLoadingLiveData.setValue(false);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to fetch all events: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to fetch all events: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
     }
 
     /**
@@ -143,28 +146,40 @@ public class EventViewModel extends ViewModel {
      * @param organizerId The ID of the organizer.
      */
     public void fetchEventsByOrganizer(String organizerId) {
+        if (organizerId == null || organizerId.isEmpty()) {
+            errorMessageLiveData.setValue("Organizer ID is invalid.");
+            return;
+        }
+
         isLoadingLiveData.setValue(true);
-        eventController.getAllEventsByOrganizer(organizerId).addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                List<Event> events = new ArrayList<>();
-                for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
-                    Event event = doc.toObject(Event.class);
-                    if (event != null) {
-                        event.setEventId(doc.getId());
-                        events.add(event);
+        eventController.getAllEventsByOrganizer(organizerId)
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        List<Event> events = new ArrayList<>();
+                        if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
+                            for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                                Event event = doc.toObject(Event.class);
+                                if (event != null) {
+                                    event.setEventId(doc.getId());
+                                    events.add(event);
+                                }
+                            }
+                            eventsByOrganizerLiveData.setValue(events);
+                        } else {
+                            eventsByOrganizerLiveData.setValue(new ArrayList<>());
+                            errorMessageLiveData.setValue("No events found for the organizer.");
+                        }
+                        isLoadingLiveData.setValue(false);
                     }
-                }
-                eventsByOrganizerLiveData.setValue(events);
-                isLoadingLiveData.setValue(false);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to fetch events by organizer: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to fetch events by organizer: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
     }
 
     /**
@@ -174,28 +189,40 @@ public class EventViewModel extends ViewModel {
      * @param attendeeId The ID of the attendee.
      */
     public void fetchEventsByAttendee(String attendeeId) {
+        if (attendeeId == null || attendeeId.isEmpty()) {
+            errorMessageLiveData.setValue("Attendee ID is invalid.");
+            return;
+        }
+
         isLoadingLiveData.setValue(true);
-        eventController.getEventsByAttendeeId(attendeeId).addOnSuccessListener(new OnSuccessListener<List<DocumentSnapshot>>() {
-            @Override
-            public void onSuccess(List<DocumentSnapshot> documentSnapshots) {
-                List<Event> events = new ArrayList<>();
-                for (DocumentSnapshot doc : documentSnapshots) {
-                    Event event = doc.toObject(Event.class);
-                    if (event != null) {
-                        event.setEventId(doc.getId());
-                        events.add(event);
+        eventController.getEventsByAttendeeId(attendeeId)
+                .addOnSuccessListener(new OnSuccessListener<List<DocumentSnapshot>>() {
+                    @Override
+                    public void onSuccess(List<DocumentSnapshot> documentSnapshots) {
+                        List<Event> events = new ArrayList<>();
+                        if (documentSnapshots != null && !documentSnapshots.isEmpty()) {
+                            for (DocumentSnapshot doc : documentSnapshots) {
+                                Event event = doc.toObject(Event.class);
+                                if (event != null) {
+                                    event.setEventId(doc.getId());
+                                    events.add(event);
+                                }
+                            }
+                            eventsByAttendeeLiveData.setValue(events);
+                        } else {
+                            eventsByAttendeeLiveData.setValue(new ArrayList<>());
+                            errorMessageLiveData.setValue("No events found for the attendee.");
+                        }
+                        isLoadingLiveData.setValue(false);
                     }
-                }
-                eventsByAttendeeLiveData.setValue(events);
-                isLoadingLiveData.setValue(false);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to fetch events by attendee: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to fetch events by attendee: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
     }
 
     /**
@@ -205,30 +232,37 @@ public class EventViewModel extends ViewModel {
      * @param eventId The ID of the event.
      */
     public void fetchEventById(String eventId) {
+        if (eventId == null || eventId.isEmpty()) {
+            errorMessageLiveData.setValue("Event ID is invalid.");
+            return;
+        }
+
         isLoadingLiveData.setValue(true);
-        eventController.getEventById(eventId).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.exists()) {
-                    Event event = documentSnapshot.toObject(Event.class);
-                    if (event != null) {
-                        event.setEventId(documentSnapshot.getId());
-                        selectedEventLiveData.setValue(event);
-                    } else {
-                        errorMessageLiveData.setValue("Failed to parse event data.");
+        eventController.getEventById(eventId)
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()) {
+                            Event event = documentSnapshot.toObject(Event.class);
+                            if (event != null) {
+                                event.setEventId(documentSnapshot.getId());
+                                selectedEventLiveData.setValue(event);
+                            } else {
+                                errorMessageLiveData.setValue("Failed to parse event data.");
+                            }
+                        } else {
+                            errorMessageLiveData.setValue("Event not found.");
+                        }
+                        isLoadingLiveData.setValue(false);
                     }
-                } else {
-                    errorMessageLiveData.setValue("Event not found.");
-                }
-                isLoadingLiveData.setValue(false);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to fetch event: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to fetch event: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
     }
 
     /**
@@ -238,21 +272,28 @@ public class EventViewModel extends ViewModel {
      * @param newEvent The Event object to be created.
      */
     public void createEvent(Event newEvent) {
+        if (newEvent == null) {
+            errorMessageLiveData.setValue("Invalid event data.");
+            return;
+        }
+
         isLoadingLiveData.setValue(true);
         // Generate a unique event ID
         String eventId = eventController.generateUniqueEventId();
         newEvent.setEventId(eventId);
 
-        eventController.addEvent(newEvent).addOnSuccessListener(aVoid -> {
-            // Optionally, you can fetch all events again or add the new event to LiveData
-            fetchAllEvents();
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to create event: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
+        eventController.addEvent(newEvent)
+                .addOnSuccessListener(aVoid -> {
+                    // Fetch all events again to update the LiveData
+                    fetchAllEvents();
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to create event: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
     }
 
     /**
@@ -262,17 +303,24 @@ public class EventViewModel extends ViewModel {
      * @param updatedEvent The Event object with updated information.
      */
     public void updateEvent(Event updatedEvent) {
+        if (updatedEvent == null || updatedEvent.getEventId() == null || updatedEvent.getEventId().isEmpty()) {
+            errorMessageLiveData.setValue("Invalid event data for update.");
+            return;
+        }
+
         isLoadingLiveData.setValue(true);
-        eventController.updateEvent(updatedEvent).addOnSuccessListener(aVoid -> {
-            // Optionally, fetch the updated event details
-            fetchEventById(updatedEvent.getEventId());
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to update event: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
+        eventController.updateEvent(updatedEvent)
+                .addOnSuccessListener(aVoid -> {
+                    // Fetch the updated event details
+                    fetchEventById(updatedEvent.getEventId());
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to update event: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
     }
 
     /**
@@ -282,17 +330,24 @@ public class EventViewModel extends ViewModel {
      * @param eventId The ID of the event to be deleted.
      */
     public void deleteEvent(String eventId) {
+        if (eventId == null || eventId.isEmpty()) {
+            errorMessageLiveData.setValue("Invalid event ID for deletion.");
+            return;
+        }
+
         isLoadingLiveData.setValue(true);
-        eventController.deleteEvent(eventId).addOnSuccessListener(aVoid -> {
-            // Optionally, fetch all events again
-            fetchAllEvents();
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to delete event: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
+        eventController.deleteEvent(eventId)
+                .addOnSuccessListener(aVoid -> {
+                    // Fetch all events again to update the LiveData
+                    fetchAllEvents();
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to delete event: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
     }
 
     /**
@@ -301,17 +356,24 @@ public class EventViewModel extends ViewModel {
      * @param eventId The ID of the event to reactivate.
      */
     public void reactivateEvent(String eventId) {
+        if (eventId == null || eventId.isEmpty()) {
+            errorMessageLiveData.setValue("Invalid event ID for reactivation.");
+            return;
+        }
+
         isLoadingLiveData.setValue(true);
-        eventController.reactivateEvent(eventId).addOnSuccessListener(aVoid -> {
-            // Optionally, fetch the updated event details
-            fetchEventById(eventId);
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to reactivate event: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
+        eventController.reactivateEvent(eventId)
+                .addOnSuccessListener(aVoid -> {
+                    // Fetch the updated event details
+                    fetchEventById(eventId);
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to reactivate event: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
     }
 
     /**
@@ -320,17 +382,24 @@ public class EventViewModel extends ViewModel {
      * @param eventId The ID of the event to end.
      */
     public void endEvent(String eventId) {
+        if (eventId == null || eventId.isEmpty()) {
+            errorMessageLiveData.setValue("Invalid event ID for ending.");
+            return;
+        }
+
         isLoadingLiveData.setValue(true);
-        eventController.endEvent(eventId).addOnSuccessListener(aVoid -> {
-            // Optionally, fetch the updated event details
-            fetchEventById(eventId);
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to end event: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
+        eventController.endEvent(eventId)
+                .addOnSuccessListener(aVoid -> {
+                    // Fetch the updated event details
+                    fetchEventById(eventId);
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to end event: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
     }
 
     /**
@@ -340,17 +409,24 @@ public class EventViewModel extends ViewModel {
      * @param imageUrl The URL of the banner image.
      */
     public void setEventBannerImage(String eventId, String imageUrl) {
+        if (eventId == null || eventId.isEmpty() || imageUrl == null || imageUrl.isEmpty()) {
+            errorMessageLiveData.setValue("Invalid event ID or image URL.");
+            return;
+        }
+
         isLoadingLiveData.setValue(true);
-        eventController.setEventBannerImage(eventId, imageUrl).addOnSuccessListener(aVoid -> {
-            // Optionally, fetch the updated event details
-            fetchEventById(eventId);
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to set event banner image: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
+        eventController.setEventBannerImage(eventId, imageUrl)
+                .addOnSuccessListener(aVoid -> {
+                    // Fetch the updated event details
+                    fetchEventById(eventId);
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to set event banner image: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
     }
 
     /**
@@ -360,17 +436,24 @@ public class EventViewModel extends ViewModel {
      * @param userId The ID of the user whose events are to be deleted.
      */
     public void deleteEventsByUser(String userId) {
+        if (userId == null || userId.isEmpty()) {
+            errorMessageLiveData.setValue("Invalid user ID for deleting events.");
+            return;
+        }
+
         isLoadingLiveData.setValue(true);
-        eventController.deleteEventsByUser(userId).addOnSuccessListener(aVoid -> {
-            // Optionally, fetch all events again
-            fetchAllEvents();
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to delete events by user: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
+        eventController.deleteEventsByUser(userId)
+                .addOnSuccessListener(aVoid -> {
+                    // Fetch all events again to update the LiveData
+                    fetchAllEvents();
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to delete events by user: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
     }
 
     /**
@@ -380,17 +463,24 @@ public class EventViewModel extends ViewModel {
      * @param eventId The ID of the event to register for.
      */
     public void registerToEvent(String eventId) {
+        if (eventId == null || eventId.isEmpty()) {
+            errorMessageLiveData.setValue("Invalid event ID for registration.");
+            return;
+        }
+
         isLoadingLiveData.setValue(true);
-        eventController.registerToEvent(eventId).addOnSuccessListener(aVoid -> {
-            // Optionally, fetch the event details again
-            fetchEventById(eventId);
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to register to event: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
+        eventController.registerToEvent(eventId)
+                .addOnSuccessListener(aVoid -> {
+                    // Fetch the event details again to update the LiveData
+                    fetchEventById(eventId);
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to register to event: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
     }
 
     /**
@@ -400,18 +490,30 @@ public class EventViewModel extends ViewModel {
      * @param eventId The ID of the event to unregister from.
      */
     public void unregisterFromEvent(String eventId) {
-        isLoadingLiveData.setValue(true);
+        if (eventId == null || eventId.isEmpty()) {
+            errorMessageLiveData.setValue("Invalid event ID for unregistration.");
+            return;
+        }
+
         String userId = CurrentUserHandler.getSingleton().getCurrentUserId();
-        eventController.unregisterFromEvent(eventId, userId).addOnSuccessListener(aVoid -> {
-            // Optionally, fetch the event details again
-            fetchEventById(eventId);
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to unregister from event: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
+        if (userId == null || userId.isEmpty()) {
+            errorMessageLiveData.setValue("Invalid user ID for unregistration.");
+            return;
+        }
+
+        isLoadingLiveData.setValue(true);
+        eventController.unregisterFromEvent(eventId, userId)
+                .addOnSuccessListener(aVoid -> {
+                    // Fetch the event details again to update the LiveData
+                    fetchEventById(eventId);
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to unregister from event: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
     }
 
     /**
@@ -422,17 +524,24 @@ public class EventViewModel extends ViewModel {
      * @param announcement The announcement to add as a HashMap.
      */
     public void addAnnouncement(String eventId, HashMap<String, String> announcement) {
+        if (eventId == null || eventId.isEmpty() || announcement == null || announcement.isEmpty()) {
+            errorMessageLiveData.setValue("Invalid event ID or announcement data.");
+            return;
+        }
+
         isLoadingLiveData.setValue(true);
-        eventController.addAnnouncement(eventId, announcement).addOnSuccessListener(aVoid -> {
-            // Fetch the updated list of announcements
-            fetchAnnouncements(eventId);
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to add announcement: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
+        eventController.addAnnouncement(eventId, announcement)
+                .addOnSuccessListener(aVoid -> {
+                    // Fetch the updated list of announcements
+                    fetchAnnouncements(eventId);
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to add announcement: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
     }
 
     /**
@@ -442,22 +551,33 @@ public class EventViewModel extends ViewModel {
      * @param eventId The ID of the event.
      */
     public void fetchAnnouncements(String eventId) {
-        isLoadingLiveData.setValue(true);
-        eventController.getAnnouncements(eventId).addOnSuccessListener(new OnSuccessListener<List<HashMap<String, String>>>() {
-            @Override
-            public void onSuccess(List<HashMap<String, String>> announcements) {
-                announcementListLiveData.setValue(announcements);
-                isLoadingLiveData.setValue(false);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to fetch announcements: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
-    }
+        if (eventId == null || eventId.isEmpty()) {
+            errorMessageLiveData.setValue("Invalid event ID for fetching announcements.");
+            return;
+        }
 
+        isLoadingLiveData.setValue(true);
+        eventController.getAnnouncements(eventId)
+                .addOnSuccessListener(new OnSuccessListener<List<HashMap<String, String>>>() {
+                    @Override
+                    public void onSuccess(List<HashMap<String, String>> announcements) {
+                        if (announcements != null && !announcements.isEmpty()) {
+                            announcementListLiveData.setValue(announcements);
+                        } else {
+                            announcementListLiveData.setValue(new ArrayList<>());
+                            errorMessageLiveData.setValue("No announcements found for the event.");
+                        }
+                        isLoadingLiveData.setValue(false);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to fetch announcements: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
+    }
 
     /**
      * Draws a lottery to select a specified number of attendees from the waiting list.
@@ -467,30 +587,43 @@ public class EventViewModel extends ViewModel {
      * @param numberToSelect The number of attendees to select.
      */
     public void drawLottery(String eventId, int numberToSelect) {
+        if (eventId == null || eventId.isEmpty() || numberToSelect <= 0) {
+            errorMessageLiveData.setValue("Invalid event ID or number to select.");
+            return;
+        }
+
         isLoadingLiveData.setValue(true);
-        eventController.drawLottery(eventId, numberToSelect).addOnSuccessListener(new OnSuccessListener<List<String>>() {
-            @Override
-            public void onSuccess(List<String> selectedAttendees) {
-                // Notify selected attendees
-                eventController.notifySelectedAttendees(eventId, selectedAttendees).addOnSuccessListener(aVoid -> {
-                    // Optionally, fetch updated event details
-                    fetchEventById(eventId);
-                    isLoadingLiveData.setValue(false);
-                }).addOnFailureListener(new OnFailureListener() {
+        eventController.drawLottery(eventId, numberToSelect)
+                .addOnSuccessListener(new OnSuccessListener<List<String>>() {
+                    @Override
+                    public void onSuccess(List<String> selectedAttendees) {
+                        if (selectedAttendees != null && !selectedAttendees.isEmpty()) {
+                            // Notify selected attendees
+                            eventController.notifySelectedAttendees(eventId, selectedAttendees)
+                                    .addOnSuccessListener(aVoid -> {
+                                        // Fetch updated event details
+                                        fetchEventById(eventId);
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            errorMessageLiveData.setValue("Failed to notify selected attendees: " + e.getMessage());
+                                            isLoadingLiveData.setValue(false);
+                                        }
+                                    });
+                        } else {
+                            errorMessageLiveData.setValue("No attendees were selected.");
+                            isLoadingLiveData.setValue(false);
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        errorMessageLiveData.setValue("Failed to notify selected attendees: " + e.getMessage());
+                        errorMessageLiveData.setValue("Failed to draw lottery: " + e.getMessage());
                         isLoadingLiveData.setValue(false);
                     }
                 });
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to draw lottery: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
     }
 
     /**
@@ -499,20 +632,29 @@ public class EventViewModel extends ViewModel {
      * @param eventId The ID of the event.
      */
     public void handleReplacement(String eventId) {
+        if (eventId == null || eventId.isEmpty()) {
+            errorMessageLiveData.setValue("Invalid event ID for handling replacement.");
+            return;
+        }
+
         isLoadingLiveData.setValue(true);
-        eventController.handleReplacement(eventId).addOnSuccessListener(aVoid -> {
-            // Optionally, fetch updated event details
-            fetchEventById(eventId);
-            isLoadingLiveData.setValue(false);
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to handle replacement attendee: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
+        eventController.handleReplacement(eventId)
+                .addOnSuccessListener(aVoid -> {
+                    // Fetch updated event details
+                    fetchEventById(eventId);
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to handle replacement attendee: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
     }
 
+    /**
+     * Clears the current error message.
+     */
     public void clearErrorMessage() {
         errorMessageLiveData.setValue(null);
     }
@@ -524,20 +666,32 @@ public class EventViewModel extends ViewModel {
      * @param eventId The ID of the event.
      */
     public void fetchUserAnnouncements(String eventId) {
+        if (eventId == null || eventId.isEmpty()) {
+            errorMessageLiveData.setValue("Invalid event ID for fetching user announcements.");
+            return;
+        }
+
         isLoadingLiveData.setValue(true);
-        eventController.getUserAnnouncements(eventId).addOnSuccessListener(new OnSuccessListener<List<HashMap<String, String>>>() {
-            @Override
-            public void onSuccess(List<HashMap<String, String>> announcements) {
-                announcementListLiveData.setValue(announcements);
-                isLoadingLiveData.setValue(false);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to fetch user announcements: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
+        eventController.getUserAnnouncements(eventId)
+                .addOnSuccessListener(new OnSuccessListener<List<HashMap<String, String>>>() {
+                    @Override
+                    public void onSuccess(List<HashMap<String, String>> announcements) {
+                        if (announcements != null && !announcements.isEmpty()) {
+                            announcementListLiveData.setValue(announcements);
+                        } else {
+                            announcementListLiveData.setValue(new ArrayList<>());
+                            errorMessageLiveData.setValue("No user announcements found for the event.");
+                        }
+                        isLoadingLiveData.setValue(false);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to fetch user announcements: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
     }
 
     /**
@@ -547,17 +701,24 @@ public class EventViewModel extends ViewModel {
      * @param eventId The ID of the event.
      */
     public void checkInUser(String eventId) {
+        if (eventId == null || eventId.isEmpty()) {
+            errorMessageLiveData.setValue("Invalid event ID for check-in.");
+            return;
+        }
+
         isLoadingLiveData.setValue(true);
-        eventController.checkInUser(eventId).addOnSuccessListener(aVoid -> {
-            // Optionally, fetch the event details again
-            fetchEventById(eventId);
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to check-in to event: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
+        eventController.checkInUser(eventId)
+                .addOnSuccessListener(aVoid -> {
+                    // Fetch the event details again to update the LiveData
+                    fetchEventById(eventId);
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to check-in to event: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
     }
 
 }
