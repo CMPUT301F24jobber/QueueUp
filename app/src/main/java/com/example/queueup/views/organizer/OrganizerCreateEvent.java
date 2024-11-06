@@ -133,8 +133,6 @@ public class OrganizerCreateEvent extends AppCompatActivity {
             return;
         }
 
-        // Debugging Log to Check the Organizer ID
-        System.out.println("Organizer ID: " + organizerId);
 
         Event newEvent = new Event(
                 UUID.randomUUID().toString(),
