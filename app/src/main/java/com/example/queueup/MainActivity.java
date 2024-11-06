@@ -77,15 +77,18 @@ public class MainActivity extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && !task.getResult().isEmpty()) {
                         // Device ID found in Firestore
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            String role = document.getString("role");
-                            Log.d("MainActivity", "Device ID found with role: " + role);
-                            if (role != null) {
-                                redirectToRoleBasedActivity(role);
-                            } else {
-                                Toast.makeText(MainActivity.this, "User role not found.", Toast.LENGTH_SHORT).show();
+                        CurrentUserHandler.getSingleton().loginWithDeviceId(() -> {
+                            // Redirect after successful login and user data load
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                String role = document.getString("role");
+                                Log.d("MainActivity", "Device ID found with role: " + role);
+                                if (role != null) {
+                                    redirectToRoleBasedActivity(role);
+                                } else {
+                                    Toast.makeText(MainActivity.this, "User role not found.", Toast.LENGTH_SHORT).show();
+                                }
                             }
-                        }
+                        });
                     } else {
                         // Device ID not found; prompt user to sign up
                         Toast.makeText(MainActivity.this, "Device not registered. Please sign up.", Toast.LENGTH_SHORT).show();

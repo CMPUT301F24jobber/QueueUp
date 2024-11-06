@@ -70,16 +70,25 @@ public class OrganizerHomeFragment extends Fragment {
             }
         });
 
-        // Fetch events for the current organizer
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            String organizerId = CurrentUserHandler.getSingleton().getCurrentUserId();
-            if (organizerId != null && !organizerId.isEmpty()) {
-                eventViewModel.fetchEventsByOrganizer(organizerId);
+        // Observe the current user data to fetch events once organizer ID is available
+        CurrentUserHandler.getSingleton().getCurrentUser().observe(getViewLifecycleOwner(), user -> {
+            if (user != null && user.getUuid() != null) {
+                eventViewModel.fetchEventsByOrganizer(user.getUuid());
             } else {
-                // Handle invalid organizer ID (e.g., show a Toast or log it)
-                // Example: Toast.makeText(getContext(), "Organizer ID is invalid.", Toast.LENGTH_LONG).show();
                 android.util.Log.e("OrganizerHomeFragment", "Organizer ID is invalid.");
             }
-        }
+        });
+
+//        // Fetch events for the current organizer
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            String organizerId = CurrentUserHandler.getSingleton().getCurrentUserId();
+//            if (organizerId != null && !organizerId.isEmpty()) {
+//                eventViewModel.fetchEventsByOrganizer(organizerId);
+//            } else {
+//                // Handle invalid organizer ID (e.g., show a Toast or log it)
+//                // Example: Toast.makeText(getContext(), "Organizer ID is invalid.", Toast.LENGTH_LONG).show();
+//                android.util.Log.e("OrganizerHomeFragment", "Organizer ID is invalid.");
+//            }
+//        }
     }
 }

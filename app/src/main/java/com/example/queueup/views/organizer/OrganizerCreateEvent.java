@@ -41,6 +41,19 @@ public class OrganizerCreateEvent extends AppCompatActivity {
         initializeUIComponents();
         setupObservers();
 
+        // Initially disable the submit button
+        submitButton.setEnabled(false);
+
+        // Observe current user to get organizer ID
+        CurrentUserHandler.getSingleton().getCurrentUser().observe(this, user -> {
+            if (user != null && user.getUuid() != null) {
+                // Organizer ID is available, enable submit button
+                submitButton.setEnabled(true);
+            } else {
+                showToast("Organizer ID is missing. Please make sure you are logged in.");
+            }
+        });
+
         findViewById(R.id.backButton).setOnClickListener(v -> finish());
         unlimitedAttendeeCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> toggleAttendeeLimit(isChecked));
         submitButton.setOnClickListener(v -> handleSubmit());
