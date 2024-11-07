@@ -125,10 +125,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void redirectToRoleBasedActivity(String role, User user) {
         Intent intent = null;
-
         switch (role) {
             case "Admin":
-                if (isAdmin) {
+                if (user.getIsadmin()) {
                     intent = new Intent(this, AdminHome.class);
                 }
                 break;

@@ -33,6 +33,10 @@ public class AttendeeWaitlistFragment extends Fragment {
         joinWaitlistButton.setOnClickListener((v) -> {
             eventController.registerToEvent(event.getEventId());
             joinWaitlistButton.setVisibility(View.INVISIBLE);
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .replace(R.id.attendee_event_fragment, AttendeeWaitlistJoinedFragment.class, null)
+                    .commit();
         });
     }
 

@@ -34,12 +34,11 @@ public class AdminUsersFragment extends Fragment implements AdminClickUserFragme
 
         db = FirebaseFirestore.getInstance();
         dataList = new ArrayList<>();
-        User e = new User("d", "d", "d", "d", "d", "d", true);
 
-        dataList.add(e);
         userList = view.findViewById(R.id.admin_user_list);
         usersAdapter = new UsersArrayAdapter(view.getContext(), dataList);
         userList.setAdapter(usersAdapter);
+
 
         userList.setOnItemClickListener((parent, view1, position, id) -> {
             User selectedUser = dataList.get(position);
@@ -56,6 +55,7 @@ public class AdminUsersFragment extends Fragment implements AdminClickUserFragme
                     .commit();
         });
 
+
         listenToUsersCollection();
     }
 
@@ -64,7 +64,6 @@ public class AdminUsersFragment extends Fragment implements AdminClickUserFragme
      */
     private void listenToUsersCollection() {
         db.collection("users")
-                .whereIn("role", new ArrayList<String>() {{ add("attendee"); add("organizer"); }})
                 .addSnapshotListener((snapshots, error) -> {
                     if (error != null) {
                         Log.w("AdminUsersFragment", "Listen failed.", error);

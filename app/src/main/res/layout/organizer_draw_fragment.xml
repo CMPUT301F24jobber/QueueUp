@@ -8,10 +8,12 @@
     android:clickable="true">
     <ImageView
         android:id="@+id/poster_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
         android:adjustViewBounds="true"
         android:layout_marginTop="30dp"
+        android:scaleType="centerCrop"
+
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -46,6 +48,7 @@
                 android:id="@+id/event_location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
                 android:fontFamily="@font/poppins_extralight"
                 android:text="location" />
 

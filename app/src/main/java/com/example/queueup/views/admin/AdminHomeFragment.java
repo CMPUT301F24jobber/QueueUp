@@ -40,8 +40,6 @@ public class AdminHomeFragment extends Fragment {
         eventViewModel = new ViewModelProvider(this).get(EventViewModel.class);
         // Initialize the data list and add an event
         dataList = new ArrayList<>();  // Proper initialization of ArrayList
-        Event eventee = new Event("id","name", "ee", "hi", "ee", "ee", new Date(1), new Date(2), 5, true);
-        dataList.add(eventee);
 
         // Set up the ListView and its adapter
         eventList = view.findViewById(R.id.event_list);  // Use 'view' to find the ListView in the fragment's layout

@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import com.bumptech.glide.Glide;
 import com.example.queueup.R;
 import com.example.queueup.models.Event;
 
@@ -46,7 +47,7 @@ public abstract class EventArrayAdapter extends ArrayAdapter<Event> {
         eventDate = view.findViewById(R.id.event_date);
         eventLocation = view.findViewById(R.id.event_location);
         eventImage = view.findViewById(R.id.event_image);
-        eventImage.setImageResource(R.drawable.ic_nav_users);
+        Glide.with(parent).load(event.getEventBannerImageUrl()).circleCrop().into(eventImage);
 
         eventTitle.setText(event.getEventName());
         formatter = DateTimeFormatter.ofPattern("EEEE MMM dd, uuuu");

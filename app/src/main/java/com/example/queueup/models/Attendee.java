@@ -15,7 +15,7 @@ public class Attendee implements Serializable {
         this.userId = userId;
         this.eventId = eventId;
         this.numberInLine = 0;
-        this.id = generateId(userId, eventId);
+        this.id = userId;
     }
 
     public String getId() {

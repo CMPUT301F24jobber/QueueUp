@@ -1,21 +1,34 @@
 package com.example.queueup.views.organizer;
 
+import static androidx.core.app.ActivityCompat.startActivityForResult;
+
+
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
 import com.example.queueup.R;
 import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.models.Event;
+import com.example.queueup.services.ImageUploader;
 import com.example.queueup.viewmodels.EventViewModel;
+import com.example.queueup.views.SignUp;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,10 +40,12 @@ public class OrganizerCreateEvent extends AppCompatActivity {
 
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm";
 
+    private ImageView eventImage;
     private EditText eventNameEditText, startDateEditText, endDateEditText, locationEditText, descriptionEditText, attendeeLimitEditText;
     private CheckBox unlimitedAttendeeCheckBox;
     private Button submitButton;
     private EventViewModel eventViewModel;
+    private Uri imageUri = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,6 +53,7 @@ public class OrganizerCreateEvent extends AppCompatActivity {
         setContentView(R.layout.organizer_create_event);
 
         eventViewModel = new ViewModelProvider(this).get(EventViewModel.class);
+        eventImage = findViewById(R.id.image_view);
         initializeUIComponents();
         setupObservers();
 
@@ -57,6 +73,12 @@ public class OrganizerCreateEvent extends AppCompatActivity {
         findViewById(R.id.backButton).setOnClickListener(v -> finish());
         unlimitedAttendeeCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> toggleAttendeeLimit(isChecked));
         submitButton.setOnClickListener(v -> handleSubmit());
+        eventImage.setOnClickListener(v -> {
+            pickMedia.launch(new PickVisualMediaRequest.Builder()
+                    .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                    .build());
+        });
+
     }
 
     private void initializeUIComponents() {
@@ -121,7 +143,7 @@ public class OrganizerCreateEvent extends AppCompatActivity {
             return;
         }
 
-        if (startDate.after(endDate)) {
+        if (!endDate.after(startDate)) {
             showToast("End Date has to be after Start Date");
             return;
         }
@@ -141,6 +163,11 @@ public class OrganizerCreateEvent extends AppCompatActivity {
             showToast("Organizer ID is missing. Please make sure you are logged in.");
             return;
         }
+        if (imageUri == null) {
+            showToast("Image is missing. Please add an image");
+            return;
+        }
+        ImageUploader imageUploader = new ImageUploader();
 
 
         Event newEvent = new Event(
@@ -156,8 +183,31 @@ public class OrganizerCreateEvent extends AppCompatActivity {
                 true // Setting the event as active by default.
         );
         eventViewModel.createEvent(newEvent);
+        imageUploader.uploadImage("profile_pictures/", imageUri, new ImageUploader.UploadListener() {
+            @Override
+            public void onUploadSuccess(String imageUrl) {
+                eventViewModel.setEventBannerImage(newEvent.getEventId(), imageUrl);
+            }
+
+            @Override
+            public void onUploadFailure(Exception exception) {
+            }
+        });
     }
 
+    ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
+            registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+                // Callback is invoked after the user selects a media item or closes the
+                // photo picker.
+                if (uri != null) {
+                    Log.d("PhotoPicker", "Selected URI: " + uri);
+                    imageUri = uri;
+                    Glide.with(this).load(uri).circleCrop().into(eventImage);
+
+                } else {
+                    Log.d("PhotoPicker", "No media selected");
+                }
+            });
 
     private boolean areRequiredFieldsFilled(String eventName, String location) {
         return !eventName.isEmpty() && !location.isEmpty();
@@ -184,3 +234,4 @@ public class OrganizerCreateEvent extends AppCompatActivity {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }
+

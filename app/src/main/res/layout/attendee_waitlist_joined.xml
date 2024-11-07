@@ -5,14 +5,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:clickable="true">
 
-    <Button
-        android:id="@+id/join_waitlist"
+    <TextView
+        android:id="@+id/waitlist_joined"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Join Waitlist Lottery"
-        android:fontFamily="@font/poppins"
-        android:backgroundTint="@color/grey_beige"
+        android:text="Waitlist Joined"
+        android:fontFamily="@font/poppins_bold"
+        android:backgroundTint="#FBF6F2"
         android:textSize="24dp"
+
         android:textColor="@color/black"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

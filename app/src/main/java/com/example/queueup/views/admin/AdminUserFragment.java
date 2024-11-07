@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.queueup.R;
+import com.example.queueup.controllers.UserController;
 import com.example.queueup.models.Event;
 import com.example.queueup.models.User;
 import com.google.android.material.button.MaterialButton;
@@ -41,10 +42,9 @@ public class AdminUserFragment extends Fragment {
         emailText.setText("Email: " + user.getEmailAddress());
         phoneText.setText("Phone: " + user.getPhoneNumber());
         deleteButton.setOnClickListener((v) -> {
-            deleteUser(user);
-            if (listener != null) {
-                listener.refreshFragment();
-            }
+            UserController.getInstance().deleteUserById(user.getUuid()).addOnSuccessListener((stuf) -> {
+                getActivity().onBackPressed();
+            });
         });
     }
     private void deleteUser(User user) {

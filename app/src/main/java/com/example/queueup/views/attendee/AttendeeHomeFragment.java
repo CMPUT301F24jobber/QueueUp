@@ -2,6 +2,7 @@ package com.example.queueup.views.attendee;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -43,10 +44,8 @@ public class AttendeeHomeFragment extends Fragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
         }
-        Event eventee = new Event("id","name", "ee", "hi", "ee", "ee", new Date(1), new Date(2), 5, true);
         // Set up the ListView and its adapter
 //        observeViewModel();
-        dataList.add(eventee);
         eventList = view.findViewById(R.id.event_list);  // Use 'view' to find the ListView in the fragment's layout
         eventAdapter = new AttendeeEventArrayAdapter(view.getContext(), dataList);  // Initialize the adapter with the context and data list
         eventList.setAdapter(eventAdapter);  // Set the adapter to the ListView
@@ -73,6 +72,12 @@ public class AttendeeHomeFragment extends Fragment {
                 Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
             }
         });
+
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        eventViewModel.fetchAllEvents();
 
     }
 }
