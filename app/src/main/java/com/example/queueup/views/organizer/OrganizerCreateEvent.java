@@ -59,7 +59,19 @@ public class OrganizerCreateEvent extends AppCompatActivity {
 
         // Initially disable the submit button
         submitButton.setEnabled(false);
+        ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
+                registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+                    // Callback is invoked after the user selects a media item or closes the
+                    // photo picker.
+                    if (uri != null) {
+                        Log.d("PhotoPicker", "Selected URI: " + uri);
+                        imageUri = uri;
+                        Glide.with(this).load(uri).circleCrop().into(eventImage);
 
+                    } else {
+                        Log.d("PhotoPicker", "No media selected");
+                    }
+                });
         // Observe current user to get organizer ID
         CurrentUserHandler.getSingleton().getCurrentUser().observe(this, user -> {
             if (user != null && user.getUuid() != null) {
@@ -195,19 +207,7 @@ public class OrganizerCreateEvent extends AppCompatActivity {
         });
     }
 
-    ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
-            registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
-                // Callback is invoked after the user selects a media item or closes the
-                // photo picker.
-                if (uri != null) {
-                    Log.d("PhotoPicker", "Selected URI: " + uri);
-                    imageUri = uri;
-                    Glide.with(this).load(uri).circleCrop().into(eventImage);
 
-                } else {
-                    Log.d("PhotoPicker", "No media selected");
-                }
-            });
 
     private boolean areRequiredFieldsFilled(String eventName, String location) {
         return !eventName.isEmpty() && !location.isEmpty();

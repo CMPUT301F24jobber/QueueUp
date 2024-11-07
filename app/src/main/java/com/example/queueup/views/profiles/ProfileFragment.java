@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.example.queueup.MainActivity;
 import com.example.queueup.R;
 import com.example.queueup.controllers.UserController;
+import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.models.User;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -26,7 +27,7 @@ import com.google.android.material.button.MaterialButton;
 public class ProfileFragment extends Fragment {
     private static final int EDIT_PROFILE_REQUEST_CODE = 1;
 
-    private FirebaseFirestore db;
+
     private String deviceId;
     private TextView profileNameTextView, profileUsernameTextView, profileEmailTextView, profilePhoneTextView, profileInitialsTextView;
     private ImageView profileImageView;
@@ -42,7 +43,6 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.profile_page, container, false);
 
-        db = FirebaseFirestore.getInstance();
         profileNameTextView = view.findViewById(R.id.profileNameTextView);
         profileUsernameTextView = view.findViewById(R.id.profileUsernameTextView);
         profileEmailTextView = view.findViewById(R.id.profileEmailTextView);
@@ -68,37 +68,31 @@ public class ProfileFragment extends Fragment {
 
         return view;
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        fetchUserData();
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        fetchUserData();
         if (requestCode == EDIT_PROFILE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             fetchUserData();
         }
     }
 
     private void fetchUserData() {
-        db.collection("users")
-                .whereEqualTo("deviceId", deviceId)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            currentUser = document.toObject(User.class);
-                            String fullName = currentUser.getFirstName() + " " + currentUser.getLastName();
-                            profileNameTextView.setText(fullName);
-                            profileUsernameTextView.setText(currentUser.getUsername());
-                            profileEmailTextView.setText(currentUser.getEmailAddress());
-                            profilePhoneTextView.setText(currentUser.getPhoneNumber());
+        currentUser = CurrentUserHandler.getSingleton().getCurrentUser().getValue();
 
-                            displayProfileImageOrInitials();
-                        }
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    // Handle error
-                });
+        String fullName = currentUser.getFirstName() + " " + currentUser.getLastName();
+        profileNameTextView.setText(fullName);
+        profileUsernameTextView.setText("@"+currentUser.getUsername());
+        profileEmailTextView.setText("Email: " + currentUser.getEmailAddress());
+        profilePhoneTextView.setText("Phone Number: " + currentUser.getPhoneNumber());
+
+        displayProfileImageOrInitials();
     }
 
     private void displayProfileImageOrInitials() {
@@ -114,4 +108,5 @@ public class ProfileFragment extends Fragment {
             profileInitialsTextView.setText(initials);
         }
     }
+
 }
