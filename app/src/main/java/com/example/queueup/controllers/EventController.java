@@ -60,9 +60,7 @@ public class EventController {
      * @return Task<QuerySnapshot>
      */
     public Task<QuerySnapshot> getAllEvents() {
-        return eventCollectionReference
-                .orderBy("startDate", Query.Direction.ASCENDING)
-                .get();
+        return eventCollectionReference.get();
     }
 
     /**

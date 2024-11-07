@@ -47,8 +47,8 @@ public class AdminHomeFragment extends Fragment {
         eventList = view.findViewById(R.id.event_list);  // Use 'view' to find the ListView in the fragment's layout
         eventAdapter = new AdminEventArrayAdapter(view.getContext(), dataList);  // Initialize the adapter with the context and data list
         eventList.setAdapter(eventAdapter);  // Set the adapter to the ListView
-       // observeViewModel();
-      //  eventViewModel.fetchAllEvents();
+        observeViewModel();
+        eventViewModel.fetchAllEvents();
 
     }
     private void observeViewModel() {
