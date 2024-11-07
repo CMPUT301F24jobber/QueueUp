@@ -4,10 +4,12 @@ import static java.time.format.DateTimeFormatter.ISO_LOCAL_TIME;
 
 import android.os.Bundle;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.example.queueup.R;
 import com.example.queueup.controllers.AttendeeController;
 import com.example.queueup.controllers.EventController;
@@ -46,6 +48,10 @@ public class AttendeeEvent extends AppCompatActivity {
 
         timeText.setText(time_text);
         descriptionText.setText(event.getEventDescription());
+
+        ImageView posterImage = findViewById(R.id.poster_image);
+
+        Glide.with(this).load(event.getEventBannerImageUrl()).into(posterImage);
 
         backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener((view) -> {

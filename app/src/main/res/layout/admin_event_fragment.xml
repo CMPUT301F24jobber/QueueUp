@@ -8,27 +8,30 @@
     android:clickable="true">
 
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/profileImageContainer"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="60dp"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="0dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+    <FrameLayout
+        android:id="@+id/event_image"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
 
-        <TextView
+        android:background="@drawable/circle_shape"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <ImageView
+            android:id="@+id/image_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#F5EBE0"
-            android:gravity="center"
-            android:text="Example"
-            android:textColor="#000000"
-            android:textSize="20sp" />
+            android:contentDescription="Image"
+            android:scaleType="centerCrop"
 
-    </androidx.cardview.widget.CardView>
+            app:srcCompat="@drawable/ic_nav_gallery" />
+    </FrameLayout>
 
     <TextView
         android:id="@+id/event_title"
@@ -37,11 +40,11 @@
         android:layout_marginTop="50dp"
         android:fontFamily="@font/poppins_extralight"
         android:text="Event Name"
-        android:textColor="#B4A7A7"
-        android:textSize="24sp"
+        android:textColor="@color/black"
+        android:textSize="28sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/profileImageContainer" />
+        app:layout_constraintTop_toBottomOf="@id/event_image" />
 
     <TextView
         android:id="@+id/start_date"
@@ -51,8 +54,8 @@
         android:fontFamily="@font/poppins_extralight"
         android:text="start date"
 
-        android:textColor="#000000"
-        android:textSize="20sp"
+        android:textColor="@color/black"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/event_title" />
@@ -66,8 +69,8 @@
         android:fontFamily="@font/poppins_extralight"
         android:text="end date"
 
-        android:textColor="#000000"
-        android:textSize="20sp"
+        android:textColor="@color/black"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.507"
         app:layout_constraintStart_toStartOf="parent"
@@ -81,8 +84,8 @@
         android:fontFamily="@font/poppins_extralight"
 
         android:text="event location"
-        android:textColor="#000000"
-        android:textSize="20sp"
+        android:textColor="@color/black"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.511"
         app:layout_constraintStart_toStartOf="parent"
