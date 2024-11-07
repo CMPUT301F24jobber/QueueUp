@@ -2,6 +2,7 @@ package com.example.queueup.viewmodels;
 
 import android.content.Context;
 import android.os.Build;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,6 +79,8 @@ public class UsersArrayAdapter extends ArrayAdapter<User> {
             }
             userInitials.setText(initials);
         }
+
+
 
         return view;
     }

@@ -39,6 +39,7 @@ public class AdminUsersFragment extends Fragment implements AdminClickUserFragme
         usersAdapter = new UsersArrayAdapter(view.getContext(), dataList);
         userList.setAdapter(usersAdapter);
 
+
         userList.setOnItemClickListener((parent, view1, position, id) -> {
             User selectedUser = dataList.get(position);
 
@@ -46,7 +47,14 @@ public class AdminUsersFragment extends Fragment implements AdminClickUserFragme
 
             Bundle args = new Bundle();
             args.putParcelable("user", selectedUser);
+
+            getParentFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .replace(R.id.admin_activity_fragment, AdminUserFragment.class, args)
+                    .addToBackStack("User")
+                    .commit();
         });
+
 
         listenToUsersCollection();
     }
