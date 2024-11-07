@@ -3,6 +3,7 @@ package com.example.queueup;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private MaterialButton attendeeButton;
     private UserViewModel userViewModel;
     private FirebaseFirestore db;
+    User user;
     private Boolean isAdmin = false;
 
     @Override
@@ -54,12 +56,17 @@ public class MainActivity extends AppCompatActivity {
         CurrentUserHandler.setOwnerActivity(this);
         CurrentUserHandler.getSingleton();
 
+
         // Set up role selection buttons
         setupRoleSelection();
 
         // Check if user is already logged in and set up UI accordingly
         checkExistingUser();
-
+        if (user != null && user.getIsadmin()) {
+            isAdmin = false;
+        } else {
+            adminButton.setVisibility(View.INVISIBLE);
+        }
         // Handle window insets for edge-to-edge UI
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -80,6 +87,9 @@ public class MainActivity extends AppCompatActivity {
                                 User user = document.toObject(User.class);
                                 if (user != null) {
                                     isAdmin = user.getIsadmin();
+                                    if (isAdmin) {
+                                        adminButton.setVisibility(View.VISIBLE);
+                                    }
                                     CurrentUserHandler.getSingleton().loginWithDeviceId(null);
                                 }
                             }
