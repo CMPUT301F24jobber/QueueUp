@@ -43,7 +43,6 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.profile_page, container, false);
 
-        db = FirebaseFirestore.getInstance();
         profileNameTextView = view.findViewById(R.id.profileNameTextView);
         profileUsernameTextView = view.findViewById(R.id.profileUsernameTextView);
         profileEmailTextView = view.findViewById(R.id.profileEmailTextView);
