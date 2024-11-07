@@ -27,7 +27,7 @@ import com.google.android.material.button.MaterialButton;
 public class ProfileFragment extends Fragment {
     private static final int EDIT_PROFILE_REQUEST_CODE = 1;
 
-    private FirebaseFirestore db;
+
     private String deviceId;
     private TextView profileNameTextView, profileUsernameTextView, profileEmailTextView, profilePhoneTextView, profileInitialsTextView;
     private ImageView profileImageView;
