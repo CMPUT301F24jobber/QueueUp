@@ -56,7 +56,6 @@ public class AdminUsersFragment extends Fragment implements AdminClickUserFragme
      */
     private void listenToUsersCollection() {
         db.collection("users")
-                .whereIn("role", new ArrayList<String>() {{ add("attendee"); add("organizer"); }})
                 .addSnapshotListener((snapshots, error) -> {
                     if (error != null) {
                         Log.w("AdminUsersFragment", "Listen failed.", error);
