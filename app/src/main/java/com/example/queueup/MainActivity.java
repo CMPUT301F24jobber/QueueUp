@@ -54,9 +54,6 @@ public class MainActivity extends AppCompatActivity {
         CurrentUserHandler.setOwnerActivity(this);
         CurrentUserHandler.getSingleton();
 
-        // Initially hide admin button
-        adminButton.setVisibility(MaterialButton.GONE);
-
         // Set up role selection buttons
         setupRoleSelection();
 
@@ -83,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
                                 User user = document.toObject(User.class);
                                 if (user != null) {
                                     isAdmin = user.getIsadmin();
-                                    updateAdminButtonVisibility();
                                     CurrentUserHandler.getSingleton().loginWithDeviceId(null);
                                 }
                             }
@@ -92,10 +88,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void updateAdminButtonVisibility() {
-        adminButton.setVisibility(isAdmin ? MaterialButton.VISIBLE : MaterialButton.GONE);
-        adminButton.setEnabled(isAdmin);
-    }
 
     private void checkDeviceIdAndRedirect(String selectedRole) {
         String deviceId = userViewModel.getDeviceId();
@@ -115,10 +107,6 @@ public class MainActivity extends AppCompatActivity {
                             User user = document.toObject(User.class);
                             if (user != null) {
                                 isAdmin = user.getIsadmin();
-                                if ("Admin".equals(selectedRole) && !isAdmin) {
-                                    Toast.makeText(MainActivity.this, "You don't have admin privileges.", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
                                 CurrentUserHandler.getSingleton().loginWithDeviceId(() ->
                                         redirectToRoleBasedActivity(selectedRole, user)
                                 );
@@ -127,13 +115,10 @@ public class MainActivity extends AppCompatActivity {
                         }
                         navigateToSignupPage(selectedRole);
                     } else {
-                        Toast.makeText(MainActivity.this, "Device not registered for the selected role. Please sign up.", Toast.LENGTH_SHORT).show();
                         navigateToSignupPage(selectedRole);
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("MainActivity", "Error checking device ID: ", e);
-                    Toast.makeText(MainActivity.this, "Error checking device ID", Toast.LENGTH_SHORT).show();
                     navigateToSignupPage(selectedRole);
                 });
     }
@@ -145,9 +130,6 @@ public class MainActivity extends AppCompatActivity {
             case "Admin":
                 if (isAdmin) {
                     intent = new Intent(this, AdminHome.class);
-                } else {
-                    Toast.makeText(this, "You don't have admin privileges.", Toast.LENGTH_SHORT).show();
-                    return;
                 }
                 break;
             case "Organizer":
