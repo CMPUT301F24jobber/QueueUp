@@ -27,6 +27,8 @@ public class AdminEventArrayAdapter extends EventArrayAdapter {
                     .replace(R.id.admin_activity_fragment, AdminEventFragment.class, bundle)
                     .addToBackStack(null)
                     .commit();
+            this.notifyDataSetChanged();
+
         };
     }
 

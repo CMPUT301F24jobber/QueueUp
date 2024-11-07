@@ -34,9 +34,7 @@ public class AdminUsersFragment extends Fragment implements AdminClickUserFragme
 
         db = FirebaseFirestore.getInstance();
         dataList = new ArrayList<>();
-        User e = new User("d", "d", "d", "d", "d", "d", true);
 
-        dataList.add(e);
         userList = view.findViewById(R.id.admin_user_list);
         usersAdapter = new UsersArrayAdapter(view.getContext(), dataList);
         userList.setAdapter(usersAdapter);
@@ -48,12 +46,6 @@ public class AdminUsersFragment extends Fragment implements AdminClickUserFragme
 
             Bundle args = new Bundle();
             args.putParcelable("user", selectedUser);
-
-            getParentFragmentManager().beginTransaction()
-                    .setReorderingAllowed(true)
-                    .replace(R.id.admin_activity_fragment, AdminUserFragment.class, args)
-                    .addToBackStack("User")
-                    .commit();
         });
 
         listenToUsersCollection();

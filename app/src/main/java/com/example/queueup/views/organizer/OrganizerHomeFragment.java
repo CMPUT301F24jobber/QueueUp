@@ -58,6 +58,17 @@ public class OrganizerHomeFragment extends Fragment {
         }
 
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        String organizerId = CurrentUserHandler.getSingleton().getCurrentUserId();
+        if (organizerId != null && !organizerId.isEmpty()) {
+            eventViewModel.fetchEventsByOrganizer(organizerId);
+        } else {
+            Toast.makeText(getContext(), "Organizer ID is missing. Please log in again.", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Organizer ID is null or empty.");
+        }
+    }
 
     /**
      * Observes LiveData from EventViewModel to update the UI accordingly.
@@ -86,4 +97,5 @@ public class OrganizerHomeFragment extends Fragment {
         super.onDestroyView();
         // Optionally, perform cleanup here
     }
+
 }

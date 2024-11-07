@@ -39,6 +39,8 @@ public class OrganizerEventArrayAdapter extends EventArrayAdapter {
             Intent intent = new Intent(view.getContext(), OrganizerEvent.class);
             intent.putExtra("event", getItem(position));
             view.getContext().startActivity(intent);
+            this.notifyDataSetChanged();
+
         };
     }
 

@@ -27,6 +27,7 @@ public class AttendeeEvent extends AppCompatActivity {
     private ImageButton backButton;
     AttendeeController attendeeController;
     private Event event;
+
     CurrentUserHandler currentUserHandler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,4 +72,6 @@ public class AttendeeEvent extends AppCompatActivity {
                     .commit();
         }
     }
+
+
 }

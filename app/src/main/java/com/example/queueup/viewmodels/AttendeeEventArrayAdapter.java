@@ -40,6 +40,7 @@ public class AttendeeEventArrayAdapter extends EventArrayAdapter {
             Intent intent = new Intent(view.getContext(), AttendeeEvent.class);
             intent.putExtra("event", getItem(position));
             view.getContext().startActivity(intent);
+            this.notifyDataSetChanged();
         };
     }
 
