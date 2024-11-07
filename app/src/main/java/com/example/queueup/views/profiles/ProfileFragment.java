@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.example.queueup.MainActivity;
 import com.example.queueup.R;
 import com.example.queueup.controllers.UserController;
+import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.models.User;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -79,26 +80,15 @@ public class ProfileFragment extends Fragment {
     }
 
     private void fetchUserData() {
-        db.collection("users")
-                .whereEqualTo("deviceId", deviceId)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            currentUser = document.toObject(User.class);
-                            String fullName = currentUser.getFirstName() + " " + currentUser.getLastName();
-                            profileNameTextView.setText(fullName);
-                            profileUsernameTextView.setText(currentUser.getUsername());
-                            profileEmailTextView.setText(currentUser.getEmailAddress());
-                            profilePhoneTextView.setText(currentUser.getPhoneNumber());
+        currentUser = CurrentUserHandler.getSingleton().getCurrentUser().getValue();
 
-                            displayProfileImageOrInitials();
-                        }
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    // Handle error
-                });
+        String fullName = currentUser.getFirstName() + " " + currentUser.getLastName();
+        profileNameTextView.setText(fullName);
+        profileUsernameTextView.setText(currentUser.getUsername());
+        profileEmailTextView.setText(currentUser.getEmailAddress());
+        profilePhoneTextView.setText(currentUser.getPhoneNumber());
+
+        displayProfileImageOrInitials();
     }
 
     private void displayProfileImageOrInitials() {
