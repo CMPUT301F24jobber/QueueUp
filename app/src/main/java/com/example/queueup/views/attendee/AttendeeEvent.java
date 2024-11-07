@@ -37,6 +37,7 @@ public class AttendeeEvent extends AppCompatActivity {
         descriptionText.setText(event.getEventDescription());
         if (savedInstanceState == null) {
             Bundle bundle = new Bundle();
+            bundle.putSerializable("event", event);
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
                     .replace(R.id.attendee_event_fragment, AttendeeWaitlistFragment.class, bundle)
