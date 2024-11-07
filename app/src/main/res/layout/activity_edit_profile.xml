@@ -38,31 +38,36 @@
         android:id="@+id/editFirstName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="First Name" />
+        android:hint="First Name"
+        android:maxLength="50"/>
 
     <EditText
         android:id="@+id/editLastName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Last Name" />
+        android:hint="Last Name"
+        android:maxLength="50"/>
 
     <EditText
         android:id="@+id/editUsername"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Username" />
+        android:hint="Username"
+        android:maxLength="50"/>
 
     <EditText
         android:id="@+id/editEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Email" />
+        android:hint="Email"
+        android:maxLength="50"/>
 
     <EditText
         android:id="@+id/editPhone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Phone Number" />
+        android:hint="Phone Number"
+        android:maxLength="10"/>
 
     <Button
         android:id="@+id/editPicButton"

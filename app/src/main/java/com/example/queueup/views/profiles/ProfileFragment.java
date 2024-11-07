@@ -68,11 +68,16 @@ public class ProfileFragment extends Fragment {
 
         return view;
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        fetchUserData();
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        fetchUserData();
         if (requestCode == EDIT_PROFILE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             fetchUserData();
         }
@@ -103,4 +108,5 @@ public class ProfileFragment extends Fragment {
             profileInitialsTextView.setText(initials);
         }
     }
+
 }

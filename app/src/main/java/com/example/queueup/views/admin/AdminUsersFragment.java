@@ -58,6 +58,11 @@ public class AdminUsersFragment extends Fragment implements AdminClickUserFragme
 
         listenToUsersCollection();
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshFragment();
+    }
 
     /**
      * Method to listen for real-time changes in the Firestore 'users' collection.

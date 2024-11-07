@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,7 +18,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.queueup.R;
+import com.example.queueup.controllers.UserController;
+import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.models.User;
+import com.example.queueup.views.SignUp;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -34,12 +38,13 @@ public class EditProfileActivity extends AppCompatActivity {
     private Uri imageUri;
     private FirebaseStorage storage;
     private String deviceId;
+    private CurrentUserHandler currentUserHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
-
+        currentUserHandler = currentUserHandler.getSingleton();
         deviceId = getIntent().getStringExtra("deviceId");
 
         db = FirebaseFirestore.getInstance();
@@ -149,13 +154,32 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private void saveProfileChanges() {
+        String firstName = editFirstName.getText().toString().trim();
+        String lastName = editLastName.getText().toString().trim();
+        String email = editEmail.getText().toString().trim();
+        String phoneNumber = editPhone.getText().toString().trim();
+        String username = editUsername.getText().toString().trim();
+        if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || phoneNumber.isEmpty() || username.isEmpty()) {
+            Toast.makeText(EditProfileActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (phoneNumber.length() != 10 || !phoneNumber.matches("\\d{10}")) {
+            Toast.makeText(EditProfileActivity.this, "Please enter a valid 10-digit phone number", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(EditProfileActivity.this, "Please enter a valid email", Toast.LENGTH_SHORT).show();
+            return;
+        }
         if (currentUser == null) return;
 
-        currentUser.setFirstName(editFirstName.getText().toString().trim());
-        currentUser.setLastName(editLastName.getText().toString().trim());
-        currentUser.setUsername(editUsername.getText().toString().trim());
-        currentUser.setEmailAddress(editEmail.getText().toString().trim());
-        currentUser.setPhoneNumber(editPhone.getText().toString().trim());
+        currentUser.setFirstName(firstName);
+        currentUser.setLastName(lastName);
+        currentUser.setUsername(username);
+        currentUser.setEmailAddress(email);
+        currentUser.setPhoneNumber(phoneNumber);
 
         if (imageUri != null) {
             StorageReference fileReference = storage.getReference("profileImages").child(currentUser.getUuid() + ".jpg");
@@ -168,22 +192,15 @@ public class EditProfileActivity extends AppCompatActivity {
                                 Glide.with(this).load(downloadUrl).circleCrop().into(profileImageView);
                                 profileInitialsTextView.setVisibility(View.GONE);
                                 profileImageView.setVisibility(View.VISIBLE);
-                                updateFirestoreUser();
+                                currentUserHandler.updateUser(currentUser);
+                                finish();
                             })
                             .addOnFailureListener(e -> Toast.makeText(EditProfileActivity.this, "Failed to get image URL", Toast.LENGTH_SHORT).show()))
                     .addOnFailureListener(e -> Toast.makeText(EditProfileActivity.this, "Failed to upload profile picture", Toast.LENGTH_SHORT).show());
         } else {
-            updateFirestoreUser();
+            currentUserHandler.updateUser(currentUser);
+            finish();
         }
     }
 
-    private void updateFirestoreUser() {
-        db.collection("users").document(currentUser.getUuid()).set(currentUser)
-                .addOnSuccessListener(aVoid -> {
-                    Intent resultIntent = new Intent();
-                    setResult(RESULT_OK, resultIntent);
-                    finish();
-                })
-                .addOnFailureListener(e -> Log.e("EditProfileActivity", "Failed to update Firestore", e));
-    }
 }

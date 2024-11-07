@@ -49,6 +49,12 @@ public class AdminHomeFragment extends Fragment {
         eventViewModel.fetchAllEvents();
 
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        eventViewModel.fetchAllEvents();
+
+    }
     private void observeViewModel() {
         eventViewModel.getAllEventsLiveData().observe(getViewLifecycleOwner(), events -> {
             dataList.clear();
