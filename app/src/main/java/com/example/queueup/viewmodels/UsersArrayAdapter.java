@@ -42,7 +42,6 @@ public class UsersArrayAdapter extends ArrayAdapter<User> {
         TextView userPhone = view.findViewById(R.id.user_phone);
         TextView userEmail = view.findViewById(R.id.user_email);
         ImageView userImage = view.findViewById(R.id.user_image);
-        TextView userRole = view.findViewById(R.id.user_role);
 
         if (user != null) {
             String firstName = user.getFirstName() != null ? user.getFirstName() : "";
@@ -55,7 +54,7 @@ public class UsersArrayAdapter extends ArrayAdapter<User> {
         userPhone.setText(user.getPhoneNumber());
         userEmail.setText(user.getEmailAddress());
         TextView userInitials = view.findViewById(R.id.user_initials);
-        userRole.setText(user.getIsadmin() ? "Admin" : "User");
+
 
         String profileImageUrl = user.getProfileImageUrl();
         if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
