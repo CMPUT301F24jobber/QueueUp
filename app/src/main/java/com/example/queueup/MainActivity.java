@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private MaterialButton attendeeButton;
     private UserViewModel userViewModel;
     private FirebaseFirestore db;
-    String role = "";
+    private Boolean isAdmin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,15 +50,18 @@ public class MainActivity extends AppCompatActivity {
         organizerButton = findViewById(R.id.organizerButton);
         attendeeButton = findViewById(R.id.attendeeButton);
 
-        // **Initialize CurrentUserHandler Singleton**
+        // Initialize CurrentUserHandler Singleton
         CurrentUserHandler.setOwnerActivity(this);
-        CurrentUserHandler.getSingleton(); // Ensure singleton is initialized
+        CurrentUserHandler.getSingleton();
 
-        // Observe the current user to update UI accordingly
-        observeCurrentUser();
+        // Initially hide admin button
+        adminButton.setVisibility(MaterialButton.GONE);
 
         // Set up role selection buttons
         setupRoleSelection();
+
+        // Check if user is already logged in and set up UI accordingly
+        checkExistingUser();
 
         // Handle window insets for edge-to-edge UI
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -68,29 +71,34 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Observes the current user and updates the admin button's visibility based on isAdmin flag.
-     */
-    private void observeCurrentUser() {
-        CurrentUserHandler.getSingleton().getCurrentUser().observe(this, new Observer<User>() {
-            @Override
-            public void onChanged(User user) {
-                if (user != null && user.getIsadmin()) {
-                    adminButton.setEnabled(true);
-                    adminButton.setVisibility(MaterialButton.VISIBLE);
-
-                }
-            }
-        });
+    private void checkExistingUser() {
+        String deviceId = userViewModel.getDeviceId();
+        if (deviceId != null && !deviceId.isEmpty()) {
+            db.collection("users")
+                    .whereEqualTo("deviceId", deviceId)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                User user = document.toObject(User.class);
+                                if (user != null) {
+                                    isAdmin = user.getIsadmin();
+                                    updateAdminButtonVisibility();
+                                    CurrentUserHandler.getSingleton().loginWithDeviceId(null);
+                                }
+                            }
+                        }
+                    });
+        }
     }
 
-    /**
-     * Checks if the device ID exists in Firestore and redirects the user accordingly.
-     *
-     * @param selectedRole The role selected by the user (Admin, Organizer, Attendee).
-     */
+    private void updateAdminButtonVisibility() {
+        adminButton.setVisibility(isAdmin ? MaterialButton.VISIBLE : MaterialButton.GONE);
+        adminButton.setEnabled(isAdmin);
+    }
+
     private void checkDeviceIdAndRedirect(String selectedRole) {
-        String deviceId = userViewModel.getDeviceId();  // Get the device ID from the ViewModel
+        String deviceId = userViewModel.getDeviceId();
 
         if (deviceId == null || deviceId.isEmpty()) {
             Toast.makeText(this, "Device ID not available.", Toast.LENGTH_SHORT).show();
@@ -98,35 +106,28 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // Query Firestore for a user with the matching deviceId and role
         db.collection("users")
                 .whereEqualTo("deviceId", deviceId)
                 .get()
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        if (!task.getResult().isEmpty()) {
-                            // Device ID found in Firestore
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                User user = document.toObject(User.class);
-                                if (user != null) {
-                                    // Initialize user session using CurrentUserHandler
-                                    CurrentUserHandler.getSingleton().loginWithDeviceId(() -> {
-                                        redirectToRoleBasedActivity(selectedRole, user);
-                                    });
-                                    return; // Exit after handling the first valid document
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            User user = document.toObject(User.class);
+                            if (user != null) {
+                                isAdmin = user.getIsadmin();
+                                if ("Admin".equals(selectedRole) && !isAdmin) {
+                                    Toast.makeText(MainActivity.this, "You don't have admin privileges.", Toast.LENGTH_SHORT).show();
+                                    return;
                                 }
+                                CurrentUserHandler.getSingleton().loginWithDeviceId(() ->
+                                        redirectToRoleBasedActivity(selectedRole, user)
+                                );
+                                return;
                             }
-                            // If user object is not properly retrieved
-                            Toast.makeText(MainActivity.this, "User data is corrupted.", Toast.LENGTH_SHORT).show();
-                            navigateToSignupPage(selectedRole);
-                        } else {
-                            // Device ID and role combination not found
-                            Toast.makeText(MainActivity.this, "Device not registered for the selected role. Please sign up.", Toast.LENGTH_SHORT).show();
-                            navigateToSignupPage(selectedRole);
                         }
+                        navigateToSignupPage(selectedRole);
                     } else {
-                        Log.e("MainActivity", "Error checking device ID: ", task.getException());
-                        Toast.makeText(MainActivity.this, "Error checking device ID", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Device not registered for the selected role. Please sign up.", Toast.LENGTH_SHORT).show();
                         navigateToSignupPage(selectedRole);
                     }
                 })
@@ -137,68 +138,48 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    /**
-     * Redirect to the activity based on user role.
-     *
-     * @param role The role of the user (Admin, Organizer, Attendee).
-     * @param user The current user object.
-     */
     private void redirectToRoleBasedActivity(String role, User user) {
-        if ("Admin".equals(role) && user.getIsadmin()) {
-            Intent intent = new Intent(this, AdminHome.class);
-            intent.putExtra("deviceId", userViewModel.getDeviceId());
-            startActivity(intent);
-            finish(); // Close MainActivity to prevent going back
-        } else if ("Organizer".equals(role)) {
-            Intent intent = new Intent(this, OrganizerHome.class);
+        Intent intent = null;
+
+        switch (role) {
+            case "Admin":
+                if (isAdmin) {
+                    intent = new Intent(this, AdminHome.class);
+                } else {
+                    Toast.makeText(this, "You don't have admin privileges.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                break;
+            case "Organizer":
+                intent = new Intent(this, OrganizerHome.class);
+                break;
+            case "Attendee":
+                intent = new Intent(this, AttendeeHome.class);
+                break;
+            default:
+                Toast.makeText(this, "Invalid role selected.", Toast.LENGTH_SHORT).show();
+                return;
+        }
+
+        if (intent != null) {
             intent.putExtra("deviceId", userViewModel.getDeviceId());
             startActivity(intent);
             finish();
-        } else if ("Attendee".equals(role)) {
-            Intent intent = new Intent(this, AttendeeHome.class);
-            intent.putExtra("deviceId", userViewModel.getDeviceId());
-            startActivity(intent);
-            finish();
-        } else {
-            Toast.makeText(this, "Invalid role selected or insufficient permissions.", Toast.LENGTH_SHORT).show();
-            navigateToSignupPage(role);
         }
     }
 
-
-    /**
-     * Navigates to the signup page, passing the selected role (if any).
-     *
-     * @param role The role selected by the user (Admin, Organizer, Attendee).
-     */
     private void navigateToSignupPage(String role) {
         Intent intent = new Intent(this, SignUp.class);
         if (role != null) {
             intent.putExtra("role", role);
         }
         startActivity(intent);
-        finish(); // Close MainActivity
+        finish();
     }
 
-    /**
-     * Sets up button click listeners for role selection and navigation to the signup page.
-     */
     private void setupRoleSelection() {
-        adminButton.setOnClickListener(v -> {
-            CurrentUserHandler.getSingleton().getCurrentUser().observe(this, new Observer<User>() {
-                @Override
-                public void onChanged(User user) {
-                    if (user != null && user.getIsadmin()) {
-                        checkDeviceIdAndRedirect("Admin");
-                    } else {
-                        Toast.makeText(MainActivity.this, "You do not have admin privileges.", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-        });
-
+        adminButton.setOnClickListener(v -> checkDeviceIdAndRedirect("Admin"));
         organizerButton.setOnClickListener(v -> checkDeviceIdAndRedirect("Organizer"));
-
         attendeeButton.setOnClickListener(v -> checkDeviceIdAndRedirect("Attendee"));
     }
 }
