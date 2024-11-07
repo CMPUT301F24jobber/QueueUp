@@ -22,10 +22,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:name="androidx.navigation.fragment.NavHostFragment"
+        app:navGraph="@navigation/admin_nav_graph"
+        app:layout_constraintHeight_max="650dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:navGraph="@navigation/admin_nav_graph"
-        app:layout_constraintTop_toBottomOf="@id/queueup_title">
+        app:layout_constraintTop_toBottomOf="@id/queueup_title"
+        android:clickable="true">
 
     </fragment>
 

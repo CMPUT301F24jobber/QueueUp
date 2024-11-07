@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:background="@color/backgroundColor"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:clickable="true">
     <ListView
         android:id="@+id/organizer_event_list"
         android:layout_width="match_parent"
