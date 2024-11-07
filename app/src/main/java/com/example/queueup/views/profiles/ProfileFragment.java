@@ -83,9 +83,9 @@ public class ProfileFragment extends Fragment {
 
         String fullName = currentUser.getFirstName() + " " + currentUser.getLastName();
         profileNameTextView.setText(fullName);
-        profileUsernameTextView.setText(currentUser.getUsername());
-        profileEmailTextView.setText(currentUser.getEmailAddress());
-        profilePhoneTextView.setText(currentUser.getPhoneNumber());
+        profileUsernameTextView.setText("@"+currentUser.getUsername());
+        profileEmailTextView.setText("Email: " + currentUser.getEmailAddress());
+        profilePhoneTextView.setText("Phone Number: " + currentUser.getPhoneNumber());
 
         displayProfileImageOrInitials();
     }

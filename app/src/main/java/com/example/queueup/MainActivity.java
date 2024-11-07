@@ -62,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Check if user is already logged in and set up UI accordingly
         checkExistingUser();
+
+        // isAdmin = true IS REQUIRED TO SEE ADMIN BUTTON AND ENTER ADMIN MODE
         if (user != null && user.getIsadmin()) {
             isAdmin = false;
         } else {
