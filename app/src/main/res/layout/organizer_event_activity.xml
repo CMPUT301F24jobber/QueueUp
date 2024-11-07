@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/backgroundColor">
+    android:background="@color/backgroundColor"
+    android:padding="16dp"
+    android:clickable="true">
     <include
         android:id="@+id/queueup_title"
         android:layout_width="match_parent"
@@ -20,7 +22,8 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/queueup_title" />
+        app:layout_constraintTop_toBottomOf="@id/queueup_title"
+        android:clickable="true"/>
     <include
         layout="@layout/organizer_event_navigation_bar"
         android:id="@+id/bottom_navigation"

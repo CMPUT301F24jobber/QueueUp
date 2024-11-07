@@ -37,6 +37,7 @@ public class OrganizerEvent extends AppCompatActivity {
                             .replace(R.id.organizer_event_fragment, OrganizerWaitingListFragment.class, null)
                             .commit();
                     break;
+
                 case "Draw Winner":
                     getSupportFragmentManager().beginTransaction()
                             .setReorderingAllowed(true)

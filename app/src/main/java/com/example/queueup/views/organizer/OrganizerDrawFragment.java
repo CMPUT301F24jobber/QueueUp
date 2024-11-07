@@ -3,6 +3,7 @@ package com.example.queueup.views.organizer;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -19,6 +20,11 @@ public class OrganizerDrawFragment extends Fragment {
     }
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        TextView eventDate = view.findViewById(R.id.event_date);
+        TextView locationText = view.findViewById(R.id.event_date);
+        TextView dateText = view.findViewById(R.id.event_date);
+        TextView timeText = view.findViewById(R.id.event_time);
+
 
     }
 

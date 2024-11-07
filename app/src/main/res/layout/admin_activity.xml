@@ -22,15 +22,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:name="androidx.navigation.fragment.NavHostFragment"
+        app:navGraph="@navigation/admin_nav_graph"
+        app:layout_constraintHeight_max="650dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:navGraph="@navigation/admin_nav_graph"
-        app:layout_constraintTop_toBottomOf="@id/queueup_title">
+        app:layout_constraintTop_toBottomOf="@id/queueup_title"
+        android:clickable="true">
 
     </fragment>
 
-    <include
-        layout="@layout/admin_navigation_bar"
+    <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="350dp"
         android:layout_height="60dp"
@@ -40,9 +41,11 @@
         android:paddingBottom="0dp"
         android:maxHeight="20dp"
         android:background="@drawable/navigation_bar_bg"
-
-        app:itemIconTint="@drawable/navigation_bar_selector"
+        app:menu="@menu/admin_bottom_nav_menu"
+        app:itemIconTint="@color/white"
+        app:labelVisibilityMode="unlabeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:layout_constraintRight_toRightOf="parent"
+        app:itemActiveIndicatorStyle="@style/BottomNavigationView.ActiveIndicator"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

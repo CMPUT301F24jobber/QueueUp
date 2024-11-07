@@ -121,8 +121,17 @@ public class OrganizerCreateEvent extends AppCompatActivity {
             return;
         }
 
+        if (startDate.after(endDate)) {
+            showToast("End Date has to be after Start Date");
+            return;
+        }
+        if (new Date().after(startDate)) {
+            showToast("Start Date cannot be in the past");
+            return;
+        }
+
         int attendeeLimitValue = unlimitedAttendees ? Integer.MAX_VALUE : parseAttendeeLimit(attendeeLimit);
-        if (attendeeLimitValue == -1) {
+        if (attendeeLimitValue <= 0) {
             showToast("Invalid attendee limit. Please enter a valid number.");
             return;
         }
@@ -146,7 +155,6 @@ public class OrganizerCreateEvent extends AppCompatActivity {
                 attendeeLimitValue,
                 true // Setting the event as active by default.
         );
-
         eventViewModel.createEvent(newEvent);
     }
 

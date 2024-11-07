@@ -17,9 +17,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 
-public class AdminUsersFragment extends Fragment implements AdminClickUserFragment.RefreshUsersListener {
+public class AdminImageFragment extends Fragment implements AdminClickUserFragment.RefreshUsersListener {
 
-    public AdminUsersFragment() {
+    public AdminImageFragment() {
         super(R.layout.admin_users_fragment);
     }
 

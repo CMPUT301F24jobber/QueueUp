@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.queueup"
-        minSdk = 24
+        minSdk = 34
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -36,8 +36,8 @@ android {
 
 dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
-    implementation ("com.google.android.gms:play-services-base:18.3.0")
-
+    implementation("com.google.android.gms:play-services-base:18.3.0")
+    implementation("com.google.android.gms:play-services-vision:20.0.0")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -57,6 +57,7 @@ dependencies {
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
     implementation("com.google.zxing:core:3.5.1")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+    implementation("androidx.fragment:fragment:1.8.5")
 }
 
 

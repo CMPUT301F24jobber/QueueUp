@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
      *
      * @param selectedRole The role selected by the user (Admin, Organizer, Attendee).
      */
-    private void checkDeviceIdAndRedirect(String selectedRole) {
+    private synchronized void checkDeviceIdAndRedirect(String selectedRole) {
         String deviceId = userViewModel.getDeviceId();  // Get the device ID from the ViewModel
 
         if (deviceId == null || deviceId.isEmpty()) {
@@ -104,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
                             navigateToSignupPage(selectedRole);
                         } else {
                             // Device ID and role combination not found
-                            Toast.makeText(MainActivity.this, "Device not registered for the selected role. Please sign up.", Toast.LENGTH_SHORT).show();
                             navigateToSignupPage(selectedRole);
                         }
                     } else {

@@ -3,6 +3,7 @@ package com.example.queueup.views;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -23,7 +25,6 @@ import com.example.queueup.views.organizer.OrganizerHome;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.UUID;
 
@@ -44,6 +45,8 @@ public class SignUp extends AppCompatActivity {
 
     private UserViewModel userViewModel;
 
+    private static final int IMAGE_PICK_REQUEST_CODE = 100;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +63,9 @@ public class SignUp extends AppCompatActivity {
         usernameInputLayout = findViewById(R.id.usernameInputLayout);
         submitButton = findViewById(R.id.submitButton);
 
+        profileImageView = findViewById(R.id.profilePicImage);
+        uploadImageButton = findViewById(R.id.profilePicButton);
+
         // Initialize ViewModel
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
@@ -67,37 +73,34 @@ public class SignUp extends AppCompatActivity {
         titleTextView.setText("Your Information");
         subtitleTextView.setText("Please enter your details");
 
-        profileImageView = findViewById(R.id.profilePicImage); //
-        uploadImageButton = findViewById(R.id.profilePicButton); //
-
-        uploadImageButton.setOnClickListener(v -> selectImage()); //
+        // Set up image upload button click listener
+        uploadImageButton.setOnClickListener(v -> selectImage());
 
         // Set up submit button click listener
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                submitUserInformation();
-            }
-        });
+        submitButton.setOnClickListener(v -> submitUserInformation());
     }
 
+    /**
+     * Launches an intent to select an image from the device.
+     */
     private void selectImage() {
-        Intent intent = new Intent(Intent.ACTION_PICK); //
-        intent.setType("image/*"); //
-        startActivityForResult(intent, 100); //
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        startActivityForResult(intent, IMAGE_PICK_REQUEST_CODE);
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 100 && resultCode == RESULT_OK && data != null) {
+
+        if (requestCode == IMAGE_PICK_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             profileImageUri = data.getData();
             profileImageView.setImageURI(profileImageUri); // Display chosen image
         }
     }
 
     /**
-     * Collect user information and submit it to Firestore.
+     * Collects user information and submits it to Firestore.
      */
     private void submitUserInformation() {
         // Get input values from TextInputEditText fields
@@ -107,71 +110,85 @@ public class SignUp extends AppCompatActivity {
         EditText phoneNumberEditText = phoneNumberInputLayout.getEditText();
         EditText usernameEditText = usernameInputLayout.getEditText();
 
-        if (firstNameEditText != null && lastNameEditText != null && emailEditText != null && phoneNumberEditText != null && usernameEditText != null) {
-            String firstName = firstNameEditText.getText().toString().trim();
-            String lastName = lastNameEditText.getText().toString().trim();
-            String email = emailEditText.getText().toString().trim();
-            String phoneNumber = phoneNumberEditText.getText().toString().trim();
-            String username = usernameEditText.getText().toString().trim();
-
-            // Validate inputs
-            if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || phoneNumber.isEmpty() || username.isEmpty()) {
-                Toast.makeText(SignUp.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // Get role from intent
-            String role = getIntent().getStringExtra("role");
-            if (role == null) {
-                role = "Attendee"; // Default role if not provided
-            }
-
-            // Create a new user object
-            String userId = UUID.randomUUID().toString();
-            String deviceId = userViewModel.getDeviceId();
-            User user = new User(firstName, lastName, username, email, phoneNumber, deviceId);
-            user.setRole(role);
-
-            // Check if a profile image is selected
-            if (profileImageUri != null) {
-                // Upload image to Firebase Storage
-                ImageUploader imageUploader = new ImageUploader();
-                imageUploader.uploadImage("profile_pictures/", profileImageUri, new ImageUploader.UploadListener() {
-                    @Override
-                    public void onUploadSuccess(String imageUrl) {
-                        user.setProfileImageUrl(imageUrl);
-                        saveUserToFirestore(user);
-                    }
-
-                    @Override
-                    public void onUploadFailure(Exception exception) {
-                        Toast.makeText(SignUp.this, "Failed to upload profile picture: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            } else {
-                // If no image, proceed without a profile picture
-                saveUserToFirestore(user);
-            }
-
-            // Save user to Firestore using UserViewModel
-            String finalRole = role;
-            userViewModel.createUser(user).addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    Toast.makeText(SignUp.this, "User registered successfully", Toast.LENGTH_SHORT).show();
-                    // Redirect based on role
-                    redirectToRoleBasedActivity(finalRole, user);
-                } else {
-                    Toast.makeText(SignUp.this, "Failed to register user: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
+        if (firstNameEditText == null || lastNameEditText == null || emailEditText == null ||
+                phoneNumberEditText == null || usernameEditText == null) {
+            Toast.makeText(SignUp.this, "Unexpected error: Missing input fields.", Toast.LENGTH_SHORT).show();
+            return;
         }
 
+        String firstName = firstNameEditText.getText().toString().trim();
+        String lastName = lastNameEditText.getText().toString().trim();
+        String email = emailEditText.getText().toString().trim();
+        String phoneNumber = phoneNumberEditText.getText().toString().trim();
+        String username = usernameEditText.getText().toString().trim();
+
+        // Validate inputs
+        if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || phoneNumber.isEmpty() || username.isEmpty()) {
+            Toast.makeText(SignUp.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (phoneNumber.length() != 10 || !phoneNumber.matches("\\d{10}")) {
+            Toast.makeText(SignUp.this, "Please enter a valid 10-digit phone number", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(SignUp.this, "Please enter a valid email", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Get role from intent
+        String role = getIntent().getStringExtra("role");
+        if (role == null) {
+            role = "Attendee"; // Default role if not provided
+        }
+
+        // Create a new user object
+        String userId = UUID.randomUUID().toString();
+        String deviceId = userViewModel.getDeviceId();
+
+        if (deviceId == null || deviceId.isEmpty()) {
+            Toast.makeText(SignUp.this, "Device ID not available.", Toast.LENGTH_SHORT).show();
+            // You might want to handle this case appropriately
+            return;
+        }
+
+        User user = new User(firstName, lastName, username, email, phoneNumber, deviceId);
+        user.setRole(role);
+
+        // Check if a profile image is selected
+        if (profileImageUri != null) {
+            // Upload image to Firebase Storage
+            ImageUploader imageUploader = new ImageUploader();
+            imageUploader.uploadImage("profile_pictures/", profileImageUri, new ImageUploader.UploadListener() {
+                @Override
+                public void onUploadSuccess(String imageUrl) {
+                    user.setProfileImageUrl(imageUrl);
+                    proceedToSaveUser(user);
+                }
+
+                @Override
+                public void onUploadFailure(Exception exception) {
+                    Toast.makeText(SignUp.this, "Failed to upload profile picture: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            // If no image, proceed without a profile picture
+            proceedToSaveUser(user);
+        }
     }
 
-    private void saveUserToFirestore(User user) {
+    /**
+     * Saves the user to Firestore and handles post-save actions.
+     *
+     * @param user The user object to save.
+     */
+    private void proceedToSaveUser(User user) {
         userViewModel.createUser(user).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Toast.makeText(SignUp.this, "User registered successfully", Toast.LENGTH_SHORT).show();
+                // Redirect based on role
                 redirectToRoleBasedActivity(user.getRole(), user);
             } else {
                 Toast.makeText(SignUp.this, "Failed to register user: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -180,18 +197,20 @@ public class SignUp extends AppCompatActivity {
     }
 
     /**
-     * Redirect to the appropriate activity based on the user's role.
+     * Redirects to the appropriate activity based on the user's role.
+     *
+     * @param role The role of the user (Admin, Organizer, Attendee).
+     * @param user The user object containing user details.
      */
-
     private void redirectToRoleBasedActivity(String role, User user) {
-        Intent intent = null;
+        Intent intent;
         switch (role) {
             case "Admin":
                 intent = new Intent(SignUp.this, AdminHome.class); // Navigate to AdminHome
                 break;
-              case "Organizer":
-                  intent = new Intent(SignUp.this, OrganizerHome.class); // Navigate to OrganizerHome
-                  break;
+            case "Organizer":
+                intent = new Intent(SignUp.this, OrganizerHome.class); // Navigate to OrganizerHome
+                break;
             case "Attendee":
             default:
                 intent = new Intent(SignUp.this, AttendeeHome.class); // Navigate to AttendeeHome

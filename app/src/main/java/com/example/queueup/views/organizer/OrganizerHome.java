@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.queueup.R;
 import com.example.queueup.controllers.UserController;
+import com.example.queueup.views.profiles.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -60,7 +61,7 @@ public class OrganizerHome extends AppCompatActivity {
                             .replace(R.id.organizer_activity_fragment, OrganizerHomeFragment.class, null)
                             .commit();
                     break;
-                case "Users":
+                case "QR Code":
                     getSupportFragmentManager().beginTransaction()
                             .setReorderingAllowed(true)
                             .replace(R.id.organizer_activity_fragment, OrganizerQRCodesFragment.class, null)
@@ -69,7 +70,7 @@ public class OrganizerHome extends AppCompatActivity {
                 case "Profile":
                     getSupportFragmentManager().beginTransaction()
                             .setReorderingAllowed(true)
-                            .replace(R.id.organizer_activity_fragment, OrganizerProfileFragment.class, null)
+                            .replace(R.id.organizer_activity_fragment, ProfileFragment.class, null) // Changed to ProfileFragment
                             .commit();
                     break;
                 default:
@@ -77,5 +78,6 @@ public class OrganizerHome extends AppCompatActivity {
             }
             return true;
         });
+
     }
 }

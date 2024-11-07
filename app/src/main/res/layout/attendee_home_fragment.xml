@@ -5,38 +5,6 @@
     android:padding="16dp"
     android:background="#FDF7F4">
 
-    <!-- Profile Initials in Circle (Top Right) -->
-    <FrameLayout
-        android:id="@+id/profileInitialsFrame"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="0dp"
-        android:layout_marginTop="0dp"
-        android:background="@drawable/circle_shape">
-
-        <!-- Initials Text -->
-        <TextView
-            android:id="@+id/profileInitialsTextView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Initials"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:gravity="center"
-            android:padding="5dp"
-            android:visibility="visible" />
-
-        <ImageView
-            android:id="@+id/profileImageView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:visibility="gone"
-           />
-        </FrameLayout>
-
     <!-- Title -->
     <TextView
         android:id="@+id/titleTextView"

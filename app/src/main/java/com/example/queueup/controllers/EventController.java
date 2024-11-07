@@ -60,9 +60,7 @@ public class EventController {
      * @return Task<QuerySnapshot>
      */
     public Task<QuerySnapshot> getAllEvents() {
-        return eventCollectionReference
-                .orderBy("startDate", Query.Direction.ASCENDING)
-                .get();
+        return eventCollectionReference.get();
     }
 
     /**
@@ -85,7 +83,6 @@ public class EventController {
         return eventCollectionReference
                 .whereEqualTo("organizerId", organizerId).get();
     }
-
     /**
      * Retrieves all events that a specific attendee is registered for.
      *
@@ -219,9 +216,9 @@ public class EventController {
             Boolean isActive = eventSnapshot.getBoolean("isActive");
             Date endDate = eventSnapshot.getDate("eventEndDate");
             Date currentDate = new Date();
-            if (isActive == null || !isActive || (endDate != null && endDate.before(currentDate))) {
-                throw new RuntimeException("The event \"" + eventName + "\" is no longer active or has already ended.");
-            }
+//            if (isActive == null || !isActive || (endDate != null && endDate.before(currentDate))) {
+//                throw new RuntimeException("The event \"" + eventName + "\" is no longer active or has already ended.");
+//            }
 
             Long maxCap = eventSnapshot.getLong("maxCapacity");
             Long currCap = eventSnapshot.getLong("currentCapacity");
