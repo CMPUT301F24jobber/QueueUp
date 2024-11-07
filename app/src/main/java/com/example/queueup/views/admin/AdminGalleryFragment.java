@@ -22,7 +22,7 @@ public class AdminGalleryFragment extends Fragment {
     private ImagesArrayAdapter eventAdapter;
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        User e = new User("e","e","e","e","e","e");
+        User e = new User("e","e","e","e","e","e", true);
         dataList = new ArrayList<User>();
         dataList.add(e);
 

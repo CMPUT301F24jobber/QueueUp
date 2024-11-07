@@ -19,7 +19,7 @@ public class User implements Parcelable {
     private String username;
     private String emailAddress;
     private String phoneNumber;
-    private String role;
+    private Boolean isadmin;
     private String profileImageUrl;
     private HashMap<String, String> notifications;
     private String deviceId;
@@ -34,7 +34,7 @@ public class User implements Parcelable {
         this.receiveNotifications = true;
     }
 
-    public User(String firstName, String lastName, String username, String emailAddress, String phoneNumber, String deviceId) {
+    public User(String firstName, String lastName, String username, String emailAddress, String phoneNumber, String deviceId, Boolean isadmin) {
         this();
         this.uuid = UUID.randomUUID().toString();
         this.firstName = firstName;
@@ -43,7 +43,7 @@ public class User implements Parcelable {
         this.emailAddress = emailAddress;
         this.phoneNumber = phoneNumber;
         this.deviceId = deviceId;
-        this.role = "admin"; // Default role set during creation
+        this.isadmin = isadmin;
     }
 
     protected User(Parcel in) {
@@ -53,7 +53,7 @@ public class User implements Parcelable {
         username = in.readString();
         emailAddress = in.readString();
         phoneNumber = in.readString();
-        role = in.readString();
+        isadmin = in.readByte() != 0;
         profileImageUrl = in.readString();
         deviceId = in.readString();
         receiveNotifications = in.readByte() != 0;
@@ -126,12 +126,11 @@ public class User implements Parcelable {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getRole() {
-        return role;
+    public Boolean getIsadmin() {
+        return isadmin;
     }
-
-    public void setRole(String role) {
-        this.role = role;
+    public void setIsadmin(Boolean isadmin) {
+        this.isadmin = isadmin;
     }
 
     public String getProfileImageUrl() {
@@ -213,19 +212,6 @@ public class User implements Parcelable {
         return this.firstName + " " + this.lastName;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "uuid='" + uuid + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", username='" + username + '\'' +
-                ", emailAddress='" + emailAddress + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", role='" + role + '\'' +
-                ", receiveNotifications=" + receiveNotifications +
-                '}';
-    }
 
     @Override
     public int describeContents() {
@@ -240,7 +226,7 @@ public class User implements Parcelable {
         parcel.writeString(username);
         parcel.writeString(emailAddress);
         parcel.writeString(phoneNumber);
-        parcel.writeString(role);
+        parcel.writeByte((byte) (isadmin ? 1 : 0));
         parcel.writeString(profileImageUrl);
         parcel.writeString(deviceId);
         parcel.writeByte((byte) (receiveNotifications ? 1 : 0));

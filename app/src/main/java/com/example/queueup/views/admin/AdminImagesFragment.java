@@ -34,7 +34,7 @@ public class AdminImagesFragment extends Fragment implements AdminClickUserFragm
 
         db = FirebaseFirestore.getInstance();
         dataList = new ArrayList<>();
-        User e = new User("d", "d", "d", "d", "d", "d");
+        User e = new User("d", "d", "d", "d", "d", "d", true);
 
         dataList.add(e);
         userList = view.findViewById(R.id.admin_user_list);

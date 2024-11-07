@@ -22,7 +22,7 @@ public class OrganizerWaitingListFragment extends Fragment {
     private UsersArrayAdapter usersAdapter;
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        User e = new User("e","e","e","e","e","e");
+        User e = new User("e","e","e","e","e","e", false);
         dataList = new ArrayList<User>();
         dataList.add(e);
 

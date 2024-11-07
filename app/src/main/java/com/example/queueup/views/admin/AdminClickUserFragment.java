@@ -51,7 +51,7 @@ public class AdminClickUserFragment extends DialogFragment {
 
         userEmail.setText(user.getEmailAddress() != null ? user.getEmailAddress() : "");
         userPhone.setText(user.getPhoneNumber() != null ? user.getPhoneNumber() : "");
-        userRole.setText(user.getRole() != null ? user.getRole() : "");
+        userRole.setText(user.getIsadmin() ? "Admin" : "User");
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setView(view)

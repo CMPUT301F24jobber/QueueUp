@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.queueup.MainActivity;
 import com.example.queueup.R;
 import com.example.queueup.models.User;
 import com.example.queueup.services.ImageUploader;
@@ -47,6 +48,9 @@ public class SignUp extends AppCompatActivity {
 
     private static final int IMAGE_PICK_REQUEST_CODE = 100;
 
+    // Declare role as a member variable
+    private String role;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +76,20 @@ public class SignUp extends AppCompatActivity {
         // Set text programmatically
         titleTextView.setText("Your Information");
         subtitleTextView.setText("Please enter your details");
+
+        // Get role from intent inside onCreate
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("role")) {
+            role = intent.getStringExtra("role");
+        } else {
+            role = null;
+            Toast.makeText(SignUp.this, "Role not specified. Redirecting to main screen.", Toast.LENGTH_SHORT).show();
+            // Redirect to main activity or handle accordingly
+            Intent mainIntent = new Intent(SignUp.this, MainActivity.class);
+            startActivity(mainIntent);
+            finish();
+            return;
+        }
 
         // Set up image upload button click listener
         uploadImageButton.setOnClickListener(v -> selectImage());
@@ -121,6 +139,7 @@ public class SignUp extends AppCompatActivity {
         String email = emailEditText.getText().toString().trim();
         String phoneNumber = phoneNumberEditText.getText().toString().trim();
         String username = usernameEditText.getText().toString().trim();
+        Boolean isadmin = false;
 
         // Validate inputs
         if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || phoneNumber.isEmpty() || username.isEmpty()) {
@@ -138,10 +157,8 @@ public class SignUp extends AppCompatActivity {
             return;
         }
 
-        // Get role from intent
-        String role = getIntent().getStringExtra("role");
-        if (role == null) {
-            role = "Attendee"; // Default role if not provided
+        if (role.equals("Admin")) {
+            isadmin = true;
         }
 
         // Create a new user object
@@ -154,8 +171,7 @@ public class SignUp extends AppCompatActivity {
             return;
         }
 
-        User user = new User(firstName, lastName, username, email, phoneNumber, deviceId);
-        user.setRole(role);
+        User user = new User(firstName, lastName, username, email, phoneNumber, deviceId, isadmin);
 
         // Check if a profile image is selected
         if (profileImageUri != null) {
@@ -189,7 +205,7 @@ public class SignUp extends AppCompatActivity {
             if (task.isSuccessful()) {
                 Toast.makeText(SignUp.this, "User registered successfully", Toast.LENGTH_SHORT).show();
                 // Redirect based on role
-                redirectToRoleBasedActivity(user.getRole(), user);
+                redirectToRoleBasedActivity(role, user);
             } else {
                 Toast.makeText(SignUp.this, "Failed to register user: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
             }

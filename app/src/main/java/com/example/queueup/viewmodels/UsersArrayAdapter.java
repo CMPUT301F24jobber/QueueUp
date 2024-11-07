@@ -55,7 +55,7 @@ public class UsersArrayAdapter extends ArrayAdapter<User> {
         userPhone.setText(user.getPhoneNumber());
         userEmail.setText(user.getEmailAddress());
         TextView userInitials = view.findViewById(R.id.user_initials);
-        userRole.setText(user.getRole());
+        userRole.setText(user.getIsadmin() ? "Admin" : "User");
 
         String profileImageUrl = user.getProfileImageUrl();
         if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
