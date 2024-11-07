@@ -23,6 +23,12 @@ public abstract class EventArrayAdapter extends ArrayAdapter<Event> {
     public EventArrayAdapter(Context context, ArrayList<Event> event) {
         super(context, 0, event);
     }
+    TextView eventTitle;
+    Event event;
+    TextView eventDate;
+    TextView eventLocation;
+    ImageView eventImage;
+    DateTimeFormatter formatter;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @NonNull
@@ -35,17 +41,16 @@ public abstract class EventArrayAdapter extends ArrayAdapter<Event> {
         } else {
             view = convertView;
         }
-        Event event = getItem(position);
-        TextView eventTitle = view.findViewById(R.id.event_name);
-        TextView eventDate = view.findViewById(R.id.event_date);
-        TextView eventLocation = view.findViewById(R.id.event_location);
-        ImageView eventImage = view.findViewById(R.id.event_image);
+        event = getItem(position);
+        eventTitle = view.findViewById(R.id.event_name);
+        eventDate = view.findViewById(R.id.event_date);
+        eventLocation = view.findViewById(R.id.event_location);
+        eventImage = view.findViewById(R.id.event_image);
         eventImage.setImageResource(R.drawable.ic_nav_users);
 
         eventTitle.setText(event.getEventName());
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE MMM dd, uuuu");
-            String date_text = event.getEventStartDate().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate().format(formatter);
-        eventDate.setText(date_text);
+        formatter = DateTimeFormatter.ofPattern("EEEE MMM dd, uuuu");
+        eventDate.setText(event.getEventStartDate().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate().format(formatter));
         eventLocation.setText(event.getEventLocation());
 
         view.setOnClickListener(onClickListener(view, position));
