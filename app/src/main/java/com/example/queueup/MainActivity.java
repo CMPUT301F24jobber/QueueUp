@@ -10,9 +10,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.queueup.handlers.CurrentUserHandler; // Import the handler
+import com.example.queueup.handlers.CurrentUserHandler;
+import com.example.queueup.models.User;
 import com.example.queueup.viewmodels.UserViewModel;
 import com.example.queueup.views.SignUp;
 import com.example.queueup.views.admin.AdminHome;
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private MaterialButton attendeeButton;
     private UserViewModel userViewModel;
     private FirebaseFirestore db;
+    private Boolean isAdmin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,15 +50,15 @@ public class MainActivity extends AppCompatActivity {
         organizerButton = findViewById(R.id.organizerButton);
         attendeeButton = findViewById(R.id.attendeeButton);
 
-        // **Initialize CurrentUserHandler Singleton**
+        // Initialize CurrentUserHandler Singleton
         CurrentUserHandler.setOwnerActivity(this);
-        CurrentUserHandler.getSingleton(); // Ensure singleton is initialized
+        CurrentUserHandler.getSingleton();
 
         // Set up role selection buttons
         setupRoleSelection();
 
-        // **Removed Auto-Redirect to prevent immediate redirection on app launch**
-        // checkDeviceIdAndRedirect(); // This line is removed
+        // Check if user is already logged in and set up UI accordingly
+        checkExistingUser();
 
         // Handle window insets for edge-to-edge UI
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -65,13 +68,29 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Checks if the device ID exists in Firestore and redirects the user accordingly.
-     *
-     * @param selectedRole The role selected by the user (Admin, Organizer, Attendee).
-     */
-    private synchronized void checkDeviceIdAndRedirect(String selectedRole) {
-        String deviceId = userViewModel.getDeviceId();  // Get the device ID from the ViewModel
+    private void checkExistingUser() {
+        String deviceId = userViewModel.getDeviceId();
+        if (deviceId != null && !deviceId.isEmpty()) {
+            db.collection("users")
+                    .whereEqualTo("deviceId", deviceId)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                User user = document.toObject(User.class);
+                                if (user != null) {
+                                    isAdmin = user.getIsadmin();
+                                    CurrentUserHandler.getSingleton().loginWithDeviceId(null);
+                                }
+                            }
+                        }
+                    });
+        }
+    }
+
+
+    private void checkDeviceIdAndRedirect(String selectedRole) {
+        String deviceId = userViewModel.getDeviceId();
 
         if (deviceId == null || deviceId.isEmpty()) {
             Toast.makeText(this, "Device ID not available.", Toast.LENGTH_SHORT).show();
@@ -79,92 +98,70 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // Query Firestore for a user with the matching deviceId and role
         db.collection("users")
                 .whereEqualTo("deviceId", deviceId)
-                .whereEqualTo("role", selectedRole)
                 .get()
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        if (!task.getResult().isEmpty()) {
-                            // Device ID and role found in Firestore
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                String role = document.getString("role");
-                                Log.d("MainActivity", "Device ID found with role: " + role);
-                                if (role != null) {
-                                    // Initialize user session using CurrentUserHandler
-                                    CurrentUserHandler.getSingleton().loginWithDeviceId(() -> {
-                                        redirectToRoleBasedActivity(role);
-                                    });
-                                    return; // Exit after handling the first valid document
-                                }
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            User user = document.toObject(User.class);
+                            if (user != null) {
+                                isAdmin = user.getIsadmin();
+                                CurrentUserHandler.getSingleton().loginWithDeviceId(() ->
+                                        redirectToRoleBasedActivity(selectedRole, user)
+                                );
+                                return;
                             }
-                            // If role is not found in the retrieved documents
-                            Toast.makeText(MainActivity.this, "User role not found.", Toast.LENGTH_SHORT).show();
-                            navigateToSignupPage(selectedRole);
-                        } else {
-                            // Device ID and role combination not found
-                            navigateToSignupPage(selectedRole);
                         }
+                        navigateToSignupPage(selectedRole);
                     } else {
-                        Log.e("MainActivity", "Error checking device ID: ", task.getException());
-                        Toast.makeText(MainActivity.this, "Error checking device ID", Toast.LENGTH_SHORT).show();
                         navigateToSignupPage(selectedRole);
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("MainActivity", "Error checking device ID: ", e);
-                    Toast.makeText(MainActivity.this, "Error checking device ID", Toast.LENGTH_SHORT).show();
                     navigateToSignupPage(selectedRole);
                 });
     }
 
-    /**
-     * Redirect to the activity based on user role.
-     *
-     * @param role The role of the user (Admin, Organizer, Attendee).
-     */
-    private void redirectToRoleBasedActivity(String role) {
-        Intent intent;
+    private void redirectToRoleBasedActivity(String role, User user) {
+        Intent intent = null;
+
         switch (role) {
             case "Admin":
-                intent = new Intent(MainActivity.this, AdminHome.class);
+                if (isAdmin) {
+                    intent = new Intent(this, AdminHome.class);
+                }
                 break;
             case "Organizer":
-                intent = new Intent(MainActivity.this, OrganizerHome.class);
+                intent = new Intent(this, OrganizerHome.class);
                 break;
             case "Attendee":
-            default:
-                intent = new Intent(MainActivity.this, AttendeeHome.class);
+                intent = new Intent(this, AttendeeHome.class);
                 break;
+            default:
+                Toast.makeText(this, "Invalid role selected.", Toast.LENGTH_SHORT).show();
+                return;
         }
-        intent.putExtra("deviceId", userViewModel.getDeviceId());
-        startActivity(intent);
-        finish(); // Close MainActivity to prevent going back
+
+        if (intent != null) {
+            intent.putExtra("deviceId", userViewModel.getDeviceId());
+            startActivity(intent);
+            finish();
+        }
     }
 
-    /**
-     * Navigates to the signup page, passing the selected role (if any).
-     *
-     * @param role The role selected by the user (Admin, Organizer, Attendee).
-     */
     private void navigateToSignupPage(String role) {
         Intent intent = new Intent(this, SignUp.class);
         if (role != null) {
             intent.putExtra("role", role);
         }
         startActivity(intent);
-        finish(); // Close MainActivity
+        finish();
     }
 
-    /**
-     * Sets up button click listeners for role selection and navigation to the signup page.
-     */
     private void setupRoleSelection() {
         adminButton.setOnClickListener(v -> checkDeviceIdAndRedirect("Admin"));
-
         organizerButton.setOnClickListener(v -> checkDeviceIdAndRedirect("Organizer"));
-
         attendeeButton.setOnClickListener(v -> checkDeviceIdAndRedirect("Attendee"));
     }
 }

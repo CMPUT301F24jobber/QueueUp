@@ -24,7 +24,7 @@ public class OrganizerQRCodesFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        User exampleUser = new User("example", "example", "example", "example", "example", "example");
+        User exampleUser = new User("example", "example", "example", "example", "example", "example", false);
         dataList = new ArrayList<>();
         dataList.add(exampleUser);
 
