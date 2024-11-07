@@ -3,6 +3,7 @@ package com.example.queueup.views;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -106,7 +107,6 @@ public class SignUp extends AppCompatActivity {
         EditText emailEditText = emailInputLayout.getEditText();
         EditText phoneNumberEditText = phoneNumberInputLayout.getEditText();
         EditText usernameEditText = usernameInputLayout.getEditText();
-
         if (firstNameEditText != null && lastNameEditText != null && emailEditText != null && phoneNumberEditText != null && usernameEditText != null) {
             String firstName = firstNameEditText.getText().toString().trim();
             String lastName = lastNameEditText.getText().toString().trim();
@@ -117,6 +117,15 @@ public class SignUp extends AppCompatActivity {
             // Validate inputs
             if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || phoneNumber.isEmpty() || username.isEmpty()) {
                 Toast.makeText(SignUp.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (phoneNumber.length() != 10) {
+                Toast.makeText(SignUp.this, "Please enter a 10 digit phone number", Toast.LENGTH_SHORT).show();
+                return;
+
+            }
+            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                Toast.makeText(SignUp.this, "Please enter a valid email", Toast.LENGTH_SHORT).show();
                 return;
             }
 
