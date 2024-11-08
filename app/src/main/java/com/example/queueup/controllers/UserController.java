@@ -11,6 +11,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+/**
+ * UserController is responsible for managing user operations, such as creating, updating,
+ * and deleting users in the Firestore database. It also handles device ID retrieval and
+ * manages user-specific fields like profile pictures and notification preferences.
+ */
 public class UserController {
     private static UserController singleInstance = null;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();

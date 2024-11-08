@@ -19,6 +19,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * ImageController manages image operations for uploading, retrieving,
+ * and deleting images from Firebase Firestore and Storage. It handles
+ * tasks such as adding images to storage and Firestore, removing references,
+ * and deleting images while updating user information as necessary.
+ */
 public class ImageController {
     private static ImageController instance = null;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
