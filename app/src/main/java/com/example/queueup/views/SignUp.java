@@ -7,6 +7,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,17 +43,17 @@ public class SignUp extends AppCompatActivity {
     private TextInputLayout emailInputLayout;
     private TextInputLayout phoneNumberInputLayout;
     private TextInputLayout usernameInputLayout;
+    private TextInputLayout passwordInputLayout;
     private MaterialButton submitButton;
-
     private ImageView profileImageView;
     private Button uploadImageButton;
     private Uri profileImageUri;
-
+    private ImageButton backButton;
     private UserViewModel userViewModel;
 
     private static final int IMAGE_PICK_REQUEST_CODE = 100;
 
-    // Declare role as a member variable
+
     private String role;
 
     @Override
@@ -69,7 +70,9 @@ public class SignUp extends AppCompatActivity {
         emailInputLayout = findViewById(R.id.emailInputLayout);
         phoneNumberInputLayout = findViewById(R.id.phoneNumberInputLayout);
         usernameInputLayout = findViewById(R.id.usernameInputLayout);
+        passwordInputLayout = findViewById(R.id.passwordInputLayout);
         submitButton = findViewById(R.id.submitButton);
+        backButton = findViewById(R.id.back_button);
 
         profileImageView = findViewById(R.id.profilePicImage);
         uploadImageButton = findViewById(R.id.profilePicButton);
@@ -94,6 +97,15 @@ public class SignUp extends AppCompatActivity {
             finish();
             return;
         }
+
+        if (role.equals("Admin")) {
+            passwordInputLayout.setVisibility(View.VISIBLE);
+        } else {
+            passwordInputLayout.setVisibility(View.GONE);
+        }
+
+        // Set up back button click listener
+        backButton.setOnClickListener(v -> onBackPressed());
 
         // Set up image upload button click listener
         uploadImageButton.setOnClickListener(v -> selectImage());
@@ -144,6 +156,12 @@ public class SignUp extends AppCompatActivity {
         String phoneNumber = phoneNumberEditText.getText().toString().trim();
         String username = usernameEditText.getText().toString().trim();
         Boolean isadmin = false;
+        String password = passwordInputLayout.getEditText().getText().toString().trim();
+
+        if(role.equals("Admin") && !password.equals("123456")) {
+            Toast.makeText(SignUp.this, "Password is incorrect", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         // Validate inputs
         if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || phoneNumber.isEmpty() || username.isEmpty()) {

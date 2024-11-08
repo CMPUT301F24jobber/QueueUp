@@ -6,7 +6,7 @@ import com.example.queueup.models.User;
 import org.junit.Test;
 public class UserUnitTest {
         private User mockUser() {
-            User mockUser = new User("John", "Doe", "johndoe", "johnDoe@gmail.com", "1234567890", "UniqueID");
+            User mockUser = new User("John", "Doe", "johndoe", "johnDoe@gmail.com", "1234567890", "UniqueID", false);
             return mockUser;
         }
 

@@ -59,15 +59,6 @@ public class OrganizerHomeFragment extends Fragment {
         // Observe LiveData from ViewModel
         observeViewModel();
 
-        // Fetch events for the current organizer
-        String organizerId = CurrentUserHandler.getSingleton().getCurrentUserId();
-        if (organizerId != null && !organizerId.isEmpty()) {
-            eventViewModel.fetchEventsByOrganizer(organizerId);
-        } else {
-            Toast.makeText(getContext(), "Organizer ID is missing. Please log in again.", Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "Organizer ID is null or empty.");
-        }
-
     }
 
     /**
