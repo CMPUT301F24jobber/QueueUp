@@ -2,8 +2,6 @@ package com.example.queueup;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -11,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.queueup.handlers.CurrentUserHandler;
@@ -33,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private MaterialButton attendeeButton;
     private UserViewModel userViewModel;
     private FirebaseFirestore db;
-    User user;
+    private User user;
     private Boolean isAdmin = false;
 
     @Override
@@ -56,14 +53,12 @@ public class MainActivity extends AppCompatActivity {
         CurrentUserHandler.setOwnerActivity(this);
         CurrentUserHandler.getSingleton();
 
-
         // Set up role selection buttons
         setupRoleSelection();
 
         // Check if user is already logged in and set up UI accordingly
         checkExistingUser();
 
-        // isAdmin = true IS REQUIRED TO SEE ADMIN BUTTON AND ENTER ADMIN MODE
         // Handle window insets for edge-to-edge UI
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -81,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful() && !task.getResult().isEmpty()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                User user = document.toObject(User.class);
+                                user = document.toObject(User.class);
                                 if (user != null) {
                                     isAdmin = user.getIsadmin();
                                     CurrentUserHandler.getSingleton().loginWithDeviceId(null);
@@ -92,23 +87,29 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void handleRoleSelection(String selectedRole) {
+        // If we already have the user object, use it directly
+        if (user != null) {
+            redirectToRoleBasedActivity(selectedRole, user);
+            return;
+        }
 
-    private void checkDeviceIdAndRedirect(String selectedRole) {
+        // Otherwise, check device ID and proceed with signup/login flow
         String deviceId = userViewModel.getDeviceId();
-
         if (deviceId == null || deviceId.isEmpty()) {
             Toast.makeText(this, "Device ID not available.", Toast.LENGTH_SHORT).show();
             navigateToSignupPage(selectedRole);
             return;
         }
 
+        // Only query database if we don't have the user
         db.collection("users")
                 .whereEqualTo("deviceId", deviceId)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && !task.getResult().isEmpty()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            User user = document.toObject(User.class);
+                            user = document.toObject(User.class);
                             if (user != null) {
                                 isAdmin = user.getIsadmin();
                                 CurrentUserHandler.getSingleton().loginWithDeviceId(() ->
@@ -133,6 +134,9 @@ public class MainActivity extends AppCompatActivity {
             case "Admin":
                 if (user.getIsadmin()) {
                     intent = new Intent(this, AdminHome.class);
+                } else {
+                    Toast.makeText(this, "You don't have admin privileges.", Toast.LENGTH_SHORT).show();
+                    return;
                 }
                 break;
             case "Organizer":
@@ -162,8 +166,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupRoleSelection() {
-        adminButton.setOnClickListener(v -> checkDeviceIdAndRedirect("Admin"));
-        organizerButton.setOnClickListener(v -> checkDeviceIdAndRedirect("Organizer"));
-        attendeeButton.setOnClickListener(v -> checkDeviceIdAndRedirect("Attendee"));
+        adminButton.setOnClickListener(v -> handleRoleSelection("Admin"));
+        organizerButton.setOnClickListener(v -> handleRoleSelection("Organizer"));
+        attendeeButton.setOnClickListener(v -> handleRoleSelection("Attendee"));
     }
 }
