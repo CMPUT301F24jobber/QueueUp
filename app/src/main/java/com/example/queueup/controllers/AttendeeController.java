@@ -7,19 +7,28 @@ import androidx.annotation.Nullable;
 import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.models.Attendee;
 import com.example.queueup.models.GeoLocation;
+import com.example.queueup.models.User;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Controller class for managing Attendees in the Event Lottery System.
- * Handles CRUD operations and waiting list management.
+ * Handles CRUD operations, waiting list management, and fetching user information.
  */
 public class AttendeeController {
     private static AttendeeController singleInstance = null;
+
     private final CollectionReference attendeeCollectionReference = FirebaseFirestore.getInstance().collection("attendees");
+    private final CollectionReference userCollectionReference = FirebaseFirestore.getInstance().collection("users");
     private final CurrentUserHandler currentUserHandler = CurrentUserHandler.getSingleton();
 
     /**
@@ -56,7 +65,9 @@ public class AttendeeController {
      * @return Task<QuerySnapshot> containing all attendees for the specified event
      */
     public Task<QuerySnapshot> getAttendanceByEventId(String eventId) {
-        return attendeeCollectionReference.whereEqualTo("eventId", eventId).get();
+        return attendeeCollectionReference.whereEqualTo("eventId", eventId)
+                .orderBy("numberInLine")
+                .get();
     }
 
     /**
@@ -122,6 +133,19 @@ public class AttendeeController {
     }
 
     /**
+     * Leaves the waiting list for a specific user and event.
+     * Useful for admin operations or when handling replacements.
+     *
+     * @param eventId The ID of the event.
+     * @param userId  The ID of the user.
+     * @return Task<Void> indicating the completion of the operation
+     */
+    public Task<Void> leaveWaitingList(String eventId, String userId) {
+        String attendeeId = Attendee.generateId(userId, eventId);
+        return attendeeCollectionReference.document(attendeeId).delete();
+    }
+
+    /**
      * Updates an existing attendance record.
      * (Used for updating status, e.g., accepting or declining an invitation)
      *
@@ -178,10 +202,43 @@ public class AttendeeController {
      * @return Task<QuerySnapshot> containing the new attendee selected
      */
     public Task<QuerySnapshot> replaceAttendee(String eventId) {
-        // TODO: Implement logic to select a new attendee from the waiting list
+        // Fetch the next attendee in line based on numberInLine
         return attendeeCollectionReference.whereEqualTo("eventId", eventId)
                 .orderBy("numberInLine")
                 .limit(1)
                 .get();
+    }
+
+    /**
+     * Fetches user information for a list of attendees.
+     *
+     * @param attendees List of attendees to fetch user information for
+     * @return Task<Map<String, User>> mapping user IDs to User objects
+     */
+    public Task<Map<String, User>> fetchUsersForAttendees(List<Attendee> attendees) {
+        List<Task<DocumentSnapshot>> userTasks = new ArrayList<>();
+        for (Attendee attendee : attendees) {
+            Task<DocumentSnapshot> userTask = userCollectionReference.document(attendee.getUserId()).get();
+            userTasks.add(userTask);
+        }
+
+        return Tasks.whenAllSuccess(userTasks).continueWith(task -> {
+            Map<String, User> userMap = new HashMap<>();
+            List<Object> results = task.getResult();
+            for (int i = 0; i < results.size(); i++) {
+                Object obj = results.get(i);
+                if (obj instanceof DocumentSnapshot) {
+                    DocumentSnapshot doc = (DocumentSnapshot) obj;
+                    if (doc.exists()) {
+                        User user = doc.toObject(User.class);
+                        if (user != null) {
+                            // Map userId to User object
+                            userMap.put(attendees.get(i).getUserId(), user);
+                        }
+                    }
+                }
+            }
+            return userMap;
+        });
     }
 }

@@ -23,4 +23,12 @@ public class EventUnitTest {
         assertEquals("Event Location", event.getEventLocation());
     }
 
+    @Test
+    public void testGetEventDates() {
+        Event event = mockEvent();
+        assertEquals(new Date(), event.getEventStartDate());
+        assertEquals(new Date(), event.getEventEndDate());
+    }
+
+
 }
