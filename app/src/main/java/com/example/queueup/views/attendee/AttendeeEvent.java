@@ -80,9 +80,11 @@ public class AttendeeEvent extends AppCompatActivity {
                     .replace(R.id.attendee_event_fragment, AttendeeWaitlistFragment.class, bundle)
                     .commit();
         } else {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("event", event);
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
-                    .replace(R.id.attendee_event_fragment, AttendeeWaitlistJoinedFragment.class, null)
+                    .replace(R.id.attendee_event_fragment, AttendeeWaitlistJoinedFragment.class, bundle)
                     .commit();
         }
     }
