@@ -1,6 +1,7 @@
 package com.example.queueup.views.organizer;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -17,8 +18,13 @@ import com.example.queueup.models.User;
 import com.example.queueup.viewmodels.AttendeeViewModel;
 import com.example.queueup.viewmodels.EventViewModel;
 import com.example.queueup.viewmodels.UsersArrayAdapter;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Fragment responsible for displaying a list of users on the event's waiting list.
@@ -33,6 +39,7 @@ public class OrganizerWaitingListFragment extends Fragment {
     private UsersArrayAdapter usersAdapter;
     private Event event;
     private AttendeeViewModel attendeeViewModel;
+    private AttendeeController attendeeController;
 
     /**
      * Called when the view is created. Initializes a sample user and binds the list to a ListView.
@@ -43,23 +50,32 @@ public class OrganizerWaitingListFragment extends Fragment {
      */
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        User e = new User("e","e","e","e","e","e", false);
+        event = this.getArguments().getSerializable("event", Event.class);
+
         attendeeViewModel = new ViewModelProvider(this).get(AttendeeViewModel.class);
-        attendeeViewModel.getAttendancesByEventLiveData();
         dataList = new ArrayList<User>();
-        dataList.add(e);
+        attendeeController = AttendeeController.getInstance();
 
         userList = getView().findViewById(R.id.event_waiting_list);
         usersAdapter = new UsersArrayAdapter(view.getContext(), dataList);
         userList.setAdapter(usersAdapter);
+        attendeeViewModel.fetchAttendeesWithUserInfo(event.getEventId());
+
+        observeViewModel();
+    }
+    public void onResume() {
+        super.onResume();
+        attendeeViewModel.fetchAttendeesWithUserInfo(event.getEventId());
+
 
     }
-
     private void observeViewModel() {
-        attendeeViewModel.getAllAttendancesLiveData().observe(getViewLifecycleOwner(), attendees -> {
+        attendeeViewModel.getAttendeesWithUserLiveData().observe(getViewLifecycleOwner(), attendees -> {
             dataList.clear();
             if (attendees != null && !attendees.isEmpty()) {
-           //     dataList.addAll(attendees);
+                for (AttendeeViewModel.AttendeeWithUser attendeeWithUser : attendees) {
+                    dataList.add(attendeeWithUser.getUser());
+                }
             }
             usersAdapter.notifyDataSetChanged();
         });

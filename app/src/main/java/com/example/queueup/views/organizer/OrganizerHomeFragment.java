@@ -69,12 +69,7 @@ public class OrganizerHomeFragment extends Fragment {
     public void onResume() {
         super.onResume();
         String organizerId = CurrentUserHandler.getSingleton().getCurrentUserId();
-        if (organizerId != null && !organizerId.isEmpty()) {
-            eventViewModel.fetchEventsByOrganizer(organizerId);
-        } else {
-            Toast.makeText(getContext(), "Organizer ID is missing. Please log in again.", Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "Organizer ID is null or empty.");
-        }
+        eventViewModel.fetchEventsByOrganizer(organizerId);
     }
 
     /**

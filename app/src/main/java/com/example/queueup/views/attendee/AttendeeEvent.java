@@ -71,6 +71,7 @@ public class AttendeeEvent extends AppCompatActivity {
         backButton.setOnClickListener((view) -> {
             onBackPressed();
         });
+
         if (!event.getAttendeeIds().contains(currentUserHandler.getCurrentUserId())) {
             Bundle bundle = new Bundle();
             bundle.putSerializable("event", event);

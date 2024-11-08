@@ -66,7 +66,6 @@ public class AttendeeController {
      */
     public Task<QuerySnapshot> getAttendanceByEventId(String eventId) {
         return attendeeCollectionReference.whereEqualTo("eventId", eventId)
-                .orderBy("numberInLine")
                 .get();
     }
 

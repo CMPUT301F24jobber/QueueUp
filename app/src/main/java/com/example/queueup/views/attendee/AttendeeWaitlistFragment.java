@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.queueup.R;
+import com.example.queueup.controllers.AttendeeController;
 import com.example.queueup.controllers.EventController;
 import com.example.queueup.models.Event;
 import com.example.queueup.models.User;
@@ -31,6 +32,7 @@ public class AttendeeWaitlistFragment extends Fragment {
     }
     Button joinWaitlistButton;
     EventController eventController;
+    AttendeeController attendeeController;
 
     /**
      * Called when the fragment's view has been created. This method sets up the button for joining the waitlist
@@ -43,6 +45,7 @@ public class AttendeeWaitlistFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         joinWaitlistButton = view.findViewById(R.id.join_waitlist);
         Event event = this.getArguments().getSerializable("event", Event.class);
+        attendeeController = AttendeeController.getInstance();
         eventController = EventController.getInstance();
         joinWaitlistButton.setOnClickListener((v) -> {
             eventController.registerToEvent(event.getEventId());

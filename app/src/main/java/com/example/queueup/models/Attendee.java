@@ -30,6 +30,7 @@ public class Attendee implements Serializable {
     public Attendee(String userId, String eventId) {
         this.userId = userId;
         this.eventId = eventId;
+        this.id = userId+eventId;
         this.numberInLine = 0;
         this.id = userId;
     }

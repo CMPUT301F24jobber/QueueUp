@@ -90,6 +90,5 @@ public class AttendeeHomeFragment extends Fragment {
     public void onResume() {
         super.onResume();
         eventViewModel.fetchAllEvents();
-
     }
 }
