@@ -7,11 +7,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
 import com.example.queueup.R;
 import com.example.queueup.controllers.UserController;
-import com.example.queueup.views.admin.AdminHomeFragment;
 import com.example.queueup.views.profiles.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -68,8 +66,11 @@ public class AttendeeHome extends AppCompatActivity {
                             .commit();
                     break;
                 case "Camera":
-                    Intent intent = new Intent(AttendeeHome.this, AttendeeQRscanFragment.class);
-                    startActivity(intent);
+                    getSupportFragmentManager().beginTransaction()
+                            .setReorderingAllowed(true)
+                            .replace(R.id.attendee_activity_fragment, AttendeeQRscanFragment.class, null)
+                            .addToBackStack("QR")
+                            .commit();
                     break;
                 case "Profile":
                     getSupportFragmentManager().beginTransaction()
