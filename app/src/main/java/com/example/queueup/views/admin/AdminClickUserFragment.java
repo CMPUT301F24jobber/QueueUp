@@ -19,13 +19,23 @@ import com.example.queueup.R;
 import com.example.queueup.models.User;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * DialogFragment that displays user details and allows an admin to delete a user.
+ * This fragment is used to view the details of a user and remove them from the database.
+ * The fragment communicates with its parent fragment to refresh the list of users after deletion.
+ */
 public class AdminClickUserFragment extends DialogFragment {
 
     private TextView userName, userEmail, userPhone, userRole;
     private FirebaseFirestore db;
     private RefreshUsersListener listener;
 
-
+    /**
+     * Creates the dialog and sets up the user details for viewing.
+     *
+     * @param savedInstanceState The saved instance state.
+     * @return A Dialog object representing the user details dialog.
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -69,6 +79,11 @@ public class AdminClickUserFragment extends DialogFragment {
 
     }
 
+    /**
+     * Attaches the fragment to its parent and ensures the parent implements the RefreshUsersListener.
+     *
+     * @param context The context of the fragment.
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -80,11 +95,20 @@ public class AdminClickUserFragment extends DialogFragment {
         }
     }
 
+    /**
+     * Interface for the parent fragment to refresh the user list after a user is deleted.
+     */
     interface RefreshUsersListener {
         void refreshFragment();
     }
 
 
+    /**
+     * Deletes a user from Firestore based on their email address.
+     * Displays appropriate toast messages based on success or failure.
+     *
+     * @param user The user to delete.
+     */
     private void deleteUser(User user) {
         String email = user.getEmailAddress();
 

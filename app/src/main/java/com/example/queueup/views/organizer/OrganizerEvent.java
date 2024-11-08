@@ -10,11 +10,21 @@ import com.example.queueup.models.Event;
 import com.example.queueup.views.attendee.AttendeeWaitlistFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+/**
+ * OrganizerEvent activity displays the details of an event and allows the organizer to manage different aspects of the event.
+ * The activity includes a bottom navigation menu to switch between the "Waiting List" and "Draw Winner" fragments.
+ */
 public class OrganizerEvent extends AppCompatActivity {
     private ImageButton backButton;
     private BottomNavigationView navigationView;
     Event event;
 
+    /**
+     * Called when the activity is first created. This method sets up the bottom navigation view and initializes
+     * the fragments for managing the event (Waiting List and Draw Winner).
+     *
+     * @param savedInstanceState A Bundle containing the activity's previously saved state, if any.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

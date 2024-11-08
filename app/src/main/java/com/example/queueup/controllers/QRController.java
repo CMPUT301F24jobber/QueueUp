@@ -3,14 +3,15 @@ package com.example.queueup.controllers;
 import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.models.QRCode;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.Firebase;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
-
-
+/**
+ * QRController is responsible for managing QR code operations within the application.
+ * It provides functionalities to create, delete, and retrieve QR codes from Firebase Firestore.
+ */
 public class QRController {
     private static QRController instance = null;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -62,5 +63,4 @@ public class QRController {
     public Task<DocumentSnapshot> getQR(String qrId) {
         return qrCollection.document(qrId).get();
     }
-
 }

@@ -1,7 +1,9 @@
 package com.example.queueup.views.attendee;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -19,12 +21,24 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
+/**
+ * AttendeeWaitlistFragment represents the fragment where an attendee can join an event's waitlist.
+ * It provides a button to register the user to the event's waitlist and transitions to another fragment once registered.
+ */
 public class AttendeeWaitlistFragment extends Fragment {
     public AttendeeWaitlistFragment() {
         super(R.layout.attendee_join_waitlist_fragment);
     }
     Button joinWaitlistButton;
     EventController eventController;
+
+    /**
+     * Called when the fragment's view has been created. This method sets up the button for joining the waitlist
+     * and initializes the EventController to handle the waitlist registration logic.
+     *
+     * @param view The view returned by {@link Fragment#onCreateView(LayoutInflater, ViewGroup, Bundle)}.
+     * @param savedInstanceState A Bundle containing the fragment's previous saved state, if any.
+     */
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         joinWaitlistButton = view.findViewById(R.id.join_waitlist);

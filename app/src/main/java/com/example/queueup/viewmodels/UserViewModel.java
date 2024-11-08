@@ -13,11 +13,21 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+/**
+ * ViewModel class that handles user-related operations such as loading, creating, updating,
+ * and managing user data in Firestore. This ViewModel interacts with the UserController to
+ * perform the necessary database operations and provides LiveData for the current user and error messages.
+ */
 public class UserViewModel extends AndroidViewModel {
     private final UserController userController;
     private final MutableLiveData<User> currentUser = new MutableLiveData<>();
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
 
+    /**
+     * Constructor for the UserViewModel.
+     *
+     * @param application The application context.
+     */
     public UserViewModel(@NonNull Application application) {
         super(application);
         userController = UserController.getInstance();

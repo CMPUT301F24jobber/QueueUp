@@ -30,6 +30,10 @@ import com.google.firebase.FirebaseApp;
 
 import java.util.UUID;
 
+/**
+ * SignUp activity allows new users to register by providing their details, uploading a profile picture,
+ * and selecting their role. It collects the user's information, validates it, and stores the data in Firestore.
+ */
 public class SignUp extends AppCompatActivity {
 
     private TextView titleTextView;

@@ -22,11 +22,32 @@ import com.example.queueup.views.admin.AdminUserFragment;
 
 import java.util.ArrayList;
 
+/**
+ * Custom ArrayAdapter for displaying user data in a list. This adapter handles the
+ * display of user information such as name, phone number, email address, and profile image.
+ * If no profile image is available, the user's initials are displayed instead.
+ */
 public class UsersArrayAdapter extends ArrayAdapter<User> {
+
+    /**
+     * Constructs a new UsersArrayAdapter.
+     *
+     * @param context the context of the application
+     * @param user the list of User objects to be displayed
+     */
     public UsersArrayAdapter(Context context, ArrayList<User> user) {
         super(context, 0, user);
     }
 
+    /**
+     * Gets the view for a user item in the list, inflating the layout and populating the
+     * view with user details such as name, phone number, email, and profile image.
+     *
+     * @param position the position of the item within the adapter's data set
+     * @param convertView a recycled view that can be reused (if available)
+     * @param parent the parent view that the new view will be attached to
+     * @return the view for the item at the specified position
+     */
     @RequiresApi(api = Build.VERSION_CODES.O)
     @NonNull
     @Override

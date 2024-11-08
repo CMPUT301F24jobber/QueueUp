@@ -19,6 +19,10 @@ import com.example.queueup.handlers.CurrentUserHandler;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Fragment representing the home screen for an organizer, displaying a list of events they have created.
+ * It fetches and displays events associated with the current organizer using a ViewModel and LiveData.
+ */
 public class OrganizerHomeFragment extends Fragment {
 
     private static final String TAG = "OrganizerHomeFragment";
@@ -32,6 +36,13 @@ public class OrganizerHomeFragment extends Fragment {
         super(R.layout.organizer_home_fragment);  // Ensure this layout exists
     }
 
+    /**
+     * Called when the view is created. Sets up the UI elements, initializes the ViewModel,
+     * and observes LiveData from the ViewModel to fetch and display events.
+     *
+     * @param view The view returned by onCreateView.
+     * @param savedInstanceState The saved instance state if the fragment is being recreated.
+     */
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -49,6 +60,11 @@ public class OrganizerHomeFragment extends Fragment {
         observeViewModel();
 
     }
+
+    /**
+     * Called when the fragment is resumed. Fetches events for the current organizer again,
+     * in case the data needs to be refreshed.
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -83,6 +99,9 @@ public class OrganizerHomeFragment extends Fragment {
 
     }
 
+    /**
+     * Called when the view is destroyed.
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();
