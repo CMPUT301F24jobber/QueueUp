@@ -18,11 +18,32 @@ import com.example.queueup.models.User;
 
 import java.util.ArrayList;
 
+/**
+ * Adapter class to display a list of user-related images or file data, extending ArrayAdapter to provide
+ * a custom view for each item. It populates a list item layout with placeholder information for
+ * file name, storage space, file format, and an image.
+ */
 public class ImagesArrayAdapter extends ArrayAdapter<User> {
+
+    /**
+     * Constructs a new ImagesArrayAdapter.
+     *
+     * @param context the context in which the adapter is being used
+     * @param event   the list of User objects to be displayed
+     */
     public ImagesArrayAdapter(Context context, ArrayList<User> event) {
         super(context, 0, event);
     }
 
+    /**
+     * Inflates and populates the view for a User item at the specified position. Sets up placeholder
+     * text for the file name, storage space, and format, as well as a static image.
+     *
+     * @param position    the position of the User item in the list
+     * @param convertView the old view to reuse, if possible
+     * @param parent      the parent view group
+     * @return the view representing the User item with image and placeholder text
+     */
     @RequiresApi(api = Build.VERSION_CODES.O)
     @NonNull
     @Override

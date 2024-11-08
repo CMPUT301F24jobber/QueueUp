@@ -24,6 +24,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * ViewModel class responsible for managing and interacting with image data. It handles the fetching,
+ * processing, and deletion of images, and exposes relevant LiveData to the UI for observing changes.
+ */
 public class ImageViewModel extends ViewModel {
     /**
      * Callback interface for deleting images

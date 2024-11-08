@@ -36,6 +36,12 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.UUID;
 
+/**
+ * OrganizerCreateEvent represents the activity where an organizer can create a new event.
+ * This activity allows the organizer to input event details, such as name, date, location,
+ * description, attendee limit, and an event image. Once the details are filled out, the organizer
+ * can submit the event to create it, with real-time validation and image uploading.
+ */
 public class OrganizerCreateEvent extends AppCompatActivity {
 
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm";
@@ -47,6 +53,12 @@ public class OrganizerCreateEvent extends AppCompatActivity {
     private EventViewModel eventViewModel;
     private Uri imageUri = null;
 
+    /**
+     * Called when the activity is first created. Initializes the UI components, sets up observers for
+     * event creation status, and registers a photo picker to allow the organizer to select an event image.
+     *
+     * @param savedInstanceState A Bundle containing the activity's previous saved state, if any.
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,6 +116,9 @@ public class OrganizerCreateEvent extends AppCompatActivity {
         submitButton = findViewById(R.id.submitButton);
     }
 
+    /**
+     * Sets up observers for error messages, loading status, and successful event creation.
+     */
     private void setupObservers() {
         eventViewModel.getErrorMessageLiveData().observe(this, errorMessage -> {
             if (errorMessage != null && !errorMessage.isEmpty()) {
@@ -127,6 +142,11 @@ public class OrganizerCreateEvent extends AppCompatActivity {
         });
     }
 
+    /**
+     * Toggles the attendee limit EditText based on whether the unlimited attendees checkbox is checked.
+     *
+     * @param isChecked Whether the checkbox is checked or not.
+     */
     private void toggleAttendeeLimit(boolean isChecked) {
         attendeeLimitEditText.setEnabled(!isChecked);
         if (isChecked) {
@@ -134,6 +154,9 @@ public class OrganizerCreateEvent extends AppCompatActivity {
         }
     }
 
+    /**
+     * Handles the event submission process, validating the inputs, creating the event, and uploading the event image.
+     */
     private synchronized void handleSubmit() {
         String eventName = eventNameEditText.getText().toString().trim();
         String startDateStr = startDateEditText.getText().toString().trim();
@@ -208,11 +231,23 @@ public class OrganizerCreateEvent extends AppCompatActivity {
     }
 
 
-
+    /**
+     * Checks if the required fields (event name and location) are filled.
+     *
+     * @param eventName The event name input by the organizer.
+     * @param location  The event location input by the organizer.
+     * @return True if both fields are filled, false otherwise.
+     */
     private boolean areRequiredFieldsFilled(String eventName, String location) {
         return !eventName.isEmpty() && !location.isEmpty();
     }
 
+    /**
+     * Parses the input date string into a Date object using the specified format.
+     *
+     * @param dateStr The date string to be parsed.
+     * @return The parsed Date object, or null if parsing failed.
+     */
     private Date parseDate(String dateStr) {
         try {
             return new SimpleDateFormat(DATE_FORMAT, Locale.getDefault()).parse(dateStr);
@@ -222,6 +257,12 @@ public class OrganizerCreateEvent extends AppCompatActivity {
         }
     }
 
+    /**
+     * Parses the attendee limit string into an integer. If the string is empty or invalid, returns -1.
+     *
+     * @param attendeeLimit The attendee limit input by the organizer.
+     * @return The parsed integer value, or -1 if invalid.
+     */
     private int parseAttendeeLimit(String attendeeLimit) {
         try {
             return attendeeLimit.isEmpty() ? -1 : Integer.parseInt(attendeeLimit);
@@ -230,6 +271,11 @@ public class OrganizerCreateEvent extends AppCompatActivity {
         }
     }
 
+    /**
+     * Displays a toast message.
+     *
+     * @param message The message to be displayed.
+     */
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }

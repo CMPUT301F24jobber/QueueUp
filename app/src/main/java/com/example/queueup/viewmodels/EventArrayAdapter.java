@@ -20,7 +20,19 @@ import com.example.queueup.models.Event;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+/**
+ * Abstract adapter class for displaying a list of events, extending ArrayAdapter to provide
+ * a custom view for each event. It is intended to be subclassed to provide specific click
+ * handling for different user roles (e.g., Admin, Attendee).
+ */
 public abstract class EventArrayAdapter extends ArrayAdapter<Event> {
+
+    /**
+     * Constructs a new EventArrayAdapter.
+     *
+     * @param context the context in which the adapter is being used
+     * @param event   the list of events to be displayed
+     */
     public EventArrayAdapter(Context context, ArrayList<Event> event) {
         super(context, 0, event);
     }
@@ -31,6 +43,16 @@ public abstract class EventArrayAdapter extends ArrayAdapter<Event> {
     ImageView eventImage;
     DateTimeFormatter formatter;
 
+    /**
+     * Inflates and populates the view for an event at the specified position.
+     * Sets up the event name, date, location, and banner image using data from
+     * the {@link Event} object.
+     *
+     * @param position    the position of the event in the list
+     * @param convertView the old view to reuse, if possible
+     * @param parent      the parent view group
+     * @return the view representing the event item
+     */
     @RequiresApi(api = Build.VERSION_CODES.O)
     @NonNull
     @Override

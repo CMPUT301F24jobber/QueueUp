@@ -17,6 +17,11 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 
+/**
+ * AdminImagesFragment is responsible for displaying a list of users in the admin section of the app.
+ * It listens for real-time updates from Firestore and updates the UI with user data. The fragment
+ * also handles user selection and navigates to the detailed user view when a user is clicked.
+ */
 public class AdminImagesFragment extends Fragment implements AdminClickUserFragment.RefreshUsersListener {
 
     public AdminImagesFragment() {
@@ -28,6 +33,14 @@ public class AdminImagesFragment extends Fragment implements AdminClickUserFragm
     private UsersArrayAdapter usersAdapter;
     private FirebaseFirestore db;
 
+    /**
+     * Called when the fragment's view has been created. It initializes the Firestore database instance,
+     * the data list for users, and sets up the ListView and its adapter. It also listens for real-time
+     * updates from Firestore and updates the list when users are added or modified.
+     *
+     * @param view The View returned by onCreateView().
+     * @param savedInstanceState A Bundle containing the activity's previous state (if any).
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);

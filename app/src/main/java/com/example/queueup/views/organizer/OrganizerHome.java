@@ -13,6 +13,11 @@ import com.example.queueup.views.profiles.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * OrganizerHome activity represents the home screen of an organizer, providing access to different functionalities
+ * such as managing events, viewing QR codes, and accessing the user's profile.
+ * The activity includes a bottom navigation view for switching between different sections.
+ */
 public class OrganizerHome extends AppCompatActivity {
 
     private FirebaseFirestore db;
@@ -21,6 +26,12 @@ public class OrganizerHome extends AppCompatActivity {
     private BottomNavigationView navigationView;
     private ImageButton plusButton;
 
+    /**
+     * Called when the activity is first created. This method initializes the views, sets up the bottom navigation
+     * menu, and sets up the listener for navigating to the event creation screen.
+     *
+     * @param savedInstanceState A Bundle containing the activity's previously saved state, if any.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -20,6 +20,10 @@ import com.example.queueup.viewmodels.UsersArrayAdapter;
 
 import java.util.ArrayList;
 
+/**
+ * Fragment responsible for displaying a list of users on the event's waiting list.
+ * This fragment fetches data from the ViewModel and updates the UI accordingly.
+ */
 public class OrganizerWaitingListFragment extends Fragment {
     public OrganizerWaitingListFragment() {
         super(R.layout.organizer_waiting_list_fragment);
@@ -29,6 +33,14 @@ public class OrganizerWaitingListFragment extends Fragment {
     private UsersArrayAdapter usersAdapter;
     private Event event;
     private AttendeeViewModel attendeeViewModel;
+
+    /**
+     * Called when the view is created. Initializes a sample user and binds the list to a ListView.
+     * Also initializes the ViewModel to fetch data for attendees on the waiting list.
+     *
+     * @param view The view returned by onCreateView.
+     * @param savedInstanceState The saved instance state if the fragment is being recreated.
+     */
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         User e = new User("e","e","e","e","e","e", false);

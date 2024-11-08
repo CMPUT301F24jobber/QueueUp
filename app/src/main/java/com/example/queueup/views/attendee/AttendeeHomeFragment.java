@@ -21,6 +21,11 @@ import com.example.queueup.viewmodels.UserViewModel;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * AttendeeHomeFragment is a fragment that displays a list of events for an attendee.
+ * It retrieves event data from the ViewModel and populates a ListView with the events.
+ * This fragment is part of the attendee's home screen, where they can view upcoming events.
+ */
 public class AttendeeHomeFragment extends Fragment {
 
     // Constructor for the fragment, loading the layout file
@@ -33,6 +38,13 @@ public class AttendeeHomeFragment extends Fragment {
     private AttendeeEventArrayAdapter eventAdapter;
     private EventViewModel eventViewModel;
 
+    /**
+     * Called when the fragment's view is created. This method initializes the event list,
+     * sets up the ListView with an adapter, and observes the ViewModel for changes in event data.
+     *
+     * @param view The root view of the fragment's layout.
+     * @param savedInstanceState A Bundle containing the fragment's saved state, if any.
+     */
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
