@@ -159,7 +159,6 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("role", role);
         }
         startActivity(intent);
-        finish();
     }
 
     private void setupRoleSelection() {
