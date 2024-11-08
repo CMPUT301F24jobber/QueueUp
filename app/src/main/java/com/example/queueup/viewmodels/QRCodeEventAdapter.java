@@ -16,6 +16,8 @@ import java.util.ArrayList;
 
 public class QRCodeEventAdapter extends EventArrayAdapter {
 
+    private View.OnClickListener onQrDownloadClickListener;
+
     public QRCodeEventAdapter(Context context, ArrayList<Event> events) {
         super(context, events);
     }
@@ -26,17 +28,16 @@ public class QRCodeEventAdapter extends EventArrayAdapter {
 
         ImageView eventImageView = view.findViewById(R.id.event_image);
 
+
         View downloadButton = view.findViewById(R.id.qr_download_button);
-        if (downloadButton != null) {
-            downloadButton.setVisibility(View.VISIBLE); // making download button visible
-        }
+        downloadButton.setVisibility(View.VISIBLE);
 
 
         // generating QR code for each event
         Event event = getItem(position);
         if (event != null && event.getCheckInQrCodeId() != null) {
             try {
-                BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+                BarcodeEncoder barcodeEncoder = new BarcodeEncoder(); // Resource used: https://github.com/journeyapps/zxing-android-embedded/blob/master/zxing-android-embedded/src/com/journeyapps/barcodescanner/BarcodeEncoder.java
                 Bitmap bitmap = barcodeEncoder.encodeBitmap(
                         event.getCheckInQrCodeId(),
                         BarcodeFormat.QR_CODE,

@@ -1,17 +1,16 @@
 package com.example.queueup.views.organizer;
 
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.queueup.R;
@@ -45,7 +44,6 @@ public class OrganizerQRCodesFragment extends Fragment {
     private ArrayList<Event> eventList;
     private QRCodeEventAdapter eventsAdapter;
     private FirebaseFirestore firestore;
-    private Button downloadButton;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -54,11 +52,10 @@ public class OrganizerQRCodesFragment extends Fragment {
         firestore = FirebaseFirestore.getInstance();
         eventList = new ArrayList<>();
         ListView eventsListView = view.findViewById(R.id.organizer_qrcodes_list);
-        downloadButton = view.findViewById(R.id.qr_download_button);
         eventsAdapter = new QRCodeEventAdapter(view.getContext(), eventList);
-        eventsListView.setAdapter(eventsAdapter);
 
-        //downloadButton.setOnClickListener(v -> downloadQrCode());
+
+        eventsListView.setAdapter(eventsAdapter);
 
         fetchEventsFromFirestore();
     }
@@ -93,5 +90,56 @@ public class OrganizerQRCodesFragment extends Fragment {
             }
         });
     }
+
+    /**
+     * Generates a QR code for the given event and saves it to the device storage.
+     *
+     * @param event The event for which the QR code is generated.
+     */
+    private void downloadQrCode(Event event) {
+        if (event == null || event.getCheckInQrCodeId() == null || event.getCheckInQrCodeId().isEmpty()) {
+            Toast.makeText(getContext(), "QR code ID is missing for this event", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            // Generate QR code bitmap
+            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+            Bitmap bitmap = barcodeEncoder.encodeBitmap(
+                    event.getCheckInQrCodeId(),
+                    BarcodeFormat.QR_CODE,
+                    800, 800
+            );
+
+            // Save bitmap to device storage
+            saveBitmapToStorage(bitmap, "QR_Code_" + event.getEventName() + ".png");
+        } catch (WriterException e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(), "Error generating QR code", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Saves a bitmap to device storage.
+     *
+     * @param bitmap The bitmap to save.
+     * @param fileName The name of the file to save.
+     */
+    private void saveBitmapToStorage(Bitmap bitmap, String fileName) {
+        File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        if (directory != null && !directory.exists()) {
+            directory.mkdirs();
+        }
+
+        File file = new File(directory, fileName);
+        try (FileOutputStream outputStream = new FileOutputStream(file)) {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+            Toast.makeText(getContext(), "QR code saved to: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(), "Failed to save QR code", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
 }
