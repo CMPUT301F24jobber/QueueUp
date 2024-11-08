@@ -102,7 +102,6 @@ public class UsersArrayAdapter extends ArrayAdapter<User> {
         }
 
 
-
         return view;
     }
 
