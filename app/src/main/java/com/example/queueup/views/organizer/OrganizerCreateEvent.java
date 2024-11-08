@@ -77,8 +77,6 @@ public class OrganizerCreateEvent extends AppCompatActivity {
             if (user != null && user.getUuid() != null) {
                 // Organizer ID is available, enable submit button
                 submitButton.setEnabled(true);
-            } else {
-                showToast("Organizer ID is missing. Please make sure you are logged in.");
             }
         });
 
@@ -171,10 +169,6 @@ public class OrganizerCreateEvent extends AppCompatActivity {
         }
 
         String organizerId = CurrentUserHandler.getSingleton().getCurrentUserId();
-        if (organizerId == null || organizerId.isEmpty()) {
-            showToast("Organizer ID is missing. Please make sure you are logged in.");
-            return;
-        }
         if (imageUri == null) {
             showToast("Image is missing. Please add an image");
             return;
