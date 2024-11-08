@@ -38,8 +38,8 @@ public class SignUp extends AppCompatActivity {
     private TextInputLayout emailInputLayout;
     private TextInputLayout phoneNumberInputLayout;
     private TextInputLayout usernameInputLayout;
+    private TextInputLayout passwordInputLayout;
     private MaterialButton submitButton;
-
     private ImageView profileImageView;
     private Button uploadImageButton;
     private Uri profileImageUri;
@@ -65,6 +65,7 @@ public class SignUp extends AppCompatActivity {
         emailInputLayout = findViewById(R.id.emailInputLayout);
         phoneNumberInputLayout = findViewById(R.id.phoneNumberInputLayout);
         usernameInputLayout = findViewById(R.id.usernameInputLayout);
+        passwordInputLayout = findViewById(R.id.passwordInputLayout);
         submitButton = findViewById(R.id.submitButton);
 
         profileImageView = findViewById(R.id.profilePicImage);
@@ -89,6 +90,12 @@ public class SignUp extends AppCompatActivity {
             startActivity(mainIntent);
             finish();
             return;
+        }
+
+        if (role.equals("Admin")) {
+            passwordInputLayout.setVisibility(View.VISIBLE);
+        } else {
+            passwordInputLayout.setVisibility(View.GONE);
         }
 
         // Set up image upload button click listener
@@ -140,6 +147,12 @@ public class SignUp extends AppCompatActivity {
         String phoneNumber = phoneNumberEditText.getText().toString().trim();
         String username = usernameEditText.getText().toString().trim();
         Boolean isadmin = false;
+        String password = passwordInputLayout.getEditText().getText().toString().trim();
+
+        if(!password.equals("123456")) {
+            Toast.makeText(SignUp.this, "Password is incorrect", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         // Validate inputs
         if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || phoneNumber.isEmpty() || username.isEmpty()) {
