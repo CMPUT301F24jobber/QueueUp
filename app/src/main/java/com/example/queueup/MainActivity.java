@@ -64,11 +64,6 @@ public class MainActivity extends AppCompatActivity {
         checkExistingUser();
 
         // isAdmin = true IS REQUIRED TO SEE ADMIN BUTTON AND ENTER ADMIN MODE
-        if (user != null && user.getIsadmin()) {
-            isAdmin = false;
-        } else {
-            adminButton.setVisibility(View.INVISIBLE);
-        }
         // Handle window insets for edge-to-edge UI
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -89,9 +84,6 @@ public class MainActivity extends AppCompatActivity {
                                 User user = document.toObject(User.class);
                                 if (user != null) {
                                     isAdmin = user.getIsadmin();
-                                    if (isAdmin) {
-                                        adminButton.setVisibility(View.VISIBLE);
-                                    }
                                     CurrentUserHandler.getSingleton().loginWithDeviceId(null);
                                 }
                             }
