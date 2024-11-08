@@ -20,6 +20,11 @@ import com.google.android.material.button.MaterialButton;
 
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Fragment that displays event details for an admin and allows deletion of the event.
+ * The admin can toggle QR functionality, view the event's title, date, location, and image,
+ * and delete the event from the database.
+ */
 public class AdminEventFragment extends Fragment {
     public AdminEventFragment() {
         super(R.layout.admin_event_fragment);
@@ -34,6 +39,13 @@ public class AdminEventFragment extends Fragment {
     MaterialButton deleteButton;
 
 
+    /**
+     * Initializes the views and binds the data for the event.
+     * Sets up the toggle button for QR, loads the event data, and handles delete button click.
+     *
+     * @param view The root view of the fragment.
+     * @param savedInstanceState The saved instance state.
+     */
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         qrToggle = view.findViewById(R.id.delete_qr_button);

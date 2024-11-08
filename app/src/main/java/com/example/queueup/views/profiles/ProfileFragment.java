@@ -24,6 +24,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.android.material.button.MaterialButton;
 
+/**
+ * ProfileFragment is responsible for displaying and managing the user's profile information.
+ * It allows the user to edit their profile, view their details, and switch roles.
+ */
 public class ProfileFragment extends Fragment {
     private static final int EDIT_PROFILE_REQUEST_CODE = 1;
 
@@ -38,6 +42,14 @@ public class ProfileFragment extends Fragment {
         // Required empty public constructor
     }
 
+    /**
+     * Called when the fragment's view is created. Inflates the layout and initializes the UI elements.
+     *
+     * @param inflater The LayoutInflater object used to inflate the view.
+     * @param container The parent view that the fragment's UI will be attached to, if non-null.
+     * @param savedInstanceState If non-null, contains the data previously saved by the fragment.
+     * @return The inflated view representing the fragment's layout.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -74,6 +86,13 @@ public class ProfileFragment extends Fragment {
         fetchUserData();
     }
 
+    /**
+     * Handles the result of the activity launched for editing the user's profile.
+     *
+     * @param requestCode The request code passed in startActivityForResult().
+     * @param resultCode The result code returned by the child activity.
+     * @param data An Intent containing the result data from the activity.
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -83,6 +102,10 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    /**
+     * Fetches the current user's data and updates the UI with the retrieved information.
+     * This includes the user's name, username, email, phone number, and profile image.
+     */
     private void fetchUserData() {
         currentUser = CurrentUserHandler.getSingleton().getCurrentUser().getValue();
 
@@ -95,6 +118,11 @@ public class ProfileFragment extends Fragment {
         displayProfileImageOrInitials();
     }
 
+    /**
+     * Displays the user's profile image or their initials if the image is not available.
+     * If the profile image is set, it is displayed using Glide. If the image is not available,
+     * the user's initials (first letter of the first and last name) are displayed instead.
+     */
     private void displayProfileImageOrInitials() {
         if (currentUser.getProfileImageUrl() != null && !currentUser.getProfileImageUrl().isEmpty()) {
             profileInitialsTextView.setVisibility(View.GONE);

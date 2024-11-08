@@ -21,6 +21,11 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * AdminHomeFragment displays a list of events for the admin. It fetches the events from the ViewModel and
+ * displays them using a ListView and a custom adapter. The fragment observes data changes in the ViewModel
+ * and updates the UI accordingly.
+ */
 public class AdminHomeFragment extends Fragment {
 
     // Constructor for the fragment, loading the layout file
@@ -33,6 +38,13 @@ public class AdminHomeFragment extends Fragment {
     private AdminEventArrayAdapter eventAdapter;
     private EventViewModel eventViewModel;
 
+    /**
+     * Called when the view for the fragment has been created. Initializes the ListView and its adapter,
+     * sets up the ViewModel, and observes LiveData for events and errors.
+     *
+     * @param view The View returned by onCreateView().
+     * @param savedInstanceState A Bundle containing the activity's previous state (if any).
+     */
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -49,12 +61,21 @@ public class AdminHomeFragment extends Fragment {
         eventViewModel.fetchAllEvents();
 
     }
+
+    /**
+     * Called when the fragment is resumed. Refetches all events from the ViewModel.
+     */
     @Override
     public void onResume() {
         super.onResume();
         eventViewModel.fetchAllEvents();
 
     }
+
+    /**
+     * Observes LiveData from the ViewModel for changes in the list of events and error messages.
+     * Updates the UI based on the data or error received.
+     */
     private void observeViewModel() {
         eventViewModel.getAllEventsLiveData().observe(getViewLifecycleOwner(), events -> {
             dataList.clear();

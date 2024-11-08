@@ -30,11 +30,31 @@ import com.example.queueup.views.organizer.OrganizerHome;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+/**
+ * Adapter class to display a list of events for attendee users, extending the EventArrayAdapter
+ * to provide additional functionality specifically for attendees. Each event in the list
+ * can be clicked to navigate to an {@link AttendeeEvent} activity for viewing the event details.
+ */
 public class AttendeeEventArrayAdapter extends EventArrayAdapter {
+
+    /**
+     * Constructs a new AttendeeEventArrayAdapter.
+     *
+     * @param context the context in which the adapter is being used
+     * @param event   the list of events to be displayed
+     */
     public AttendeeEventArrayAdapter(Context context, ArrayList<Event> event) {
         super(context, event);
     }
 
+    /**
+     * Returns an OnClickListener that handles click events for an item in the event list.
+     * When an event is clicked, it starts the {@link AttendeeEvent} activity to view the selected event's details.
+     *
+     * @param view     the view being clicked
+     * @param position the position of the event item in the list
+     * @return an OnClickListener that opens the AttendeeEvent activity with the selected event's details
+     */
     protected View.OnClickListener onClickListener(View view, int position) {
         return (v) -> {
             Intent intent = new Intent(view.getContext(), AttendeeEvent.class);

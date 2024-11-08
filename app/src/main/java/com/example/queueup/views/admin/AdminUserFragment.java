@@ -15,6 +15,10 @@ import com.example.queueup.models.User;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * AdminUserFragment is responsible for displaying detailed information about a user in the admin section of the app.
+ * It allows the admin to view a user's profile and delete the user from the system.
+ */
 public class AdminUserFragment extends Fragment {
     public AdminUserFragment() {
         super(R.layout.admin_user_fragment);
@@ -23,6 +27,13 @@ public class AdminUserFragment extends Fragment {
     private AdminClickUserFragment.RefreshUsersListener listener;
     private MaterialButton deleteButton;
 
+    /**
+     * Called when the fragment's view has been created. This method initializes the UI elements such as
+     * the profile text views and the delete button. It also populates the UI with user data passed as an argument.
+     *
+     * @param view The View returned by onCreateView().
+     * @param savedInstanceState A Bundle containing the activity's previous state (if any).
+     */
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);

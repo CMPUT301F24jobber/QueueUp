@@ -26,6 +26,10 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+/**
+ * MainActivity is the entry point of the app, where the user selects their role (Admin, Organizer, or Attendee) to proceed further.
+ * It handles device ID checks, user role-based navigation, and role-specific UI updates.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private MaterialButton adminButton;
@@ -36,6 +40,11 @@ public class MainActivity extends AppCompatActivity {
     User user;
     private Boolean isAdmin = false;
 
+    /**
+     * Called when the activity is created. Initializes Firebase, sets up UI elements,
+     * and handles edge-to-edge UI configurations. It also checks for an existing user.
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +86,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Checks if a user is already registered by their device ID and updates the UI accordingly.
+     * If no user is found, it will redirect to the sign-up page.
+     */
     private void checkExistingUser() {
         String deviceId = userViewModel.getDeviceId();
         if (deviceId != null && !deviceId.isEmpty()) {
@@ -100,7 +113,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    /**
+     * Checks the device ID and redirects the user to the appropriate activity based on their selected role.
+     * If no user is found with the given device ID, the user is redirected to the sign-up page.
+     *
+     * @param selectedRole The role selected by the user (Admin, Organizer, Attendee).
+     */
     private void checkDeviceIdAndRedirect(String selectedRole) {
         String deviceId = userViewModel.getDeviceId();
 
@@ -135,6 +153,12 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Redirects the user to the appropriate activity based on their role.
+     *
+     * @param role The role of the user (Admin, Organizer, Attendee).
+     * @param user The user object containing user details.
+     */
     private void redirectToRoleBasedActivity(String role, User user) {
         Intent intent = null;
         switch (role) {
@@ -161,6 +185,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Navigates the user to the sign-up page, passing the selected role as an extra.
+     *
+     * @param role The role of the user (Admin, Organizer, Attendee).
+     */
     private void navigateToSignupPage(String role) {
         Intent intent = new Intent(this, SignUp.class);
         if (role != null) {
@@ -170,6 +199,9 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * Sets up the role selection buttons and their corresponding click listeners.
+     */
     private void setupRoleSelection() {
         adminButton.setOnClickListener(v -> checkDeviceIdAndRedirect("Admin"));
         organizerButton.setOnClickListener(v -> checkDeviceIdAndRedirect("Organizer"));

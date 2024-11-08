@@ -27,6 +27,12 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+/**
+ * Activity that allows the user to edit their profile information, including
+ * their first name, last name, username, email, phone number, and profile picture.
+ * This activity interacts with Firebase Firestore and Firebase Storage to
+ * save and retrieve user data, including the user's profile image.
+ */
 public class EditProfileActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private User currentUser;
@@ -40,6 +46,11 @@ public class EditProfileActivity extends AppCompatActivity {
     private String deviceId;
     private CurrentUserHandler currentUserHandler;
 
+    /**
+     * Called when the activity is created. Initializes the UI elements, Firebase instances,
+     * and sets up click listeners for saving changes, removing profile picture, and selecting a new one.
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,11 +106,22 @@ public class EditProfileActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Opens the image picker to select a new profile picture.
+     */
     private void selectImage() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, PICK_IMAGE_REQUEST);
     }
 
+    /**
+     * Handles the result of the image picker activity.
+     * Updates the profile picture in the UI if a new image is selected.
+     *
+     * @param requestCode The request code passed in startActivityForResult().
+     * @param resultCode The result code returned by the activity.
+     * @param data The data returned by the activity, containing the selected image URI.
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -113,6 +135,9 @@ public class EditProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Removes the user's profile picture from Firebase and updates the UI.
+     */
     private void removeProfilePicture() {
         if (currentUser != null && currentUser.getProfileImageUrl() != null && !currentUser.getProfileImageUrl().isEmpty()) {
             currentUser.setProfileImageUrl(null);
@@ -128,6 +153,9 @@ public class EditProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Loads the current user's data into the input fields and displays the profile image or initials.
+     */
     private void loadUserData() {
         if (currentUser != null) {
             editFirstName.setText(currentUser.getFirstName());
@@ -139,6 +167,9 @@ public class EditProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Displays the user's profile image or initials in the UI.
+     */
     private void displayProfileImageOrInitials() {
         if (currentUser.getProfileImageUrl() != null && !currentUser.getProfileImageUrl().isEmpty()) {
             profileInitialsTextView.setVisibility(View.GONE);
@@ -153,6 +184,10 @@ public class EditProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Saves the profile changes made by the user to Firebase Firestore and Firebase Storage.
+     * If a new profile image is selected, it is uploaded to Firebase Storage.
+     */
     private void saveProfileChanges() {
         String firstName = editFirstName.getText().toString().trim();
         String lastName = editLastName.getText().toString().trim();
