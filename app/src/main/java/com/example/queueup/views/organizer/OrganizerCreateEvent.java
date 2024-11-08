@@ -198,6 +198,8 @@ public class OrganizerCreateEvent extends AppCompatActivity {
         }
         ImageUploader imageUploader = new ImageUploader();
 
+        String qrCodeId = UUID.randomUUID().toString();
+
 
         Event newEvent = new Event(
                 UUID.randomUUID().toString(),
@@ -211,6 +213,8 @@ public class OrganizerCreateEvent extends AppCompatActivity {
                 attendeeLimitValue,
                 true // Setting the event as active by default.
         );
+
+        newEvent.setCheckInQrCodeId(qrCodeId);
         eventViewModel.createEvent(newEvent);
         imageUploader.uploadImage("profile_pictures/", imageUri, new ImageUploader.UploadListener() {
             @Override

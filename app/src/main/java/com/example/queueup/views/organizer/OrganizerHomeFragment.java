@@ -3,6 +3,7 @@ package com.example.queueup.views.organizer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -54,6 +55,7 @@ public class OrganizerHomeFragment extends Fragment {
         eventList = view.findViewById(R.id.organizer_event_list);  // Ensure this ID matches your XML
         dataList = new ArrayList<>();
         eventAdapter = new OrganizerEventArrayAdapter(requireContext(), dataList);
+
         eventList.setAdapter(eventAdapter);
 
         // Observe LiveData from ViewModel
