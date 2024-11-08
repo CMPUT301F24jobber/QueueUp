@@ -1,0 +1,11 @@
+com.example.queueup
+com.example.queueup.controllers
+com.example.queueup.handlers
+com.example.queueup.models
+com.example.queueup.services
+com.example.queueup.viewmodels
+com.example.queueup.views
+com.example.queueup.views.admin
+com.example.queueup.views.attendee
+com.example.queueup.views.organizer
+com.example.queueup.views.profiles
