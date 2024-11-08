@@ -11,18 +11,20 @@ import androidx.lifecycle.ViewModel;
 import com.example.queueup.controllers.AttendeeController;
 import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.models.Attendee;
+import com.example.queueup.models.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * ViewModel for managing attendee-related data and operations.
- * Interacts with AttendeeController to perform CRUD operations and exposes LiveData to the UI.
+ * Interacts with AttendeeController to perform CRUD operations, fetch user information,
+ * and exposes LiveData to the UI.
  */
 public class AttendeeViewModel extends ViewModel {
 
@@ -41,8 +43,35 @@ public class AttendeeViewModel extends ViewModel {
     // LiveData for loading states
     private final MutableLiveData<Boolean> isLoadingLiveData = new MutableLiveData<>(false);
 
+    // LiveData for combined attendee and user information
+    private final MutableLiveData<List<AttendeeWithUser>> attendeesWithUserLiveData = new MutableLiveData<>();
+
+    // LiveData to indicate if a specific user is on a waiting list
+    private final MutableLiveData<Boolean> isOnWaitingListLiveData = new MutableLiveData<>(false);
+
     // Instance of AttendeeController
     private final AttendeeController attendeeController;
+
+    /**
+     * Inner class to hold combined attendee and user data
+     */
+    public static class AttendeeWithUser {
+        private final Attendee attendee;
+        private final User user;
+
+        public AttendeeWithUser(Attendee attendee, User user) {
+            this.attendee = attendee;
+            this.user = user;
+        }
+
+        public Attendee getAttendee() {
+            return attendee;
+        }
+
+        public User getUser() {
+            return user;
+        }
+    }
 
     /**
      * Constructor initializes the AttendeeController instance.
@@ -50,6 +79,8 @@ public class AttendeeViewModel extends ViewModel {
     public AttendeeViewModel() {
         this.attendeeController = AttendeeController.getInstance();
     }
+
+    // Getters for LiveData
 
     /**
      * Returns LiveData containing all attendance records for the current user.
@@ -86,6 +117,21 @@ public class AttendeeViewModel extends ViewModel {
         return isLoadingLiveData;
     }
 
+    /**
+     * Returns LiveData containing combined attendee and user information.
+     */
+    public LiveData<List<AttendeeWithUser>> getAttendeesWithUserLiveData() {
+        return attendeesWithUserLiveData;
+    }
+
+    /**
+     * Returns LiveData indicating if a specific user is on a waiting list.
+     */
+    public LiveData<Boolean> getIsOnWaitingListLiveData() {
+        return isOnWaitingListLiveData;
+    }
+
+    // LiveData setters are private to prevent external modification
 
     /**
      * Fetches all attendance records for the current user.
@@ -93,27 +139,29 @@ public class AttendeeViewModel extends ViewModel {
      */
     public void fetchAllAttendances() {
         isLoadingLiveData.setValue(true);
-        attendeeController.getAllAttendance().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                List<Attendee> attendances = new ArrayList<>();
-                for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
-                    Attendee attendee = doc.toObject(Attendee.class);
-                    if (attendee != null) {
-                        attendee.setId(doc.getId()); // Ensure attendee ID is set
-                        attendances.add(attendee);
+        attendeeController.getAllAttendance()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        List<Attendee> attendances = new ArrayList<>();
+                        for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                            Attendee attendee = doc.toObject(Attendee.class);
+                            if (attendee != null) {
+                                attendee.setId(doc.getId()); // Ensure attendee ID is set
+                                attendances.add(attendee);
+                            }
+                        }
+                        allAttendancesLiveData.setValue(attendances);
+                        isLoadingLiveData.setValue(false);
                     }
-                }
-                allAttendancesLiveData.setValue(attendances);
-                isLoadingLiveData.setValue(false);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to fetch attendances: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to fetch attendances: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
     }
 
     /**
@@ -124,27 +172,29 @@ public class AttendeeViewModel extends ViewModel {
      */
     public void fetchAttendancesByEvent(String eventId) {
         isLoadingLiveData.setValue(true);
-        attendeeController.getAttendanceByEventId(eventId).addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                List<Attendee> attendances = new ArrayList<>();
-                for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
-                    Attendee attendee = doc.toObject(Attendee.class);
-                    if (attendee != null) {
-                        attendee.setId(doc.getId());
-                        attendances.add(attendee);
+        attendeeController.getAttendanceByEventId(eventId)
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        List<Attendee> attendances = new ArrayList<>();
+                        for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                            Attendee attendee = doc.toObject(Attendee.class);
+                            if (attendee != null) {
+                                attendee.setId(doc.getId());
+                                attendances.add(attendee);
+                            }
+                        }
+                        attendancesByEventLiveData.setValue(attendances);
+                        isLoadingLiveData.setValue(false);
                     }
-                }
-                attendancesByEventLiveData.setValue(attendances);
-                isLoadingLiveData.setValue(false);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to fetch attendances for event: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to fetch attendances for event: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
     }
 
     /**
@@ -155,31 +205,32 @@ public class AttendeeViewModel extends ViewModel {
      */
     public void fetchAttendeeById(String attendeeId) {
         isLoadingLiveData.setValue(true);
-        attendeeController.getAttendanceById(attendeeId).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.exists()) {
-                    Attendee attendee = documentSnapshot.toObject(Attendee.class);
-                    if (attendee != null) {
-                        attendee.setId(documentSnapshot.getId());
-                        selectedAttendeeLiveData.setValue(attendee);
-                    } else {
-                        errorMessageLiveData.setValue("Failed to parse attendee data.");
+        attendeeController.getAttendanceById(attendeeId)
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()) {
+                            Attendee attendee = documentSnapshot.toObject(Attendee.class);
+                            if (attendee != null) {
+                                attendee.setId(documentSnapshot.getId());
+                                selectedAttendeeLiveData.setValue(attendee);
+                            } else {
+                                errorMessageLiveData.setValue("Failed to parse attendee data.");
+                            }
+                        } else {
+                            errorMessageLiveData.setValue("Attendee not found.");
+                        }
+                        isLoadingLiveData.setValue(false);
                     }
-                } else {
-                    errorMessageLiveData.setValue("Attendee not found.");
-                }
-                isLoadingLiveData.setValue(false);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to fetch attendee: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to fetch attendee: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
     }
-
 
     /**
      * Joins the waiting list for a specific event.
@@ -189,19 +240,21 @@ public class AttendeeViewModel extends ViewModel {
      */
     public void joinWaitingList(String eventId) {
         isLoadingLiveData.setValue(true);
-        attendeeController.joinWaitingList(eventId).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                // Optionally, fetch all attendances again
-                fetchAllAttendances();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to join waiting list: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
+        attendeeController.joinWaitingList(eventId)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Optionally, fetch all attendances again
+                        fetchAllAttendances();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to join waiting list: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
     }
 
     /**
@@ -214,18 +267,20 @@ public class AttendeeViewModel extends ViewModel {
      */
     public void joinWaitingList(String userId, String eventId, @Nullable Location location) {
         isLoadingLiveData.setValue(true);
-        attendeeController.joinWaitingList(userId, eventId, location).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                fetchAllAttendances();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to join waiting list with location: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
+        attendeeController.joinWaitingList(userId, eventId, location)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        fetchAllAttendances();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to join waiting list with location: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
     }
 
     /**
@@ -236,19 +291,21 @@ public class AttendeeViewModel extends ViewModel {
      */
     public void leaveWaitingList(String eventId) {
         isLoadingLiveData.setValue(true);
-        attendeeController.leaveWaitingList(eventId).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                // Optionally, fetch all attendances again
-                fetchAllAttendances();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to leave waiting list: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
+        attendeeController.leaveWaitingList(eventId)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Optionally, fetch all attendances again
+                        fetchAllAttendances();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to leave waiting list: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
     }
 
     /**
@@ -261,19 +318,21 @@ public class AttendeeViewModel extends ViewModel {
      */
     public void leaveWaitingList(String eventId, String userId) {
         isLoadingLiveData.setValue(true);
-        attendeeController.leaveWaitingList(eventId).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                // Optionally, fetch attendances by event again
-                fetchAttendancesByEvent(eventId);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to leave waiting list for user: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
+        attendeeController.leaveWaitingList(userId, eventId)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Optionally, fetch attendances by event again
+                        fetchAttendancesByEvent(eventId);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to leave waiting list for user: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
     }
 
     /**
@@ -284,19 +343,21 @@ public class AttendeeViewModel extends ViewModel {
      */
     public void updateAttendance(Attendee attendee) {
         isLoadingLiveData.setValue(true);
-        attendeeController.updateAttendance(attendee).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                // Optionally, fetch the updated attendee details
-                fetchAttendeeById(attendee.getId());
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to update attendance: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
+        attendeeController.updateAttendance(attendee)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Optionally, fetch the updated attendee details
+                        fetchAttendeeById(attendee.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to update attendance: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
     }
 
     /**
@@ -307,21 +368,22 @@ public class AttendeeViewModel extends ViewModel {
      */
     public void deleteAttendance(String attendeeId) {
         isLoadingLiveData.setValue(true);
-        attendeeController.deleteAttendance(attendeeId).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                // Optionally, fetch all attendances again
-                fetchAllAttendances();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to delete attendance: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
+        attendeeController.deleteAttendance(attendeeId)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Optionally, fetch all attendances again
+                        fetchAllAttendances();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to delete attendance: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
     }
-
 
     /**
      * Checks in the current user to a specific event.
@@ -333,22 +395,23 @@ public class AttendeeViewModel extends ViewModel {
     public void checkInUser(String eventId, @Nullable Location location) {
         isLoadingLiveData.setValue(true);
         String attendeeId = generateAttendeeId(eventId);
-        attendeeController.checkInAttendee(attendeeId, location).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                // Optionally, fetch the updated attendee details
-                fetchAttendeeById(attendeeId);
-                isLoadingLiveData.setValue(false);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to check-in: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
+        attendeeController.checkInAttendee(attendeeId, location)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Optionally, fetch the updated attendee details
+                        fetchAttendeeById(attendeeId);
+                        isLoadingLiveData.setValue(false);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to check-in: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
     }
-
 
     /**
      * Handles the replacement of an attendee if they decline the invitation.
@@ -359,48 +422,52 @@ public class AttendeeViewModel extends ViewModel {
      */
     public void handleReplacement(String eventId) {
         isLoadingLiveData.setValue(true);
-        attendeeController.replaceAttendee(eventId).addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                if (!queryDocumentSnapshots.isEmpty()) {
-                    DocumentSnapshot newAttendeeDoc = queryDocumentSnapshots.getDocuments().get(0);
-                    Attendee newAttendee = newAttendeeDoc.toObject(Attendee.class);
-                    if (newAttendee != null) {
-                        // Update the numberInLine or any other necessary fields
-                        // For example, set numberInLine based on current list size
-                        newAttendee.setNumberInLine(calculateNumberInLine(eventId));
-                        // Update the attendee record
-                        attendeeController.updateAttendance(newAttendee).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                notifyAttendee(newAttendee.getId(), true);
-                                // Fetch updated attendances by event
-                                fetchAttendancesByEvent(eventId);
+        attendeeController.replaceAttendee(eventId)
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            DocumentSnapshot newAttendeeDoc = queryDocumentSnapshots.getDocuments().get(0);
+                            Attendee newAttendee = newAttendeeDoc.toObject(Attendee.class);
+                            if (newAttendee != null) {
+                                // Update the numberInLine or any other necessary fields
+                                // For example, set numberInLine based on current list size
+                                newAttendee.setNumberInLine(calculateNumberInLine(eventId));
+                                // Update the attendee record
+                                attendeeController.updateAttendance(newAttendee)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                notifyAttendee(newAttendee.getId(), true);
+                                                // Fetch updated attendances by event
+                                                fetchAttendancesByEvent(eventId);
+                                                isLoadingLiveData.setValue(false);
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                errorMessageLiveData.setValue("Failed to update replacement attendee: " + e.getMessage());
+                                                isLoadingLiveData.setValue(false);
+                                            }
+                                        });
+                            } else {
+                                errorMessageLiveData.setValue("Failed to parse replacement attendee data.");
                                 isLoadingLiveData.setValue(false);
                             }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                errorMessageLiveData.setValue("Failed to update replacement attendee: " + e.getMessage());
-                                isLoadingLiveData.setValue(false);
-                            }
-                        });
-                    } else {
-                        errorMessageLiveData.setValue("Failed to parse replacement attendee data.");
+                        } else {
+                            errorMessageLiveData.setValue("No attendees available for replacement.");
+                            isLoadingLiveData.setValue(false);
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to handle replacement attendee: " + e.getMessage());
                         isLoadingLiveData.setValue(false);
                     }
-                } else {
-                    errorMessageLiveData.setValue("No attendees available for replacement.");
-                    isLoadingLiveData.setValue(false);
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                errorMessageLiveData.setValue("Failed to handle replacement attendee: " + e.getMessage());
-                isLoadingLiveData.setValue(false);
-            }
-        });
+                });
     }
 
     /**
@@ -428,7 +495,9 @@ public class AttendeeViewModel extends ViewModel {
         // This could involve calling a NotificationHandler or similar component
     }
 
-
+    /**
+     * Clears the current error message.
+     */
     public void clearErrorMessage() {
         errorMessageLiveData.setValue(null);
     }
@@ -444,4 +513,93 @@ public class AttendeeViewModel extends ViewModel {
         return Attendee.generateId(userId, eventId);
     }
 
+    /**
+     * Fetches attendance records for a specific event, including user information.
+     * Updates attendeesWithUserLiveData with combined attendee and user information.
+     *
+     * @param eventId The ID of the event
+     */
+    public void fetchAttendeesWithUserInfo(String eventId) {
+        isLoadingLiveData.setValue(true);
+
+        attendeeController.getAttendanceByEventId(eventId)
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        List<Attendee> attendees = new ArrayList<>();
+                        for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                            Attendee attendee = doc.toObject(Attendee.class);
+                            if (attendee != null) {
+                                attendee.setId(doc.getId());
+                                attendees.add(attendee);
+                            }
+                        }
+
+                        if (attendees.isEmpty()) {
+                            attendeesWithUserLiveData.setValue(new ArrayList<>());
+                            isLoadingLiveData.setValue(false);
+                            return;
+                        }
+
+                        attendeeController.fetchUsersForAttendees(attendees)
+                                .addOnSuccessListener(new OnSuccessListener<Map<String, User>>() {
+                                    @Override
+                                    public void onSuccess(Map<String, User> userMap) {
+                                        List<AttendeeWithUser> combinedList = new ArrayList<>();
+                                        for (Attendee attendee : attendees) {
+                                            User user = userMap.get(attendee.getUserId());
+                                            if (user != null) {
+                                                combinedList.add(new AttendeeWithUser(attendee, user));
+                                            }
+                                        }
+                                        attendeesWithUserLiveData.setValue(combinedList);
+                                        isLoadingLiveData.setValue(false);
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        errorMessageLiveData.setValue("Failed to fetch user information: " + e.getMessage());
+                                        isLoadingLiveData.setValue(false);
+                                    }
+                                });
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to fetch attendees: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
+    }
+
+    /**
+     * Checks if a specific user is on the waiting list for an event.
+     * Updates isOnWaitingListLiveData with the result.
+     *
+     * @param userId  The ID of the user to check
+     * @param eventId The ID of the event to check
+     */
+    public void checkWaitingListStatus(String userId, String eventId) {
+        isLoadingLiveData.setValue(true);
+        String attendeeId = Attendee.generateId(userId, eventId);
+
+        attendeeController.getAttendanceById(attendeeId)
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        isOnWaitingListLiveData.setValue(documentSnapshot.exists());
+                        isLoadingLiveData.setValue(false);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to check waiting list status: " + e.getMessage());
+                        isOnWaitingListLiveData.setValue(false);
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
+    }
 }

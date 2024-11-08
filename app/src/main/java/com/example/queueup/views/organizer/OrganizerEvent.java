@@ -1,6 +1,7 @@
 package com.example.queueup.views.organizer;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,10 +32,13 @@ public class OrganizerEvent extends AppCompatActivity {
         setContentView(R.layout.organizer_event_activity);
         navigationView = findViewById(R.id.bottom_navigation);
         event = getIntent().getSerializableExtra("event", Event.class);
+        Log.d("ewio", event.getEventId());
         if (savedInstanceState == null) {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("event", event);
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
-                    .replace(R.id.organizer_event_fragment, OrganizerWaitingListFragment.class, null)
+                    .replace(R.id.organizer_event_fragment, OrganizerWaitingListFragment.class, bundle)
                     .commit();
         }
         backButton = findViewById(R.id.back_button);

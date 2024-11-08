@@ -1,6 +1,7 @@
 package com.example.queueup.handlers;
 
 import android.util.Log;
+import android.app.Application;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;

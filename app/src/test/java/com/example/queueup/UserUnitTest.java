@@ -20,4 +20,5 @@ public class UserUnitTest {
             assertEquals("johnDoe@gmail.com", user.getEmailAddress());
             assertEquals("1234567890", user.getPhoneNumber());
         }
+
 }
