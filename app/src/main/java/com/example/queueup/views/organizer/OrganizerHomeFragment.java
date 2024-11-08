@@ -48,9 +48,6 @@ public class OrganizerHomeFragment extends Fragment {
         // Observe LiveData from ViewModel
         observeViewModel();
 
-        // Fetch events for the current organizer
-        String organizerId = CurrentUserHandler.getSingleton().getCurrentUserId();
-
     }
     @Override
     public void onResume() {
