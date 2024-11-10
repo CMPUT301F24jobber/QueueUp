@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "752088682486",
+    "project_id": "listycity-5dc23",
+    "storage_bucket": "listycity-5dc23.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:752088682486:android:7aa7b0fe0fe671e1e201d7",
+        "android_client_info": {
+          "package_name": "com.example.listycity5"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbs3DdN-9Fetszysob3lKRN6-GOS7xUHo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
