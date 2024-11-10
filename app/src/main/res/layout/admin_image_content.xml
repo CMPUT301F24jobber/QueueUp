@@ -51,6 +51,7 @@
         app:layout_constraintStart_toEndOf="@+id/file_image"
         app:layout_constraintTop_toTopOf="parent" />
 
+    e
 
     <TextView
         android:id="@+id/file_format"
