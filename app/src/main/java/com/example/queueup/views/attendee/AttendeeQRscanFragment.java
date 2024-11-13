@@ -19,6 +19,7 @@ import com.example.queueup.R;
 import com.example.queueup.controllers.AttendeeController;
 import com.example.queueup.controllers.EventController;
 import com.example.queueup.models.Event;
+import com.google.android.material.button.MaterialButton;
 
 /**
  * AttendeeWaitlistFragment represents the fragment where an attendee can join an event's waitlist.
@@ -28,7 +29,7 @@ public class AttendeeQRscanFragment extends Fragment {
     public AttendeeQRscanFragment() {
         super(R.layout.attendee_qr_fragment);
     }
-    Button scanButton;
+    MaterialButton scanButton;
     EventController eventController;
     AttendeeController attendeeController;
 
