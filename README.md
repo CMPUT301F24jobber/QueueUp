@@ -6,4 +6,4 @@ QueueUp redefines event management with its sleek modern interface, exceptional 
 
 - **[QueueUp's Wiki](https://github.com/CMPUT301F24jobber/QueueUp/wiki)**
 - **[QueueUp's UI Demo](https://github.com/CMPUT301F24jobber/QueueUp/wiki/User-Interface-Mockup-and-Storyboard)**
-- **[QueueUp's UML](https://github.com/CMPUT301F24jobber/QueueUp/wiki/User-Interface-Mockup-and-Storyboard](https://github.com/CMPUT301F24jobber/QueueUp/wiki/UML-Diagram)**
+- **[QueueUp's UML](https://github.com/CMPUT301F24jobber/QueueUp/wiki/UML-Diagram)**
