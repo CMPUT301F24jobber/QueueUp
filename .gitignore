@@ -40,3 +40,4 @@ local.properties
 .history/*
 
 .DS_Store
+/app/google-services.json

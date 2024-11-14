@@ -3,10 +3,13 @@ package com.example.queueup.controllers;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.provider.Settings;
+import android.util.Log;
 
 import com.example.queueup.models.User;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -99,12 +102,53 @@ public class UserController {
     }
 
     /**
-     * Update a user's profile picture.
-     *
-     * @param userId The user ID to update the profile picture for.
-     * @param profileImageUrl The URL of the new profile picture.
-     * @return A task that resolves when the profile picture is updated.
+     * get user fcm token
+     * @param userId The user id
+     * @return Task<String> The user fcm token
      */
+    public Task<String> getUserFcmToken(String userId) {
+        TaskCompletionSource<String> taskCompletionSource = new TaskCompletionSource<>();
+        userCollectionReference.document(userId).get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        if (task.getResult() != null && task.getResult().exists()) {
+                            String fcmToken = task.getResult().getString("FCMToken");
+                            taskCompletionSource.setResult(fcmToken);
+                            Log.d("UserController", "Successfully retrieved User FCM token.");
+                        } else {
+                            taskCompletionSource.setException(new Exception("No such user."));
+                            Log.d("UserController", "Failed to retrieve User FCM token.");
+                        }
+                    } else {
+                        Log.d("UserController", "Failed to retrieve User FCM token. User does not exist.");
+                        taskCompletionSource.setException(task.getException());
+                    }
+                });
+
+        return taskCompletionSource.getTask();
+    }
+
+    /**
+     * Set user fcm token
+     * @param userId The user id
+     * @param fcmToken The fcm token
+     * @return Task<Void>
+     */
+    public Task<Void> setUserFcmToken(String userId, String fcmToken) {
+        DocumentReference userRef = userCollectionReference.document(userId);
+        return userRef.update("FCM", fcmToken)
+                .addOnSuccessListener(aVoid -> Log.d("UserController", "User FCM token successfully updated."))
+                .addOnFailureListener(e -> Log.e("UserController", "Failed to update user FCM token.", e));
+    }
+
+
+        /**
+         * Update a user's profile picture.
+         *
+         * @param userId The user ID to update the profile picture for.
+         * @param profileImageUrl The URL of the new profile picture.
+         * @return A task that resolves when the profile picture is updated.
+         */
     public Task<Void> updateProfilePicture(String userId, String profileImageUrl) {
         return userCollectionReference.document(userId).update("profileImageUrl", profileImageUrl);
     }
