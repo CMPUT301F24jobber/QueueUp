@@ -2,8 +2,9 @@ package com.example.queueup.views.organizer;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -18,7 +19,6 @@ import com.example.queueup.viewmodels.OrganizerEventArrayAdapter;
 import com.example.queueup.handlers.CurrentUserHandler;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Fragment representing the home screen for an organizer, displaying a list of events they have created.
@@ -35,6 +35,21 @@ public class OrganizerHomeFragment extends Fragment {
 
     public OrganizerHomeFragment() {
         super(R.layout.organizer_home_fragment);  // Ensure this layout exists
+    }
+
+    /**
+     * Called to have the fragment instantiate its user interface view.
+     *
+     * @param inflater The LayoutInflater object that can be used to inflate any views in the fragment.
+     * @param container If non-null, this is the parent view that the fragment's UI should be attached to.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state.
+     * @return Return the View for the fragment's UI.
+     */
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.organizer_home_fragment, container, false);
     }
 
     /**
@@ -61,15 +76,7 @@ public class OrganizerHomeFragment extends Fragment {
         // Observe LiveData from ViewModel
         observeViewModel();
 
-    }
-
-    /**
-     * Called when the fragment is resumed. Fetches events for the current organizer again,
-     * in case the data needs to be refreshed.
-     */
-    @Override
-    public void onResume() {
-        super.onResume();
+        // Fetch events for the current organizer
         String organizerId = CurrentUserHandler.getSingleton().getCurrentUserId();
         eventViewModel.fetchEventsByOrganizer(organizerId);
     }
@@ -77,8 +84,8 @@ public class OrganizerHomeFragment extends Fragment {
     /**
      * Observes LiveData from EventViewModel to update the UI accordingly.
      */
+// OrganizerHomeFragment.java
     private void observeViewModel() {
-        // Observe events by organizer
         eventViewModel.getEventsByOrganizerLiveData().observe(getViewLifecycleOwner(), events -> {
             dataList.clear();
             if (events != null && !events.isEmpty()) {
@@ -87,13 +94,11 @@ public class OrganizerHomeFragment extends Fragment {
             eventAdapter.notifyDataSetChanged();
         });
 
-        // Observe error messages
         eventViewModel.getErrorMessageLiveData().observe(getViewLifecycleOwner(), errorMessage -> {
             if (errorMessage != null && !errorMessage.isEmpty()) {
                 Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 
     /**
@@ -104,5 +109,4 @@ public class OrganizerHomeFragment extends Fragment {
         super.onDestroyView();
         // Optionally, perform cleanup here
     }
-
 }
