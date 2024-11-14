@@ -117,7 +117,7 @@ public class OrganizerCreateEvent extends AppCompatActivity {
     /**
      * Sets up observers for error messages, loading status, and successful event creation.
      */
-    private void setupObservers() {
+    private synchronized void setupObservers() {
         eventViewModel.getErrorMessageLiveData().observe(this, errorMessage -> {
             if (errorMessage != null && !errorMessage.isEmpty()) {
                 showToast(errorMessage);
@@ -133,6 +133,8 @@ public class OrganizerCreateEvent extends AppCompatActivity {
         eventViewModel.getAllEventsLiveData().observe(this, events -> {
             if (events != null) {
                 showToast("Event created successfully");
+                Intent intent = new Intent(OrganizerCreateEvent.this, OrganizerHome.class);
+                startActivity(intent);
                 finish();
             } else {
                 showToast("Event creation failed. Please try again.");
