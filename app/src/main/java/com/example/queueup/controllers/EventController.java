@@ -200,6 +200,53 @@ public class EventController {
     }
 
     /**
+     * Get the FCM tokens of all attendees of an event.
+     * @param eventId The event id
+     * @return Task<List<String>> The list of FCM tokens
+     */
+
+    public Task<List<String>> getAttendeesFCMTokens(String eventId) {
+        UserController userController = UserController.getInstance();
+        DocumentReference eventRef = eventCollectionReference.document(eventId);
+        return eventRef.get().continueWithTask(task -> {
+            if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
+                DocumentSnapshot eventSnapshot = task.getResult();
+                List<String> attendeeIds = (List<String>) eventSnapshot.get("attendeeIds");
+
+                if (attendeeIds == null || attendeeIds.isEmpty()) {
+                    return Tasks.forResult(new ArrayList<String>());
+                }
+
+                List<Task<DocumentSnapshot>> userTasks = new ArrayList<>();
+                for (String attendeeId : attendeeIds) {
+                    userTasks.add(userController.getUserById(attendeeId));
+                }
+
+                return Tasks.whenAllSuccess(userTasks).continueWith(innerTask -> {
+                    List<?> userSnapshots = innerTask.getResult();
+                    List<String> fcmTokens = new ArrayList<>();
+
+                    for (Object obj : userSnapshots) {
+                        if (obj instanceof DocumentSnapshot) {
+                            DocumentSnapshot userSnapshot = (DocumentSnapshot) obj;
+                            if (userSnapshot.exists()) {
+                                String token = userSnapshot.getString("FCMToken");
+                                if (token != null && !token.isEmpty()) {
+                                    fcmTokens.add(token);
+                                }
+                            }
+                        }
+                    }
+
+                    return fcmTokens;
+                });
+            } else {
+                throw new RuntimeException("Failed to retrieve event details.");
+            }
+        });
+    }
+
+    /**
      * Registers a user to an event (joins the waiting list) with optional geolocation.
      *
      * @param userId   The ID of the user

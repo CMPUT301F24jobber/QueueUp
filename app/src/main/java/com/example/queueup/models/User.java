@@ -28,6 +28,7 @@ public class User implements Parcelable {
     private String deviceId;
     private boolean receiveNotifications;
     private List<String> waitingListEvents;
+    private String FCMToken;
 
     /**
      * Default constructor required for Firestore.
@@ -275,6 +276,24 @@ public class User implements Parcelable {
      */
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
+    }
+
+    /**
+     * Returns the user's FCM token.
+     *
+     * @return The FCM token.
+     */
+    public String getFCMToken() {
+        return FCMToken;
+    }
+
+    /**
+     * Sets the user's FCM token.
+     *
+     * @param FCMToken The FCM token to set.
+     */
+    public void setFCMToken(String FCMToken) {
+        this.FCMToken = FCMToken;
     }
 
     /**
