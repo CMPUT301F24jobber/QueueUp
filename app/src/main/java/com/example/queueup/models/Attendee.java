@@ -14,6 +14,7 @@ public class Attendee implements Serializable {
     private String eventId;
     private int numberInLine;
     private GeoLocation location;
+    private String status;
 
     /**
      * Default constructor for creating an empty Attendee object.
@@ -33,6 +34,7 @@ public class Attendee implements Serializable {
         this.id = userId+eventId;
         this.numberInLine = 0;
         this.id = userId;
+        this.status = "pending";
     }
 
     /**
@@ -96,6 +98,24 @@ public class Attendee implements Serializable {
      */
     public int getNumberInLine() {
         return numberInLine;
+    }
+
+    /**
+     * Returns the status of the attendee in line.
+     *
+     * @return The status of the attendee in line.
+     */
+    public String getStatus() {
+        return status;
+    }
+
+    /**
+     * Sets the status of the attendee in line.
+     *
+     * @param status The new status of the attendee in line.
+     */
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     /**

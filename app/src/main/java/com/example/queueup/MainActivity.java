@@ -12,6 +12,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.queueup.handlers.CurrentUserHandler;
+import com.example.queueup.handlers.PushNotificationHandler;
 import com.example.queueup.models.User;
 import com.example.queueup.viewmodels.UserViewModel;
 import com.example.queueup.views.SignUp;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private User user;
     private Boolean isAdmin = false;
+    private PushNotificationHandler pushNotificationHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +67,11 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+
+        // Initialize PushNotificationHandler Singleton
+        pushNotificationHandler = PushNotificationHandler.getSingleton();
+        pushNotificationHandler.handleNotificationPermissions(this, this);
     }
 
     private void checkExistingUser() {

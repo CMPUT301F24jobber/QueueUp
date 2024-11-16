@@ -5,13 +5,14 @@ import android.content.SharedPreferences;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.example.queueup.handlers.PushNotificationHandler;
 import com.example.queueup.models.User;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 /**
@@ -199,4 +200,45 @@ public class UserController {
     public Task<QuerySnapshot> getUserByDeviceId(String deviceId) {
         return userCollectionReference.whereEqualTo("deviceId", deviceId).get();
     }
+
+    /**
+     * Retrieves the FCM token for a specific user.
+     *
+     * @param userId The ID of the user.
+     * @return Task<String> containing the FCM token.
+     */
+    public Task<String> getFCMToken(String userId) {
+        return getUserById(userId).continueWith(task -> {
+            if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
+                User user = task.getResult().toObject(User.class);
+                return user != null ? user.getFCMToken() : null;
+            } else {
+                throw new RuntimeException("User not found or failed to retrieve.");
+            }
+        });
+    }
+
+    /**
+     * Checks if a user has enabled a specific type of notification.
+     *
+     * @param userId The ID of the user.
+     * @param type The type of notification.
+     * @return Task<Boolean> indicating if the notification is enabled.
+     */
+    public Task<Boolean> isNotificationEnabled(String userId, PushNotificationHandler.NotificationType type) {
+        return getUserById(userId).continueWith(task -> {
+            if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
+                User user = task.getResult().toObject(User.class);
+                if (user != null) {
+                    // Implement logic based on NotificationType
+                    // For simplicity, let's assume all users have notifications enabled
+                    return user.isReceiveNotifications();
+                }
+                return false;
+            } else {
+                throw new RuntimeException("User not found or failed to retrieve.");
+            }
+        });
+    }
+
 }

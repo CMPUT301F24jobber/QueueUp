@@ -1,10 +1,12 @@
 package com.example.queueup.controllers;
 
 import android.location.Location;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 import com.example.queueup.handlers.CurrentUserHandler;
+import com.example.queueup.handlers.PushNotificationHandler;
 import com.example.queueup.models.Attendee;
 import com.example.queueup.models.GeoLocation;
 import com.example.queueup.models.User;
@@ -22,14 +24,17 @@ import java.util.Map;
 
 /**
  * Controller class for managing Attendees in the Event Lottery System.
- * Handles CRUD operations, waiting list management, and fetching user information.
+ * Handles CRUD operations, waiting list management, updating statuses,
+ * and fetching user information.
  */
 public class AttendeeController {
     private static AttendeeController singleInstance = null;
+    private static final String TAG = "AttendeeController";
 
     private final CollectionReference attendeeCollectionReference = FirebaseFirestore.getInstance().collection("attendees");
     private final CollectionReference userCollectionReference = FirebaseFirestore.getInstance().collection("users");
     private final CurrentUserHandler currentUserHandler = CurrentUserHandler.getSingleton();
+    private final PushNotificationHandler pushNotificationHandler = PushNotificationHandler.getSingleton();
 
     /**
      * Private constructor to enforce Singleton pattern.
@@ -54,7 +59,11 @@ public class AttendeeController {
      * @return Task<QuerySnapshot> containing all attendance records for the current user
      */
     public Task<QuerySnapshot> getAllAttendance() {
-        String currentUserId = currentUserHandler.getCurrentUser().getValue().getUuid();
+        User currentUser = currentUserHandler.getCurrentUser().getValue();
+        if (currentUser == null) {
+            return Tasks.forException(new Exception("Current user is not logged in."));
+        }
+        String currentUserId = currentUser.getUuid();
         return attendeeCollectionReference.whereEqualTo("userId", currentUserId).get();
     }
 
@@ -65,8 +74,7 @@ public class AttendeeController {
      * @return Task<QuerySnapshot> containing all attendees for the specified event
      */
     public Task<QuerySnapshot> getAttendanceByEventId(String eventId) {
-        return attendeeCollectionReference.whereEqualTo("eventId", eventId)
-                .get();
+        return attendeeCollectionReference.whereEqualTo("eventId", eventId).get();
     }
 
     /**
@@ -97,8 +105,13 @@ public class AttendeeController {
      * @return Task<Void> indicating the completion of the operation
      */
     public Task<Void> joinWaitingList(String eventId) {
-        String userId = currentUserHandler.getCurrentUser().getValue().getUuid();
+        User currentUser = currentUserHandler.getCurrentUser().getValue();
+        if (currentUser == null) {
+            return Tasks.forException(new Exception("Current user is not logged in."));
+        }
+        String userId = currentUser.getUuid();
         Attendee newAttendee = new Attendee(userId, eventId);
+        newAttendee.setStatus("waiting"); // Set initial status to "waiting"
         return attendeeCollectionReference.document(newAttendee.getId()).set(newAttendee);
     }
 
@@ -112,6 +125,7 @@ public class AttendeeController {
      */
     public Task<Void> joinWaitingList(String userId, String eventId, @Nullable Location location) {
         Attendee newAttendee = new Attendee(userId, eventId);
+        newAttendee.setStatus("waiting"); // Set initial status to "waiting"
         if (location != null) {
             GeoLocation newLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
             newAttendee.setLocation(newLocation);
@@ -120,14 +134,20 @@ public class AttendeeController {
     }
 
     /**
-     * Leaves the waiting list for a specific event.
+     * Leaves the waiting list for the current user and a specific event.
      *
      * @param eventId The ID of the event
      * @return Task<Void> indicating the completion of the operation
      */
     public Task<Void> leaveWaitingList(String eventId) {
-        String userId = currentUserHandler.getCurrentUser().getValue().getUuid();
+        User currentUser = currentUserHandler.getCurrentUser().getValue();
+        if (currentUser == null) {
+            return Tasks.forException(new Exception("Current user is not logged in."));
+        }
+        String userId = currentUser.getUuid();
         String attendeeId = Attendee.generateId(userId, eventId);
+
+        attendeeCollectionReference.document(attendeeId).update("status", "cancelled");
         return attendeeCollectionReference.document(attendeeId).delete();
     }
 
@@ -176,22 +196,53 @@ public class AttendeeController {
         if (location != null) {
             GeoLocation checkInLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
             return attendeeCollectionReference.document(attendeeId)
-                    .update("geoLocation", checkInLocation, "isCheckedIn", true);
+                    .update("location", checkInLocation, "isCheckedIn", true)
+                    .addOnSuccessListener(aVoid -> Log.d(TAG, "Attendee checked in successfully."))
+                    .addOnFailureListener(e -> Log.e(TAG, "Failed to check in attendee.", e));
         }
         // If location is not provided, still mark as checked in
         return attendeeCollectionReference.document(attendeeId)
-                .update("isCheckedIn", true);
+                .update("isCheckedIn", true)
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Attendee checked in successfully without location."))
+                .addOnFailureListener(e -> Log.e(TAG, "Failed to check in attendee.", e));
     }
 
     /**
      * Notifies an attendee about their selection status.
-     * (Implementation would require integration with a notification system)
      *
      * @param attendeeId The ID of the attendee
      * @param isSelected Whether the attendee was selected or not
      */
     public void notifyAttendee(String attendeeId, boolean isSelected) {
-        // TODO: Implement notification logic (e.g., Firebase Cloud Messaging)
+        attendeeCollectionReference.document(attendeeId).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
+                Attendee attendee = task.getResult().toObject(Attendee.class);
+                if (attendee != null) {
+                    String eventId = attendee.getEventId();
+                    String userId = attendee.getUserId();
+                    String newStatus = isSelected ? "selected" : "not_selected";
+                    attendee.setStatus(newStatus);
+                    // Update the attendee's status in Firestore
+                    attendeeCollectionReference.document(attendeeId).set(attendee).addOnSuccessListener(aVoid -> {
+                        Log.d(TAG, "Attendee status updated to " + newStatus + ".");
+                        // Send notification based on selection status
+                        if (isSelected) {
+                            pushNotificationHandler.sendLotteryWinNotification(eventId, userId)
+                                    .addOnSuccessListener(a -> Log.d(TAG, "Lottery win notification sent to user " + userId + "."))
+                                    .addOnFailureListener(e -> Log.e(TAG, "Failed to send lottery win notification.", e));
+                        } else {
+                            pushNotificationHandler.sendLotteryLoseNotification(eventId, userId)
+                                    .addOnSuccessListener(a -> Log.d(TAG, "Lottery lose notification sent to user " + userId + "."))
+                                    .addOnFailureListener(e -> Log.e(TAG, "Failed to send lottery lose notification.", e));
+                        }
+                    }).addOnFailureListener(e -> {
+                        Log.e(TAG, "Failed to update attendee status.", e);
+                    });
+                }
+            } else {
+                Log.e(TAG, "Failed to retrieve attendee with ID: " + attendeeId);
+            }
+        });
     }
 
     /**
@@ -201,8 +252,10 @@ public class AttendeeController {
      * @return Task<QuerySnapshot> containing the new attendee selected
      */
     public Task<QuerySnapshot> replaceAttendee(String eventId) {
-        // Fetch the next attendee in line based on numberInLine
-        return attendeeCollectionReference.whereEqualTo("eventId", eventId)
+        // Fetch the next attendee in line based on numberInLine and status "waiting"
+        return attendeeCollectionReference
+                .whereEqualTo("eventId", eventId)
+                .whereEqualTo("status", "waiting")
                 .orderBy("numberInLine")
                 .limit(1)
                 .get();
@@ -239,5 +292,19 @@ public class AttendeeController {
             }
             return userMap;
         });
+    }
+
+    /**
+     * Sets the status of an attendee.
+     *
+     * @param attendeeId The ID of the attendee
+     * @param status     The new status to set (e.g., "selected", "not_selected")
+     * @return Task<Void> indicating the completion of the operation
+     */
+    public Task<Void> setAttendeeStatus(String attendeeId, String status) {
+        return attendeeCollectionReference.document(attendeeId)
+                .update("status", status)
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Attendee " + attendeeId + " status set to " + status + "."))
+                .addOnFailureListener(e -> Log.e(TAG, "Failed to set status for attendee " + attendeeId + ".", e));
     }
 }

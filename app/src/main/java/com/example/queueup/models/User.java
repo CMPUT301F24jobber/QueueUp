@@ -30,6 +30,8 @@ public class User implements Parcelable {
     private List<String> waitingListEvents;
     private String FCMToken;
 
+    
+
     /**
      * Default constructor required for Firestore.
      */

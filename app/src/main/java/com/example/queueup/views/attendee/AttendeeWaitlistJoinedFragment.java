@@ -11,6 +11,7 @@ import com.example.queueup.R;
 import com.example.queueup.controllers.AttendeeController;
 import com.example.queueup.controllers.EventController;
 import com.example.queueup.handlers.CurrentUserHandler;
+import com.example.queueup.handlers.PushNotificationHandler;
 import com.example.queueup.models.Event;
 
 public class AttendeeWaitlistJoinedFragment extends Fragment {
@@ -31,7 +32,9 @@ public class AttendeeWaitlistJoinedFragment extends Fragment {
         attendeeController = AttendeeController.getInstance();
         eventController = EventController.getInstance();
         currentUserHandler = CurrentUserHandler.getSingleton();
+        PushNotificationHandler pushNotificationHandler = PushNotificationHandler.getSingleton();
         leaveWaitlistButton.setOnClickListener((v) -> {
+            attendeeController.setAttendeeStatus(currentUserHandler.getCurrentUserId(), "cancelled");
             eventController.unregisterFromEvent( event.getEventId(), currentUserHandler.getCurrentUserId());
             leaveWaitlistButton.setVisibility(View.INVISIBLE);
             Bundle bundle = new Bundle();

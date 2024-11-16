@@ -244,7 +244,7 @@ public class AttendeeViewModel extends ViewModel {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        // Optionally, fetch all attendances again
+                        // Fetch all attendances again to update UI
                         fetchAllAttendances();
                     }
                 })
@@ -271,6 +271,7 @@ public class AttendeeViewModel extends ViewModel {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
+                        // Fetch all attendances again to update UI
                         fetchAllAttendances();
                     }
                 })
@@ -295,7 +296,7 @@ public class AttendeeViewModel extends ViewModel {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        // Optionally, fetch all attendances again
+                        // Fetch all attendances again to update UI
                         fetchAllAttendances();
                     }
                 })
@@ -322,7 +323,7 @@ public class AttendeeViewModel extends ViewModel {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        // Optionally, fetch attendances by event again
+                        // Fetch attendances by event again to update UI
                         fetchAttendancesByEvent(eventId);
                     }
                 })
@@ -347,7 +348,7 @@ public class AttendeeViewModel extends ViewModel {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        // Optionally, fetch the updated attendee details
+                        // Fetch the updated attendee details
                         fetchAttendeeById(attendee.getId());
                     }
                 })
@@ -372,7 +373,7 @@ public class AttendeeViewModel extends ViewModel {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        // Optionally, fetch all attendances again
+                        // Fetch all attendances again to update UI
                         fetchAllAttendances();
                     }
                 })
@@ -399,7 +400,7 @@ public class AttendeeViewModel extends ViewModel {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        // Optionally, fetch the updated attendee details
+                        // Fetch the updated attendee details
                         fetchAttendeeById(attendeeId);
                         isLoadingLiveData.setValue(false);
                     }
@@ -438,7 +439,8 @@ public class AttendeeViewModel extends ViewModel {
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
-                                                notifyAttendee(newAttendee.getId(), true);
+                                                // Notify the new attendee about their selection
+                                                attendeeController.notifyAttendee(newAttendee.getId(), true);
                                                 // Fetch updated attendances by event
                                                 fetchAttendancesByEvent(eventId);
                                                 isLoadingLiveData.setValue(false);
@@ -491,8 +493,8 @@ public class AttendeeViewModel extends ViewModel {
      * @param isSelected Whether the attendee was selected or not.
      */
     private void notifyAttendee(String attendeeId, boolean isSelected) {
-        // TODO: Implement notification logic (e.g., Firebase Cloud Messaging)
-        // This could involve calling a NotificationHandler or similar component
+        // This method is now handled by AttendeeController's notifyAttendee method
+        // Therefore, this can be removed or left empty if needed for future use
     }
 
     /**
