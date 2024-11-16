@@ -8,7 +8,6 @@ import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
-import com.example.queueup.R;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -56,4 +55,5 @@ public class NotificationService extends FirebaseMessagingService {
 
         notificationManager.notify(0, notificationBuilder.build());
     }
+
 }

@@ -103,6 +103,8 @@ public class EventViewModel extends ViewModel {
         return isLoadingLiveData;
     }
 
+    // LiveData setters are private to prevent external modification
+
     /**
      * Fetches all events from the database.
      * Updates allEventsLiveData upon success or errorMessageLiveData upon failure.
@@ -404,6 +406,7 @@ public class EventViewModel extends ViewModel {
 
     /**
      * Sets the banner image URL for a specific event.
+     * Updates selectedEventLiveData upon success or errorMessageLiveData upon failure.
      *
      * @param eventId  The ID of the event.
      * @param imageUrl The URL of the banner image.
@@ -653,14 +656,7 @@ public class EventViewModel extends ViewModel {
     }
 
     /**
-     * Clears the current error message.
-     */
-    public void clearErrorMessage() {
-        errorMessageLiveData.setValue(null);
-    }
-
-    /**
-     * Retrieves user announcements for a specific event.
+     * Fetches user announcements for a specific event.
      * Updates announcementListLiveData upon success or errorMessageLiveData upon failure.
      *
      * @param eventId The ID of the event.
@@ -708,9 +704,12 @@ public class EventViewModel extends ViewModel {
 
         isLoadingLiveData.setValue(true);
         eventController.checkInUser(eventId)
-                .addOnSuccessListener(aVoid -> {
-                    // Fetch the event details again to update the LiveData
-                    fetchEventById(eventId);
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Fetch the event details again to update the LiveData
+                        fetchEventById(eventId);
+                    }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -721,4 +720,10 @@ public class EventViewModel extends ViewModel {
                 });
     }
 
+    /**
+     * Clears the current error message.
+     */
+    public void clearErrorMessage() {
+        errorMessageLiveData.setValue(null);
+    }
 }

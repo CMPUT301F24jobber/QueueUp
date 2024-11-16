@@ -58,7 +58,7 @@ dependencies {
     implementation("com.google.zxing:core:3.5.1")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("androidx.fragment:fragment:1.8.5")
-    implementation("com.google.firebase:firebase-messaging")
+    implementation("com.google.firebase:firebase-messaging:23.1.2")
     implementation ("com.squareup.okhttp3:okhttp:4.9.1")
 
 }
