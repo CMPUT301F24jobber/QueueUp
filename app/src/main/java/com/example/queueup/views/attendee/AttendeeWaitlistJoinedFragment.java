@@ -24,6 +24,7 @@ public class AttendeeWaitlistJoinedFragment extends Fragment {
     EventController eventController;
     AttendeeController attendeeController;
     CurrentUserHandler currentUserHandler;
+    PushNotificationHandler pushNotificationHandler = PushNotificationHandler.getSingleton();
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
@@ -32,7 +33,13 @@ public class AttendeeWaitlistJoinedFragment extends Fragment {
         attendeeController = AttendeeController.getInstance();
         eventController = EventController.getInstance();
         currentUserHandler = CurrentUserHandler.getSingleton();
-        PushNotificationHandler pushNotificationHandler = PushNotificationHandler.getSingleton();
+        // send notification to the user that they have left the waitlist
+        pushNotificationHandler.sendNotificationToUser(
+                currentUserHandler.getCurrentUserId(),
+                "You have left the waitlist for " + event.getEventName(),
+                "Body of the notification",
+                PushNotificationHandler.NotificationType.GENERAL
+        );
         leaveWaitlistButton.setOnClickListener((v) -> {
             attendeeController.setAttendeeStatus(currentUserHandler.getCurrentUserId(), "cancelled");
             eventController.unregisterFromEvent( event.getEventId(), currentUserHandler.getCurrentUserId());

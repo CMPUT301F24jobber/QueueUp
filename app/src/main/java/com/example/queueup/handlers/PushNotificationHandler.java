@@ -103,7 +103,7 @@ public class PushNotificationHandler {
 
     // Entrant Notifications
 
-    // US 01.04.01 - Notification when chosen from the waiting list
+    // Notification when chosen from the waiting list
     public Task<Void> sendLotteryWinNotification(String eventId, String userId) {
         TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
 
@@ -122,7 +122,7 @@ public class PushNotificationHandler {
         return taskCompletionSource.getTask();
     }
 
-    // US 01.04.02 - Notification when not chosen
+    // Notification when not chosen
     public Task<Void> sendLotteryLoseNotification(String eventId, String userId) {
         TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
 
@@ -141,7 +141,7 @@ public class PushNotificationHandler {
         return taskCompletionSource.getTask();
     }
 
-    // US 01.05.01 - Notification for another chance
+    // Notification for another chance
     public Task<Void> sendReplacementNotification(String eventId, String userId, NotificationType general) {
         TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
 
@@ -160,7 +160,7 @@ public class PushNotificationHandler {
         return taskCompletionSource.getTask();
     }
 
-    // US 02.05.01 - Send invitation to chosen entrants
+    // Send invitation to chosen entrants
     public Task<Void> sendInvitationNotification(String eventId, String userId) {
         TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
 
@@ -179,7 +179,7 @@ public class PushNotificationHandler {
         return taskCompletionSource.getTask();
     }
 
-    // US 02.07.01 - Send notification to all entrants on the waiting list
+    // Send notification to all entrants on the waiting list
     public Task<Void> sendNotificationToWaitingList(String eventId, String message) {
         TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
 
@@ -197,7 +197,7 @@ public class PushNotificationHandler {
         return taskCompletionSource.getTask();
     }
 
-    // US 02.07.02 - Send notification to all selected entrants
+    // Send notification to all selected entrants
     public Task<Void> sendNotificationToSelectedEntrants(String eventId, String message) {
         TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
 
@@ -215,7 +215,7 @@ public class PushNotificationHandler {
         return taskCompletionSource.getTask();
     }
 
-    // US 02.07.03 - Send notification to all cancelled entrants
+    // Send notification to all cancelled entrants
     public Task<Void> sendNotificationToCancelledEntrants(String eventId, String message) {
         TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
 
