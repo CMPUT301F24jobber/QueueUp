@@ -137,7 +137,7 @@ public class UserController {
      */
     public Task<Void> setUserFcmToken(String userId, String fcmToken) {
         DocumentReference userRef = userCollectionReference.document(userId);
-        return userRef.update("FCM", fcmToken)
+        return userRef.update("FCMToken", fcmToken)
                 .addOnSuccessListener(aVoid -> Log.d("UserController", "User FCM token successfully updated."))
                 .addOnFailureListener(e -> Log.e("UserController", "Failed to update user FCM token.", e));
     }
@@ -221,8 +221,7 @@ public class UserController {
     /**
      * Checks if a user has enabled a specific type of notification.
      *
-     * @param userId The ID of the user.
-     * @param type The type of notification.
+     * @param userId The ID of the user.z
      * @return Task<Boolean> indicating if the notification is enabled.
      */
     public Task<Boolean> isNotificationEnabled(String userId, PushNotificationHandler.NotificationType type) {

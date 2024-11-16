@@ -27,6 +27,7 @@ import com.example.queueup.views.organizer.OrganizerHome;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.UUID;
 
@@ -194,6 +195,14 @@ public class SignUp extends AppCompatActivity {
         }
 
         User user = new User(firstName, lastName, username, email, phoneNumber, deviceId, isadmin);
+
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                user.setFCMToken(task.getResult());
+            } else {
+                Toast.makeText(SignUp.this, "Failed to get FCM token: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
 
         // Check if a profile image is selected
         if (profileImageUri != null) {
