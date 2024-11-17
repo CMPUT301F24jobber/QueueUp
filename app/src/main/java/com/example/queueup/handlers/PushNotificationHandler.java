@@ -74,22 +74,16 @@ public class PushNotificationHandler {
 
     // Send notification to a single user
     public void sendNotificationToUser(String userId, String title, String body, NotificationType type) {
-        userController.isNotificationEnabled(userId, type).addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult() != null && task.getResult()) {
-                userController.getFCMToken(userId).addOnCompleteListener(tokenTask -> {
-                    if (tokenTask.isSuccessful()) {
-                        String token = tokenTask.getResult();
-                        if (token != null && !token.isEmpty()) {
-                            sendNotificationToToken(token, title, body);
-                        } else {
-                            Log.d(TAG, "FCM token is null or empty for user " + userId);
-                        }
-                    } else {
-                        Log.d(TAG, "Failed to get FCM token for user " + userId);
-                    }
-                });
+        userController.getUserById(userId).addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                String token = task.getResult().getString("fcmToken");
+                if (token != null) {
+                    sendNotificationToToken(token, title, body);
+                } else {
+                    Log.d(TAG, "User " + userId + " does not have an FCM token.");
+                }
             } else {
-                Log.d(TAG, "Notifications are disabled for user " + userId + " or failed to check.");
+                Log.d(TAG, "Failed to get user " + userId + " for notification.");
             }
         });
     }
@@ -247,7 +241,7 @@ public class PushNotificationHandler {
      *
      * @param root The JSON payload containing notification details.
      */
-    private void sendPushNotification(JSONObject root) {
+    public void sendPushNotification(JSONObject root) {
         MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
         RequestBody body = RequestBody.create(root.toString(), mediaType);
 
