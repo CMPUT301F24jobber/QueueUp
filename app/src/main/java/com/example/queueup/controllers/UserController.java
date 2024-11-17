@@ -109,23 +109,16 @@ public class UserController {
      */
     public Task<String> getUserFcmToken(String userId) {
         TaskCompletionSource<String> taskCompletionSource = new TaskCompletionSource<>();
-        userCollectionReference.document(userId).get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        if (task.getResult() != null && task.getResult().exists()) {
-                            String fcmToken = task.getResult().getString("FCMToken");
-                            taskCompletionSource.setResult(fcmToken);
-                            Log.d("UserController", "Successfully retrieved User FCM token.");
-                        } else {
-                            taskCompletionSource.setException(new Exception("No such user."));
-                            Log.d("UserController", "Failed to retrieve User FCM token.");
-                        }
-                    } else {
-                        Log.d("UserController", "Failed to retrieve User FCM token. User does not exist.");
-                        taskCompletionSource.setException(task.getException());
-                    }
-                });
-
+        userCollectionReference.document(userId).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
+                User user = task.getResult().toObject(User.class);
+                if (user != null) {
+                    taskCompletionSource.setResult(user.getFCMToken());
+                    return;
+                }
+            }
+            taskCompletionSource.setResult(null);
+        });
         return taskCompletionSource.getTask();
     }
 
