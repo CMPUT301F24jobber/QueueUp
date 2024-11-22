@@ -91,5 +91,15 @@
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <include
+        android:id="@+id/draw_attendees_fragment"
+        layout="@layout/organizer_draw_winners_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        app:layout_constraintTop_toBottomOf="@id/info_constraint_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

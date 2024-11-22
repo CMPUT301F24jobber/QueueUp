@@ -1,22 +1,20 @@
 package com.example.queueup.views.organizer;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.queueup.R;
+import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.models.Event;
 import com.example.queueup.viewmodels.EventViewModel;
 import com.example.queueup.viewmodels.OrganizerEventArrayAdapter;
-import com.example.queueup.handlers.CurrentUserHandler;
 
 import java.util.ArrayList;
 
@@ -49,7 +47,8 @@ public class OrganizerHomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.organizer_home_fragment, container, false);
+        View view = inflater.inflate(R.layout.organizer_home_fragment, container, false);
+        return view;
     }
 
     /**
@@ -92,12 +91,6 @@ public class OrganizerHomeFragment extends Fragment {
                 dataList.addAll(events);
             }
             eventAdapter.notifyDataSetChanged();
-        });
-
-        eventViewModel.getErrorMessageLiveData().observe(getViewLifecycleOwner(), errorMessage -> {
-            if (errorMessage != null && !errorMessage.isEmpty()) {
-                Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
-            }
         });
     }
 

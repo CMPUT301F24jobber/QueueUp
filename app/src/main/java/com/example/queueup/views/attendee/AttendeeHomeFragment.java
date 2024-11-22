@@ -2,24 +2,19 @@ package com.example.queueup.views.attendee;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.queueup.R;
-import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.models.Event;
 import com.example.queueup.viewmodels.AttendeeEventArrayAdapter;
 import com.example.queueup.viewmodels.EventViewModel;
-import com.example.queueup.viewmodels.UserViewModel;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * AttendeeHomeFragment is a fragment that displays a list of events for an attendee.
@@ -77,13 +72,7 @@ public class AttendeeHomeFragment extends Fragment {
             }
             eventAdapter.notifyDataSetChanged();
         });
-
-        // Observe error messages
-        eventViewModel.getErrorMessageLiveData().observe(getViewLifecycleOwner(), errorMessage -> {
-            if (errorMessage != null && !errorMessage.isEmpty()) {
-                Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
-            }
-        });
+        
 
     }
     @Override

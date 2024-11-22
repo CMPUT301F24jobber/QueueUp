@@ -1,10 +1,8 @@
 package com.example.queueup.views.admin;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -13,13 +11,9 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.queueup.R;
 import com.example.queueup.models.Event;
 import com.example.queueup.viewmodels.AdminEventArrayAdapter;
-import com.example.queueup.viewmodels.EventArrayAdapter;
 import com.example.queueup.viewmodels.EventViewModel;
 
-import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * AdminHomeFragment displays a list of events for the admin. It fetches the events from the ViewModel and
@@ -84,13 +78,7 @@ public class AdminHomeFragment extends Fragment {
             }
             eventAdapter.notifyDataSetChanged();
         });
-
-        // Observe error messages
-        eventViewModel.getErrorMessageLiveData().observe(getViewLifecycleOwner(), errorMessage -> {
-            if (errorMessage != null && !errorMessage.isEmpty()) {
-                Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
-            }
-        });
+        
 
     }
 
