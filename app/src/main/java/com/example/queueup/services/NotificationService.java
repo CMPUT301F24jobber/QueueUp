@@ -1,4 +1,3 @@
-// File: com/example/queueup/services/MyFirebaseMessagingService.java
 package com.example.queueup.services;
 
 import android.app.NotificationChannel;
