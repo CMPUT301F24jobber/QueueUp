@@ -1,6 +1,5 @@
 package com.example.queueup.views.organizer;
 
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
@@ -16,15 +15,14 @@ import androidx.fragment.app.Fragment;
 import com.example.queueup.R;
 import com.example.queueup.models.Event;
 import com.example.queueup.viewmodels.QRCodeEventAdapter;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -79,14 +77,7 @@ public class OrganizerQRCodesFragment extends Fragment {
                     }
                     eventsAdapter.notifyDataSetChanged();
                 } else {
-                    Toast.makeText(getContext(), "No events found", Toast.LENGTH_SHORT).show();
                 }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getContext(), "Failed to fetch events", Toast.LENGTH_SHORT).show();
-                Log.e(TAG, "Error fetching events from Firestore", e);
             }
         });
     }
@@ -98,7 +89,6 @@ public class OrganizerQRCodesFragment extends Fragment {
      */
     private void downloadQrCode(Event event) {
         if (event == null || event.getCheckInQrCodeId() == null || event.getCheckInQrCodeId().isEmpty()) {
-            Toast.makeText(getContext(), "QR code ID is missing for this event", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -137,7 +127,6 @@ public class OrganizerQRCodesFragment extends Fragment {
             Toast.makeText(getContext(), "QR code saved to: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(getContext(), "Failed to save QR code", Toast.LENGTH_SHORT).show();
         }
     }
 

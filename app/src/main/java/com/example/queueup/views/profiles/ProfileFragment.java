@@ -148,7 +148,6 @@ public class ProfileFragment extends Fragment {
      * Fetches the current user's data using the ViewModel.
      */
     private void fetchUserData() {
-        Toast.makeText(getContext(), "Loading...", Toast.LENGTH_SHORT).show();
         userViewModel.loadUserByDeviceId(deviceId);
     }
 
