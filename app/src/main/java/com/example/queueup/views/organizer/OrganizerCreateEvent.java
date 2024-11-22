@@ -1,8 +1,7 @@
 package com.example.queueup.views.organizer;
 
-import static androidx.core.app.ActivityCompat.startActivityForResult;
-
-
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,94 +27,173 @@ import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.models.Event;
 import com.example.queueup.services.ImageUploader;
 import com.example.queueup.viewmodels.EventViewModel;
-import com.example.queueup.views.SignUp;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.UUID;
 
-/**
- * OrganizerCreateEvent represents the activity where an organizer can create a new event.
- * This activity allows the organizer to input event details, such as name, date, location,
- * description, attendee limit, and an event image. Once the details are filled out, the organizer
- * can submit the event to create it, with real-time validation and image uploading.
- */
+
 public class OrganizerCreateEvent extends AppCompatActivity {
 
-    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm";
+    // Constants for date and time formats
+    private static final String DATE_FORMAT = "yyyy-MM-dd";
+    private static final String TIME_FORMAT = "HH:mm";
+    private static final String DATETIME_FORMAT = "yyyy-MM-dd HH:mm";
 
+    // UI Components
     private ImageView eventImage;
-    private EditText eventNameEditText, startDateEditText, endDateEditText, locationEditText, descriptionEditText, attendeeLimitEditText;
+    private EditText eventNameEditText;
+    private EditText startDateEditText, startTimeEditText;
+    private EditText endDateEditText, endTimeEditText;
+    private EditText locationEditText, descriptionEditText, attendeeLimitEditText;
     private CheckBox unlimitedAttendeeCheckBox;
     private Button submitButton;
+    private ImageButton backButton;
+
+    // View Model and Data
     private EventViewModel eventViewModel;
     private Uri imageUri = null;
 
-    /**
-     * Called when the activity is first created. Initializes the UI components, sets up observers for
-     * event creation status, and registers a photo picker to allow the organizer to select an event image.
-     *
-     * @param savedInstanceState A Bundle containing the activity's previous saved state, if any.
-     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.organizer_create_event);
 
+        // Initialize ViewModel and UI components
         eventViewModel = new ViewModelProvider(this).get(EventViewModel.class);
-        eventImage = findViewById(R.id.image_view);
         initializeUIComponents();
+        setupDateTimeListeners();
+        setupClickListeners();
         setupObservers();
 
-        // Initially disable the submit button
+        // Initially disable submit button
         submitButton.setEnabled(false);
+
+        // Setup photo picker
         ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
                 registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
-                    // Callback is invoked after the user selects a media item or closes the
-                    // photo picker.
                     if (uri != null) {
                         Log.d("PhotoPicker", "Selected URI: " + uri);
                         imageUri = uri;
                         Glide.with(this).load(uri).circleCrop().into(eventImage);
-
                     } else {
                         Log.d("PhotoPicker", "No media selected");
                     }
                 });
-        // Observe current user to get organizer ID
+
+        // Enable submit button when user is authenticated
         CurrentUserHandler.getSingleton().getCurrentUser().observe(this, user -> {
             if (user != null && user.getUuid() != null) {
-                // Organizer ID is available, enable submit button
                 submitButton.setEnabled(true);
             }
         });
 
-        findViewById(R.id.backButton).setOnClickListener(v -> finish());
-        unlimitedAttendeeCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> toggleAttendeeLimit(isChecked));
-        submitButton.setOnClickListener(v -> handleSubmit());
+        // Setup image picker click listener
         eventImage.setOnClickListener(v -> {
             pickMedia.launch(new PickVisualMediaRequest.Builder()
                     .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
                     .build());
         });
-
     }
 
+    /**
+     * Initializes all UI components by finding their views
+     */
     private void initializeUIComponents() {
+        eventImage = findViewById(R.id.image_view);
         eventNameEditText = findViewById(R.id.eventNameEditText);
         startDateEditText = findViewById(R.id.startDateEditText);
+        startTimeEditText = findViewById(R.id.startTimeEditText);
         endDateEditText = findViewById(R.id.endDateEditText);
+        endTimeEditText = findViewById(R.id.endTimeEditText);
         locationEditText = findViewById(R.id.locationEditText);
         descriptionEditText = findViewById(R.id.descriptionEditText);
         attendeeLimitEditText = findViewById(R.id.attendeeLimitEditText);
         unlimitedAttendeeCheckBox = findViewById(R.id.unlimitedAttendeeCheckBox);
         submitButton = findViewById(R.id.submitButton);
+        backButton = findViewById(R.id.backButton);
     }
 
     /**
-     * Sets up observers for error messages, loading status, and successful event creation.
+     * Sets up click listeners for various UI components
+     */
+    private void setupClickListeners() {
+        backButton.setOnClickListener(v -> finish());
+        unlimitedAttendeeCheckBox.setOnCheckedChangeListener((buttonView, isChecked) ->
+                toggleAttendeeLimit(isChecked));
+        submitButton.setOnClickListener(v -> handleSubmit());
+    }
+
+    /**
+     * Sets up date and time picker dialogs for both start and end date/time fields
+     */
+    private void setupDateTimeListeners() {
+        Calendar calendar = Calendar.getInstance();
+
+        // Start Date Picker
+        startDateEditText.setOnClickListener(v -> {
+            DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+                    (view, year, month, dayOfMonth) -> {
+                        String selectedDate = String.format(Locale.getDefault(),
+                                "%04d-%02d-%02d", year, month + 1, dayOfMonth);
+                        startDateEditText.setText(selectedDate);
+                    },
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH));
+            datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
+            datePickerDialog.show();
+        });
+
+        // Start Time Picker
+        startTimeEditText.setOnClickListener(v -> {
+            TimePickerDialog timePickerDialog = new TimePickerDialog(this,
+                    (view, hourOfDay, minute) -> {
+                        String selectedTime = String.format(Locale.getDefault(),
+                                "%02d:%02d", hourOfDay, minute);
+                        startTimeEditText.setText(selectedTime);
+                    },
+                    calendar.get(Calendar.HOUR_OF_DAY),
+                    calendar.get(Calendar.MINUTE),
+                    true); // Use 24-hour format
+            timePickerDialog.show();
+        });
+
+        // End Date Picker
+        endDateEditText.setOnClickListener(v -> {
+            DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+                    (view, year, month, dayOfMonth) -> {
+                        String selectedDate = String.format(Locale.getDefault(),
+                                "%04d-%02d-%02d", year, month + 1, dayOfMonth);
+                        endDateEditText.setText(selectedDate);
+                    },
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH));
+            datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
+            datePickerDialog.show();
+        });
+
+        // End Time Picker
+        endTimeEditText.setOnClickListener(v -> {
+            TimePickerDialog timePickerDialog = new TimePickerDialog(this,
+                    (view, hourOfDay, minute) -> {
+                        String selectedTime = String.format(Locale.getDefault(),
+                                "%02d:%02d", hourOfDay, minute);
+                        endTimeEditText.setText(selectedTime);
+                    },
+                    calendar.get(Calendar.HOUR_OF_DAY),
+                    calendar.get(Calendar.MINUTE),
+                    true); // Use 24-hour format
+            timePickerDialog.show();
+        });
+    }
+
+    /**
+     * Sets up observers for the ViewModel to handle loading states and error messages
      */
     private void setupObservers() {
         eventViewModel.getErrorMessageLiveData().observe(this, errorMessage -> {
@@ -128,7 +206,7 @@ public class OrganizerCreateEvent extends AppCompatActivity {
             if (Boolean.FALSE.equals(isLoading)) {
                 eventViewModel.getAllEventsLiveData().observe(this, events -> {
                     if (events != null) {
-                        // create a delay for intent so data loads first before moving to next activity
+                        // Create a delay for intent so data loads first
                         try {
                             Thread.sleep(1000);
                         } catch (InterruptedException e) {
@@ -149,9 +227,7 @@ public class OrganizerCreateEvent extends AppCompatActivity {
     }
 
     /**
-     * Toggles the attendee limit EditText based on whether the unlimited attendees checkbox is checked.
-     *
-     * @param isChecked Whether the checkbox is checked or not.
+     * Toggles the attendee limit EditText based on checkbox state
      */
     private void toggleAttendeeLimit(boolean isChecked) {
         attendeeLimitEditText.setEnabled(!isChecked);
@@ -161,69 +237,84 @@ public class OrganizerCreateEvent extends AppCompatActivity {
     }
 
     /**
-     * Handles the event submission process, validating the inputs, creating the event, and uploading the event image.
+     * Handles the submit button click, validates inputs and creates the event
      */
     private synchronized void handleSubmit() {
+        // Get all input values
         String eventName = eventNameEditText.getText().toString().trim();
-        String startDateStr = startDateEditText.getText().toString().trim();
-        String endDateStr = endDateEditText.getText().toString().trim();
+        String startDate = startDateEditText.getText().toString().trim();
+        String startTime = startTimeEditText.getText().toString().trim();
+        String endDate = endDateEditText.getText().toString().trim();
+        String endTime = endTimeEditText.getText().toString().trim();
         String location = locationEditText.getText().toString().trim();
         String description = descriptionEditText.getText().toString().trim();
         String attendeeLimit = attendeeLimitEditText.getText().toString().trim();
         boolean unlimitedAttendees = unlimitedAttendeeCheckBox.isChecked();
 
-        if (!areRequiredFieldsFilled(eventName, location)) {
+        // Validate required fields
+        if (!areRequiredFieldsFilled(eventName, location, startDate, startTime, endDate, endTime)) {
             showToast("Please fill in all required fields");
             return;
         }
 
-        Date startDate = parseDate(startDateStr);
-        Date endDate = parseDate(endDateStr);
-        if (startDate == null || endDate == null) {
-            showToast("Invalid date format. Please use yyyy-MM-dd HH:mm");
+        // Combine date and time strings
+        String startDateTimeStr = startDate + " " + startTime;
+        String endDateTimeStr = endDate + " " + endTime;
+
+        // Parse and validate dates
+        Date startDateTime = parseDateTime(startDateTimeStr);
+        Date endDateTime = parseDateTime(endDateTimeStr);
+
+        if (startDateTime == null || endDateTime == null) {
+            showToast("Invalid date/time format");
             return;
         }
 
-        if (!endDate.after(startDate)) {
-            showToast("End Date has to be after Start Date");
-            return;
-        }
-        if (new Date().after(startDate)) {
-            showToast("Start Date cannot be in the past");
+        if (!endDateTime.after(startDateTime)) {
+            showToast("End date/time must be after start date/time");
             return;
         }
 
+        if (new Date().after(startDateTime)) {
+            showToast("Start date/time cannot be in the past");
+            return;
+        }
+
+        // Validate attendee limit
         int attendeeLimitValue = unlimitedAttendees ? Integer.MAX_VALUE : parseAttendeeLimit(attendeeLimit);
         if (attendeeLimitValue <= 0) {
             showToast("Invalid attendee limit. Please enter a valid number.");
             return;
         }
 
+        // Check for required image and organizer ID
         String organizerId = CurrentUserHandler.getSingleton().getCurrentUserId();
         if (imageUri == null) {
             showToast("Image is missing. Please add an image");
             return;
         }
-        ImageUploader imageUploader = new ImageUploader();
 
+        // Create and upload event
         String qrCodeId = UUID.randomUUID().toString();
-
+        ImageUploader imageUploader = new ImageUploader();
 
         Event newEvent = new Event(
                 UUID.randomUUID().toString(),
                 eventName,
                 description,
-                null, // eventBannerImageUrl can be null for now.
+                null, // Image URL will be set after upload
                 location,
                 organizerId,
-                startDate,
-                endDate,
+                startDateTime,
+                endDateTime,
                 attendeeLimitValue,
-                true // Setting the event as active by default.
+                true // Active by default
         );
 
         newEvent.setCheckInQrCodeId(qrCodeId);
         eventViewModel.createEvent(newEvent);
+
+        // Upload the event image
         imageUploader.uploadImage("profile_pictures/", imageUri, new ImageUploader.UploadListener() {
             @Override
             public void onUploadSuccess(String imageUrl) {
@@ -232,31 +323,28 @@ public class OrganizerCreateEvent extends AppCompatActivity {
 
             @Override
             public void onUploadFailure(Exception exception) {
+                showToast("Failed to upload image. Event created without image.");
             }
         });
     }
 
-
     /**
-     * Checks if the required fields (event name and location) are filled.
-     *
-     * @param eventName The event name input by the organizer.
-     * @param location  The event location input by the organizer.
-     * @return True if both fields are filled, false otherwise.
+     * Validates that all required fields are filled
      */
-    private boolean areRequiredFieldsFilled(String eventName, String location) {
-        return !eventName.isEmpty() && !location.isEmpty();
+    private boolean areRequiredFieldsFilled(String eventName, String location,
+                                            String startDate, String startTime,
+                                            String endDate, String endTime) {
+        return !eventName.isEmpty() && !location.isEmpty() &&
+                !startDate.isEmpty() && !startTime.isEmpty() &&
+                !endDate.isEmpty() && !endTime.isEmpty();
     }
 
     /**
-     * Parses the input date string into a Date object using the specified format.
-     *
-     * @param dateStr The date string to be parsed.
-     * @return The parsed Date object, or null if parsing failed.
+     * Parses a date-time string into a Date object
      */
-    private Date parseDate(String dateStr) {
+    private Date parseDateTime(String dateTimeStr) {
         try {
-            return new SimpleDateFormat(DATE_FORMAT, Locale.getDefault()).parse(dateStr);
+            return new SimpleDateFormat(DATETIME_FORMAT, Locale.getDefault()).parse(dateTimeStr);
         } catch (ParseException e) {
             e.printStackTrace();
             return null;
@@ -264,10 +352,7 @@ public class OrganizerCreateEvent extends AppCompatActivity {
     }
 
     /**
-     * Parses the attendee limit string into an integer. If the string is empty or invalid, returns -1.
-     *
-     * @param attendeeLimit The attendee limit input by the organizer.
-     * @return The parsed integer value, or -1 if invalid.
+     * Parses the attendee limit string into an integer
      */
     private int parseAttendeeLimit(String attendeeLimit) {
         try {
@@ -278,12 +363,9 @@ public class OrganizerCreateEvent extends AppCompatActivity {
     }
 
     /**
-     * Displays a toast message.
-     *
-     * @param message The message to be displayed.
+     * Shows a toast message
      */
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }
-

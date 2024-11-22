@@ -31,6 +31,7 @@ public class UserViewModel extends AndroidViewModel {
     public UserViewModel(@NonNull Application application) {
         super(application);
         userController = UserController.getInstance();
+
     }
 
     public LiveData<User> getCurrentUser() {
