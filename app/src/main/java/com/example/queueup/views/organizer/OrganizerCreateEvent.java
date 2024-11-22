@@ -130,7 +130,7 @@ public class OrganizerCreateEvent extends AppCompatActivity {
                     if (events != null) {
                         // create a delay for intent so data loads first before moving to next activity
                         try {
-                            Thread.sleep(5000);
+                            Thread.sleep(1000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
