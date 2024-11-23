@@ -8,7 +8,6 @@
     android:clickable="true"
     >
 
-    <!-- Button: Draw Winner -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/draw_winner_button"
         android:layout_width="100dp"
@@ -21,11 +20,27 @@
         android:textSize="10sp"
         app:backgroundTint="@color/beige"
         app:cornerRadius="24dp"
+        app:layout_constraintBottom_toTopOf="@id/send_notification_to_winners_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/send_notification_to_winners_button"
+        android:layout_width="158dp"
+        android:layout_height="45dp"
+        android:layout_marginBottom="16dp"
+        android:padding="12dp"
+        android:text="Send Notification to Winners"
+        android:textAllCaps="false"
+        android:textColor="@android:color/black"
+        android:textSize="10sp"
+        app:backgroundTint="@color/beige"
+        app:cornerRadius="24dp"
         app:layout_constraintBottom_toTopOf="@id/send_notification_to_losers_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- Button: Send Notification to Losers -->
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/send_notification_to_losers_button"
         android:layout_width="158dp"
@@ -42,7 +57,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- Button: Send Notification to Everyone -->
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/send_notification_to_everyone_button"
         android:layout_width="158dp"
