@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -16,16 +15,12 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.example.queueup.R;
-import com.example.queueup.controllers.AttendeeController;
-import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.models.Event;
-import com.example.queueup.models.User;
 import com.example.queueup.services.ImageUploader;
 import com.example.queueup.viewmodels.EventViewModel;
-import com.example.queueup.viewmodels.UsersArrayAdapter;
+import com.google.android.material.button.MaterialButton;
 
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 
 /**
  * OrganizerDrawFragment represents the fragment where the organizer can view event details,
@@ -40,6 +35,9 @@ public class OrganizerDrawFragment extends Fragment {
     Event event;
     ImageUploader imageUploader;
     private EventViewModel eventViewModel;
+
+    private MaterialButton drawWinnerButton;
+
 
     /**
      * Called when the fragment's view is created. It initializes the UI components, binds data to the views,
@@ -61,6 +59,7 @@ public class OrganizerDrawFragment extends Fragment {
         eventDate.setText(date_text);
         locationText.setText(event.getEventLocation());
         ImageView posterImage = view.findViewById(R.id.poster_image);
+        drawWinnerButton = view.findViewById(R.id.draw_winner_button);
         eventViewModel = new ViewModelProvider(this).get(EventViewModel.class);
 
         Glide.with(this).load(event.getEventBannerImageUrl()).into(posterImage);
@@ -91,6 +90,10 @@ public class OrganizerDrawFragment extends Fragment {
             pickMedia.launch(new PickVisualMediaRequest.Builder()
                     .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
                     .build());
+        });
+
+        drawWinnerButton.setOnClickListener(v -> {
+            eventViewModel.drawLottery(event.getEventId(), event.getMaxCapacity());
         });
 
 
