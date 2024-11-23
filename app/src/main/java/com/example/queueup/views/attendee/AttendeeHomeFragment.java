@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.queueup.R;
+import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.models.Event;
 import com.example.queueup.viewmodels.AttendeeEventArrayAdapter;
 import com.example.queueup.viewmodels.EventViewModel;
@@ -56,28 +57,25 @@ public class AttendeeHomeFragment extends Fragment {
         eventList = view.findViewById(R.id.event_list);  // Use 'view' to find the ListView in the fragment's layout
         eventAdapter = new AttendeeEventArrayAdapter(view.getContext(), dataList);  // Initialize the adapter with the context and data list
         eventList.setAdapter(eventAdapter);  // Set the adapter to the ListView
-//        String attendeeId = CurrentUserHandler.getSingleton().getCurrentUserId();
-//        if (attendeeId != null && !attendeeId.isEmpty()) {
-//            eventViewModel.fetchEventsByAttendee(attendeeId);
-//        }
+        String attendeeId = CurrentUserHandler.getSingleton().getCurrentUserId();
+        if (attendeeId != null && !attendeeId.isEmpty()) {
+            eventViewModel.fetchEventsByAttendee(attendeeId);
+        }
         observeViewModel();
-        eventViewModel.fetchAllEvents();
+
 
     }
     private void observeViewModel() {
-        eventViewModel.getAllEventsLiveData().observe(getViewLifecycleOwner(), events -> {
-            dataList.clear();
-            if (events != null && !events.isEmpty()) {
+        eventViewModel.getEventsByAttendeeLiveData().observe(getViewLifecycleOwner(), events -> {
+            if (events != null) {
+                dataList.clear();
                 dataList.addAll(events);
+                eventAdapter.notifyDataSetChanged();
             }
-            eventAdapter.notifyDataSetChanged();
         });
-        
-
     }
     @Override
     public void onResume() {
         super.onResume();
-        eventViewModel.fetchAllEvents();
     }
 }
