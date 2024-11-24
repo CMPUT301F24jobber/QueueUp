@@ -24,6 +24,8 @@ public class Event implements Serializable {
     private Date creationDate;
     private String checkInQrCodeId;
     private Boolean isActive;
+    private Boolean isDrawn;
+
     private int maxCapacity;
     private int currentCapacity;
 
@@ -319,5 +321,22 @@ public class Event implements Serializable {
      */
     public void setIsActive(Boolean isActive) {
         this.isActive = isActive;
+    }
+    /**
+     * Checks whether the event has been drawn.
+     *
+     * @return {@code true} if the event is active; {@code false} otherwise
+     */
+    public Boolean getIsDrawn() {
+        return isDrawn;
+    }
+
+    /**
+     * Set drawn status of event.
+     *
+     * @param isDrawn {@code true} to mark the event as active, {@code false} to deactivate
+     */
+    public void setIsDrawn(Boolean isDrawn) {
+        this.isDrawn = isDrawn;
     }
 }

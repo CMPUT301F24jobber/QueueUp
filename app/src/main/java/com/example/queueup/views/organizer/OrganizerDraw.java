@@ -31,8 +31,8 @@ public class OrganizerDraw extends Fragment {
         super(R.layout.organizer_draw_fragment);
     }
 
-    Event event;
-    ImageUploader imageUploader;
+    private Event event;
+    private ImageUploader imageUploader;
     private EventViewModel eventViewModel;
 
     /**
@@ -86,6 +86,7 @@ public class OrganizerDraw extends Fragment {
                     .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
                     .build());
         });
+        if (event.is)
 
 
 
