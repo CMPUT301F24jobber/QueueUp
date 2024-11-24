@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:text="Join Waitlist Lottery"
         android:fontFamily="@font/poppins"
-        android:backgroundTint="@color/grey_beige"
+        android:backgroundTint="@color/beige"
         android:textSize="24dp"
         android:textColor="@color/black"
         app:layout_constraintTop_toTopOf="parent"
