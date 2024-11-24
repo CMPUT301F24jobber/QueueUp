@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.queueup.R;
 import com.example.queueup.models.Event;
-import com.example.queueup.views.attendee.AttendeeWaitlistFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 /**
@@ -60,7 +59,7 @@ public class OrganizerEvent extends AppCompatActivity {
                 case "Draw Winner":
                     getSupportFragmentManager().beginTransaction()
                             .setReorderingAllowed(true)
-                            .replace(R.id.organizer_event_fragment, OrganizerDrawFragment.class, bundle)
+                            .replace(R.id.organizer_event_fragment, OrganizerDraw.class, bundle)
                             .commit();
                     break;
                 default:
