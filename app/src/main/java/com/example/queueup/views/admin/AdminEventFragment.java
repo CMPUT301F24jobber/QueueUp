@@ -18,6 +18,7 @@ import com.example.queueup.R;
 import com.example.queueup.controllers.EventController;
 import com.example.queueup.models.Event;
 import com.example.queueup.models.User;
+import com.example.queueup.viewmodels.EventViewModel;
 import com.google.android.material.button.MaterialButton;
 
 import java.time.format.DateTimeFormatter;
@@ -35,6 +36,8 @@ public class AdminEventFragment extends Fragment {
     TextView eventLocation;
     ImageView eventImage;
     MaterialButton deleteButton;
+    ToggleButton deleteQrButton;
+    private EventViewModel eventViewModel;
 
     /**
      * call when the fragment's view has been created.
@@ -50,6 +53,7 @@ public class AdminEventFragment extends Fragment {
         eventLocation = view.findViewById(R.id.event_location);
         eventImage = view.findViewById(R.id.image_view);
         deleteButton = view.findViewById(R.id.delete_button);
+        deleteQrButton = view.findViewById(R.id.delete_qr_button);
         Event event = this.getArguments().getSerializable("event", Event.class);
 
         qrToggle.setOnCheckedChangeListener((v, isChecked) -> {
@@ -68,6 +72,13 @@ public class AdminEventFragment extends Fragment {
         String startDateText = event.getEventStartDate().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate().format(formatter);
         String endDateText = event.getEventStartDate().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate().format(formatter);
         Glide.with(this).load(event.getEventBannerImageUrl()).into(eventImage);
+        deleteQrButton.setOnClickListener(v -> {
+            // deactivates the qr code
+            event.setCheckInQrCodeId(null);
+            EventController.getInstance().updateEvent(event).addOnSuccessListener(stuff -> {
+                getActivity().onBackPressed();
+            });
+        });
 
         startDate.setText(startDateText);
         endDate.setText(endDateText);
