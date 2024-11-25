@@ -1,12 +1,14 @@
 package com.example.queueup.models;
 
-import android.os.Parcelable;
 import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
+
 import androidx.annotation.NonNull;
+
 import com.google.firebase.firestore.Exclude;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,7 +22,7 @@ public class User implements Parcelable {
     private String phoneNumber;
     private Boolean isadmin;
     private String profileImageUrl;
-    private HashMap<String, String> notifications;
+    private ArrayList<String> notifications;
     private String deviceId;
     private boolean receiveNotifications;
     private List<String> waitingListEvents;
@@ -28,7 +30,7 @@ public class User implements Parcelable {
 
 
     public User() {
-        this.notifications = new HashMap<>();
+        this.notifications = new ArrayList<String>();
         this.waitingListEvents = new ArrayList<>();
         this.receiveNotifications = true;
     }
@@ -202,7 +204,7 @@ public class User implements Parcelable {
     /**
      * Returns the notifications of the user.
      */
-    public HashMap<String, String> getNotifications() {
+    public ArrayList<String> getNotifications() {
         return notifications;
     }
 
@@ -210,7 +212,7 @@ public class User implements Parcelable {
      * Sets the notifications of the user.
      * @param notifications
      */
-    public void setNotifications(HashMap<String, String> notifications) {
+    public void setNotifications(ArrayList<String> notifications) {
         this.notifications = notifications;
     }
 
@@ -276,11 +278,10 @@ public class User implements Parcelable {
 
     /**
      * Adds a notification to the user.
-     * @param notificationId
      * @param notificationContent
      */
-    public void addNotification(String notificationId, String notificationContent) {
-        this.notifications.put(notificationId, notificationContent);
+    public void addNotification(String notificationContent) {
+        this.notifications.add(notificationContent);
     }
 
     /**

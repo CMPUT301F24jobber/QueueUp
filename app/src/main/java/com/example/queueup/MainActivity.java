@@ -11,9 +11,11 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.queueup.controllers.NotificationApplication;
 import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.handlers.PushNotificationHandler;
 import com.example.queueup.models.User;
+import com.example.queueup.services.NotificationService;
 import com.example.queueup.viewmodels.UserViewModel;
 import com.example.queueup.views.SignUp;
 import com.example.queueup.views.admin.AdminHome;
@@ -26,6 +28,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String CHANNEL_ID = "QueueUp Notifications";
     private MaterialButton adminButton;
     private MaterialButton organizerButton;
     private MaterialButton attendeeButton;
@@ -34,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private User user;
     private Boolean isAdmin = false;
     private PushNotificationHandler pushNotificationHandler;
+    private NotificationApplication notificationApplication;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +56,9 @@ public class MainActivity extends AppCompatActivity {
         // Initialize CurrentUserHandler Singleton
         CurrentUserHandler.setOwnerActivity(this);
         CurrentUserHandler.getSingleton();
+
+        Intent notificationService = new Intent(getApplicationContext(), NotificationService.class);
+        startService(notificationService);
 
         // Set up role selection buttons
         setupRoleSelection();

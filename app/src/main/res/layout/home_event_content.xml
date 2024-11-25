@@ -47,7 +47,7 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:fontFamily="@font/poppins_bold"
+        android:fontFamily="@font/poppins_extralight"
         android:maxLines="2"
         android:text="Date"
         android:textAlignment="textStart"

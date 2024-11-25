@@ -20,6 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text=""
+            android:fontFamily="@font/poppins_bold"
             android:textSize="32sp"
             android:textStyle="bold"
             android:textColor="@android:color/white"
@@ -49,7 +50,7 @@
         android:layout_below="@id/profileImageFrame"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
-        android:fontFamily="sans-serif-medium" />
+        android:fontFamily="@font/poppins" />
 
     <!-- Profile Username -->
     <TextView
@@ -63,7 +64,7 @@
         android:layout_below="@id/profileNameTextView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
-        android:fontFamily="sans-serif-light" />
+        android:fontFamily="@font/poppins_extralight" />
 
     <!-- Profile Email -->
     <TextView
@@ -76,7 +77,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
         android:textColor="#333333"
-        android:fontFamily="sans-serif" />
+        android:fontFamily="@font/poppins" />
 
     <!-- Profile Phone -->
     <TextView
@@ -89,32 +90,28 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
         android:textColor="#333333"
-        android:fontFamily="sans-serif" />
+        android:fontFamily="@font/poppins" />
 
     <!-- Edit Profile Button -->
-
-    <!-- Switch Role Button -->
-
     <Button
         android:id="@+id/editButton"
-        android:layout_width="279dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/profilePhoneTextView"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="68dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="70dp"
+        android:text="Edit"
+        android:fontFamily="@font/poppins"
+        android:textColor="@android:color/white"
         android:backgroundTint="#8C7466"
-        android:gravity="center"
-        android:text="Edit Profile/Notification Settings"
-        android:textColor="@android:color/white" />
+        android:layout_below="@id/profilePhoneTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp" />
 
+    <!-- Switch Role Button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/switch_role"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Switch Role"
+        android:fontFamily="@font/poppins"
         android:layout_below="@id/editButton"
         android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"

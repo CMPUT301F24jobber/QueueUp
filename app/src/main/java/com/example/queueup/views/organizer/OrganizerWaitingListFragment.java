@@ -34,7 +34,7 @@ public class OrganizerWaitingListFragment extends Fragment {
     public OrganizerWaitingListFragment() {
         super(R.layout.organizer_waiting_list_fragment);
     }
-    private ArrayList<User> dataList;
+    private ArrayList<User> waitingList, cancelledList, selectedList;
     private ListView userList;
     private UsersArrayAdapter usersAdapter;
     private Event event;
@@ -52,28 +52,28 @@ public class OrganizerWaitingListFragment extends Fragment {
         event = this.getArguments().getSerializable("event", Event.class);
 
         attendeeViewModel = new ViewModelProvider(this).get(AttendeeViewModel.class);
-        dataList = new ArrayList<User>();
+        waitingList = new ArrayList<User>();
         attendeeController = AttendeeController.getInstance();
 
         userList = getView().findViewById(R.id.event_waiting_list);
-        usersAdapter = new UsersArrayAdapter(view.getContext(), dataList);
+        usersAdapter = new UsersArrayAdapter(view.getContext(), waitingList);
         userList.setAdapter(usersAdapter);
         attendeeViewModel.fetchAttendeesWithUserInfo(event.getEventId());
 
         observeViewModel();
     }
+    
     public void onResume() {
         super.onResume();
         attendeeViewModel.fetchAttendeesWithUserInfo(event.getEventId());
-
-
     }
+    
     private void observeViewModel() {
         attendeeViewModel.getAttendeesWithUserLiveData().observe(getViewLifecycleOwner(), attendees -> {
-            dataList.clear();
+            waitingList.clear();
             if (attendees != null && !attendees.isEmpty()) {
                 for (AttendeeViewModel.AttendeeWithUser attendeeWithUser : attendees) {
-                    dataList.add(attendeeWithUser.getUser());
+                    waitingList.add(attendeeWithUser.getUser());
                 }
             }
             usersAdapter.notifyDataSetChanged();
