@@ -75,8 +75,6 @@ public class AdminClickUserFragment extends DialogFragment {
                 });
 
         return builder.create();
-
-
     }
 
     /**
@@ -149,6 +147,4 @@ public class AdminClickUserFragment extends DialogFragment {
                     }
                 });
     }
-
-    
 }

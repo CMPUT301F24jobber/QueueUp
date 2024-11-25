@@ -222,8 +222,6 @@ public class UserController {
             if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
                 User user = task.getResult().toObject(User.class);
                 if (user != null) {
-                    // Implement logic based on NotificationType
-                    // For simplicity, let's assume all users have notifications enabled
                     return user.isReceiveNotifications();
                 }
                 return false;
@@ -232,5 +230,4 @@ public class UserController {
             }
         });
     }
-
 }
