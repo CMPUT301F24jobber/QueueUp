@@ -49,60 +49,76 @@ public class AttendeeWaitlistFragment extends Fragment {
         if (!isAdded()) return;
 
         if (event != null && event.getIsGeoLocationRequried()) {
-            try {
-                LocationManager locationManager = (LocationManager) requireActivity()
-                        .getSystemService(Context.LOCATION_SERVICE);
-                locationService = new LocationService(requireContext(), requireActivity(), locationManager);
-
-                locationService.setLocationCallback(new LocationService.LocationCallback() {
-                    @Override
-                    public void onLocationReceived(Location location) {
-                        if (isAdded()) {
-                            joinWithLocation(location);
-                        }
-                    }
-
-                    @Override
-                    public void onLocationError(String error) {
-                        if (isAdded() && getContext() != null) {
-                            Toast.makeText(getContext(),
-                                    "Location required: " + error, Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-
-                locationService.handleLocationPermissions();
-                locationService.getLocation();
-            } catch (IllegalStateException e) {
-                // Handle fragment detachment during location setup
-                return;
-            }
+            setupLocationService();
         } else {
             joinWithLocation(null);
         }
     }
 
+    private void setupLocationService() {
+        try {
+            LocationManager locationManager = (LocationManager) requireActivity()
+                    .getSystemService(Context.LOCATION_SERVICE);
+            locationService = new LocationService(requireContext(), requireActivity(), locationManager);
+
+            locationService.setLocationCallback(new LocationService.LocationCallback() {
+                @Override
+                public void onLocationReceived(Location location) {
+                    if (isAdded()) {
+                        joinWithLocation(location);
+                    }
+                }
+
+                @Override
+                public void onLocationError(String error) {
+                    if (isAdded() && getContext() != null) {
+                        Toast.makeText(getContext(),
+                                "Location required: " + error, Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+
+            locationService.handleLocationPermissions();
+            locationService.getLocation();
+        } catch (IllegalStateException e) {
+            if (isAdded() && getContext() != null) {
+                Toast.makeText(getContext(), "Failed to setup location service", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
     private void joinWithLocation(Location location) {
-        if (!isAdded()) return;
+        if (!isAdded() || event == null) return;
 
         try {
-            attendeeController.joinWaitingList(currentUserHandler.getCurrentUserId(),
-                            event.getEventId(), location)
+            // First register with EventController
+            eventController.registerToEvent(event.getEventId())
                     .addOnSuccessListener(task -> {
-                        if (isAdded()) {
-                            joinWaitlistButton.setVisibility(View.INVISIBLE);
-                            navigateToJoinedFragment();
-                        }
+                        // Then join waitlist with AttendeeController
+                        attendeeController.joinWaitingList(
+                                        currentUserHandler.getCurrentUserId(),
+                                        event.getEventId(),
+                                        location
+                                )
+                                .addOnSuccessListener(waitlistTask -> {
+                                    if (isAdded()) {
+                                        joinWaitlistButton.setVisibility(View.INVISIBLE);
+                                        navigateToJoinedFragment();
+                                    }
+                                })
+                                .addOnFailureListener(this::handleJoinError);
                     })
-                    .addOnFailureListener(e -> {
-                        if (isAdded() && getContext() != null) {
-                            Toast.makeText(getContext(),
-                                    "Failed to join waitlist: " + e.getMessage(),
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    });
+                    .addOnFailureListener(this::handleJoinError);
         } catch (IllegalStateException e) {
-            // Handle fragment detachment during join operation
+            handleJoinError(e);
+        }
+    }
+
+    private void handleJoinError(Exception e) {
+        if (isAdded() && getContext() != null) {
+            Toast.makeText(getContext(),
+                    "Failed to join waitlist: " + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
         }
     }
 
@@ -117,12 +133,13 @@ public class AttendeeWaitlistFragment extends Fragment {
                     .replace(R.id.attendee_event_fragment, AttendeeWaitlistJoinedFragment.class, bundle)
                     .commit();
         } catch (IllegalStateException e) {
-            // Handle fragment detachment during navigation
+            handleJoinError(e);
         }
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+
     }
 }
