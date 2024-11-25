@@ -99,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // Otherwise, check device ID and proceed with signup/login flow
         String deviceId = userViewModel.getDeviceId();
         if (deviceId == null || deviceId.isEmpty()) {
             Toast.makeText(this, "Device ID not available.", Toast.LENGTH_SHORT).show();
