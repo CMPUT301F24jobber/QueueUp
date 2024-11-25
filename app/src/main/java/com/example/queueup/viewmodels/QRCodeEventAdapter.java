@@ -16,14 +16,27 @@ public class QRCodeEventAdapter extends EventArrayAdapter {
         super(context, events);
     }
 
+    /**
+     * Returns the view for the QRCodeEventAdapter
+     * @param position
+     * @param convertView
+     * @param parent
+     * @return
+     */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view = super.getView(position, convertView, parent);
+        View view = super.getView(position, convertView, parent); // get the view from the parent class
         Event event = getItem(position);
 
         return view;
     }
 
+    /**
+     * Returns the onClickListener for the QRCodeEventAdapter
+     * @param view
+     * @param position
+     * @return
+     */
     @Override
     protected View.OnClickListener onClickListener(View view, int position) {
         // redirect to QR code download page
