@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.queueup.models.Event;
 import com.example.queueup.views.organizer.OrganizerQr;
@@ -43,6 +44,10 @@ public class QRCodeEventAdapter extends EventArrayAdapter {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (getItem(position).getCheckInQrCodeId() == null) {
+                    Toast.makeText(getContext(), "No QR code available", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 Intent intent = new Intent(getContext(), OrganizerQr.class);
                 intent.putExtra("event", getItem(position));
                 getContext().startActivity(intent);
