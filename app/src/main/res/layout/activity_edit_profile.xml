@@ -3,7 +3,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="#FDF7F4">
+    android:background="@color/light_beige">
 
     <FrameLayout
         android:id="@+id/profileImageFrame"
@@ -13,7 +13,7 @@
         android:layout_marginBottom="16dp"
         android:background="@drawable/circle_shape">
 
-        <!-- Initials TextView -->
+
         <TextView
             android:id="@+id/profileInitialsTextView"
             android:layout_width="match_parent"
@@ -25,7 +25,7 @@
             android:gravity="center"
             android:visibility="visible" />
 
-        <!-- Profile ImageView -->
+
         <ImageView
             android:id="@+id/profileImageView"
             android:layout_width="match_parent"
@@ -39,6 +39,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="First Name"
+        android:fontFamily="@font/poppins"
         android:maxLength="50"/>
 
     <EditText
@@ -46,12 +47,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Last Name"
+        android:fontFamily="@font/poppins"
         android:maxLength="50"/>
 
     <EditText
         android:id="@+id/editUsername"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins"
         android:hint="Username"
         android:maxLength="50"/>
 
@@ -59,6 +62,7 @@
         android:id="@+id/editEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins"
         android:hint="Email"
         android:maxLength="50"/>
 
@@ -66,14 +70,63 @@
         android:id="@+id/editPhone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins"
         android:hint="Phone Number"
         android:maxLength="10"/>
+
+    <TextView
+        android:id="@+id/notifTitle"
+        android:layout_width="227dp"
+        android:layout_height="55dp"
+        android:layout_gravity="center"
+        android:fontFamily="@font/poppins_bold"
+        android:paddingTop="15dp"
+        android:text="Notifcation Settings:"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <Switch
+        android:id="@+id/notifSwitch2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins"
+        android:textSize="20sp"
+        android:paddingTop="5dp"
+        android:thumbTint="#8C7466"
+        android:text="I want to be notified when I'm chosen from a waiting list:"/>
+
+    <Switch
+        android:id="@+id/notifSwitch3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="I want to recieve other notifications from QueueUp:"
+        android:fontFamily="@font/poppins"
+        android:textSize="20sp"
+        android:paddingTop="5dp"
+        android:paddingBottom="25dp"
+        android:thumbTint="#8C7466"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <CheckBox
+        android:id="@+id/checkBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins"
+        android:textSize="18sp"
+        android:buttonTint="#8C7466"
+        android:text="Are you enjoying QueueUp?" />
 
     <Button
         android:id="@+id/editPicButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:backgroundTint="#8C7466"
+        android:fontFamily="@font/poppins_bold"
+        android:paddingTop="10dp"
         android:text="Edit Profile Picture" />
 
     <Button
@@ -81,6 +134,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:backgroundTint="#8C7466"
+        android:fontFamily="@font/poppins_bold"
         android:text="Remove Profile Picture" />
 
     <Button
@@ -88,6 +142,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:backgroundTint="#8C7466"
+        android:fontFamily="@font/poppins_bold"
         android:text="Save" />
+
 
 </LinearLayout>

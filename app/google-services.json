@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "175402334631",
-    "project_id": "queueup-b3c43",
-    "storage_bucket": "queueup-b3c43.appspot.com"
+    "project_number": "142567966436",
+    "project_id": "mongerdb-2cb37",
+    "storage_bucket": "mongerdb-2cb37.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:175402334631:android:15659711867940ff325e82",
+        "mobilesdk_app_id": "1:142567966436:android:0ce0a36d9230fc6c524ef1",
         "android_client_info": {
           "package_name": "com.example.queueup"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCiVoAUf51nm40esjhQR_tlOY745ddU3So"
+          "current_key": "AIzaSyCylCPBkog3h9HW1cjftxzdVxItC8V_BZE"
         }
       ],
       "services": {
