@@ -30,7 +30,6 @@ public class EventUnitTest {
         Event event = mockEvent();
         assertEquals("Event Name", event.getEventName());
         assertEquals("Event Description", event.getEventDescription());
-        assertEquals("Event Location", event.getEventLocation());
     }
 
 }

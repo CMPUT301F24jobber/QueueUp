@@ -18,14 +18,10 @@ import com.example.queueup.viewmodels.OrganizerEventArrayAdapter;
 
 import java.util.ArrayList;
 
-/**
- * Fragment representing the home screen for an organizer, displaying a list of events they have created.
- * It fetches and displays events associated with the current organizer using a ViewModel and LiveData.
- */
+
 public class OrganizerHomeFragment extends Fragment {
 
     private static final String TAG = "OrganizerHomeFragment";
-
     private ArrayList<Event> dataList;
     private ListView eventList;
     private OrganizerEventArrayAdapter eventAdapter;
