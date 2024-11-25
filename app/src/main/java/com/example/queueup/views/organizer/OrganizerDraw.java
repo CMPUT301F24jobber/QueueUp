@@ -155,7 +155,6 @@ public class OrganizerDraw extends Fragment {
         if (event.getIsDrawn()) {
             redrawLayout.setVisibility(View.VISIBLE);
             drawLayout.setVisibility(View.INVISIBLE);
-
             redrawWinners.setOnClickListener(v -> {
                 if (rewinnerNotification.isChecked()) {
 
@@ -179,6 +178,8 @@ public class OrganizerDraw extends Fragment {
 
                     }
                 }
+                redrawLayout.setVisibility(View.VISIBLE);
+                drawLayout.setVisibility(View.INVISIBLE);
             });
         }
 
