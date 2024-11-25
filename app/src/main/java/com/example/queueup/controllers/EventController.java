@@ -369,6 +369,10 @@ public class EventController {
 
             // Select the required number of attendees
             List<String> selectedAttendees = shuffledAttendees.subList(0, Math.min(numberToSelect, shuffledAttendees.size()));
+
+            for (String userId : selectedAttendees) {
+                attendeeController.setAttendeeStatus(Attendee.generateId(userId, eventId), "selected");
+            }
             return Tasks.forResult(selectedAttendees);
         });
     }

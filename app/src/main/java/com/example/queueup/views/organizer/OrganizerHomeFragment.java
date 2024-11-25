@@ -100,6 +100,5 @@ public class OrganizerHomeFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        // Optionally, perform cleanup here
     }
 }
