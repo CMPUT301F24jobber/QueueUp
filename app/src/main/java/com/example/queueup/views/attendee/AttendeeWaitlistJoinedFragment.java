@@ -37,7 +37,7 @@ public class AttendeeWaitlistJoinedFragment extends Fragment {
             pushNotificationHandler.sendNotificationToUser(
                     currentUserHandler.getCurrentUser().getValue().getFCMToken()
                     ,
-                    "Notification Title",  // Add the appropriate title here
+                    "Notification Title",
                     "You have left the waitlist for " + event.getEventName(),
                     PushNotificationHandler.NotificationType.GENERAL
             );
