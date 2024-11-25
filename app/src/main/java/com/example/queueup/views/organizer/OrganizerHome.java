@@ -13,11 +13,7 @@ import com.example.queueup.views.profiles.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-/**
- * OrganizerHome activity represents the home screen of an organizer, providing access to different functionalities
- * such as managing events, viewing QR codes, and accessing the user's profile.
- * The activity includes a bottom navigation view for switching between different sections.
- */
+
 public class OrganizerHome extends AppCompatActivity {
 
     private FirebaseFirestore db;
@@ -27,10 +23,8 @@ public class OrganizerHome extends AppCompatActivity {
     private ImageButton plusButton;
 
     /**
-     * Called when the activity is first created. This method initializes the views, sets up the bottom navigation
-     * menu, and sets up the listener for navigating to the event creation screen.
-     *
-     * @param savedInstanceState A Bundle containing the activity's previously saved state, if any.
+     * Called when the activity is created. Initializes the UI elements and sets up the navigation bar.
+     * @param savedInstanceState
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,12 +34,11 @@ public class OrganizerHome extends AppCompatActivity {
         // Initialize views
         navigationView = findViewById(R.id.bottom_navigation);
         db = FirebaseFirestore.getInstance();
-        plusButton = findViewById(R.id.plusButton);  // Add the plusButton from layout
-
+        plusButton = findViewById(R.id.plusButton);
         // Get deviceId from intent or UserController
         deviceId = getIntent().getStringExtra("deviceId");
         if (deviceId == null || deviceId.isEmpty()) {
-            deviceId = UserController.getInstance().getDeviceId(getApplicationContext());  // Fetch from UserController if not passed
+            deviceId = UserController.getInstance().getDeviceId(getApplicationContext());
         }
 
         // Set the OnClickListener to navigate to OrganizerCreateEvent
@@ -81,7 +74,7 @@ public class OrganizerHome extends AppCompatActivity {
                 case "Profile":
                     getSupportFragmentManager().beginTransaction()
                             .setReorderingAllowed(true)
-                            .replace(R.id.organizer_activity_fragment, ProfileFragment.class, null) // Changed to ProfileFragment
+                            .replace(R.id.organizer_activity_fragment, ProfileFragment.class, null)
                             .commit();
                     break;
                 default:

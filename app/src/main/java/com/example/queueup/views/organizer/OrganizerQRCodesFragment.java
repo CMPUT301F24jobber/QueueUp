@@ -11,9 +11,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.queueup.R;
+import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.models.Event;
+import com.example.queueup.viewmodels.EventViewModel;
 import com.example.queueup.viewmodels.QRCodeEventAdapter;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
@@ -42,10 +45,12 @@ public class OrganizerQRCodesFragment extends Fragment {
     private ArrayList<Event> eventList;
     private QRCodeEventAdapter eventsAdapter;
     private FirebaseFirestore firestore;
+    private EventViewModel eventViewModel;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        eventViewModel = new ViewModelProvider(this).get(EventViewModel.class);
 
         firestore = FirebaseFirestore.getInstance();
         eventList = new ArrayList<>();
@@ -55,80 +60,27 @@ public class OrganizerQRCodesFragment extends Fragment {
 
         eventsListView.setAdapter(eventsAdapter);
 
-        fetchEventsFromFirestore();
+        observeViewModel();
+
+        // Fetch events for the current organizer
+        String organizerId = CurrentUserHandler.getSingleton().getCurrentUserId();
+        eventViewModel.fetchEventsByOrganizer(organizerId);
     }
 
     /**
      * Fetches events from the Firestore database and updates the event list.
      */
-    private void fetchEventsFromFirestore() {
-        CollectionReference eventsRef = firestore.collection("events");
-        eventsRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
-                    for (DocumentSnapshot document : queryDocumentSnapshots) {
-                        Event event = document.toObject(Event.class);
-                        if (event != null) {
-                            eventList.add(event);
-                        } else {
-                            Log.w(TAG, "Null event found in Firestore data.");
-                        }
-                    }
-                    eventsAdapter.notifyDataSetChanged();
-                } else {
-                }
-            }
+    private void observeViewModel() {
+        eventViewModel.getEventsByOrganizerLiveData().observe(getViewLifecycleOwner(), events -> {
+            eventList.clear();
+            eventList.addAll(events);
+            eventsAdapter.notifyDataSetChanged();
         });
     }
 
-    /**
-     * Generates a QR code for the given event and saves it to the device storage.
-     *
-     * @param event The event for which the QR code is generated.
-     */
-    private void downloadQrCode(Event event) {
-        if (event == null || event.getCheckInQrCodeId() == null || event.getCheckInQrCodeId().isEmpty()) {
-            return;
-        }
 
-        try {
-            // Generate QR code bitmap
-            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-            Bitmap bitmap = barcodeEncoder.encodeBitmap(
-                    event.getCheckInQrCodeId(),
-                    BarcodeFormat.QR_CODE,
-                    800, 800
-            );
 
-            // Save bitmap to device storage
-            saveBitmapToStorage(bitmap, "QR_Code_" + event.getEventName() + ".png");
-        } catch (WriterException e) {
-            e.printStackTrace();
-            Toast.makeText(getContext(), "Error generating QR code", Toast.LENGTH_SHORT).show();
-        }
-    }
 
-    /**
-     * Saves a bitmap to device storage.
-     *
-     * @param bitmap The bitmap to save.
-     * @param fileName The name of the file to save.
-     */
-    private void saveBitmapToStorage(Bitmap bitmap, String fileName) {
-        File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        if (directory != null && !directory.exists()) {
-            directory.mkdirs();
-        }
-
-        File file = new File(directory, fileName);
-        try (FileOutputStream outputStream = new FileOutputStream(file)) {
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-            Toast.makeText(getContext(), "QR code saved to: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
 
 }

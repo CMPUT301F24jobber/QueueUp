@@ -25,11 +25,7 @@ import com.example.queueup.views.attendee.AttendeeWaitlistJoinedFragment;
 
 import java.time.format.DateTimeFormatter;
 
-/**
- * OrganizerDrawFragment represents the fragment where the organizer can view event details,
- * including event date, time, location, and poster image. The organizer can also update the event's
- * poster image by selecting a new image from their device.
- */
+
 public class OrganizerDraw extends Fragment {
     public OrganizerDraw() {
         super(R.layout.organizer_draw_fragment);
@@ -52,11 +48,10 @@ public class OrganizerDraw extends Fragment {
     private ToggleButton cancelNotification;
 
     /**
-     * Called when the fragment's view is created. It initializes the UI components, binds data to the views,
-     * and sets up the functionality for changing the event poster image.
+     * Called when the fragment's view has been created.
      *
-     * @param view The root view for the fragment.
-     * @param savedInstanceState A Bundle containing the fragment's previously saved state, if any.
+     * @param view
+     * @param savedInstanceState
      */
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
