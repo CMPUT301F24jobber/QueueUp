@@ -58,10 +58,10 @@
         android:layout_height="wrap_content"
         android:text="Cancel Unconfirmed Winners"
         android:fontFamily="@font/poppins"
-        android:backgroundTint="@color/beige"
+        android:backgroundTint="@color/red"
         android:textSize="24dp"
         android:textColor="@color/black"
-        app:layout_constraintTop_toTopOf="c"
+        app:layout_constraintTop_toBottomOf="@id/winner_button_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         />
@@ -72,6 +72,9 @@
             android:orientation="horizontal"
             android:paddingVertical="5dp"
             android:id="@+id/cancel_button_layout"
+            app:layout_constraintTop_toBottomOf="@id/cancel_winners"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             >
 
             <ToggleButton

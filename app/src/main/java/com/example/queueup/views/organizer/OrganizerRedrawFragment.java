@@ -21,10 +21,11 @@ public class OrganizerRedrawFragment extends Fragment {
     }
 
 
-    Button drawWinners;
+    Button redrawWinners;
+    Button cancelWinners;
+
     ToggleButton winnerNotification;
-    ToggleButton loserNotification;
-    ToggleButton everyoneNotification;
+    ToggleButton cancelNotification;
     private Event event;
 
     EventController eventController;
@@ -35,24 +36,23 @@ public class OrganizerRedrawFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         event = this.getArguments().getSerializable("event", Event.class);
-        drawWinners = view.findViewById(R.id.draw_winners);
+        redrawWinners = view.findViewById(R.id.redraw_winners);
+        redrawWinners = view.findViewById(R.id.redraw_winners);
+
         winnerNotification = view.findViewById(R.id.notification_winner);
-        loserNotification = view.findViewById(R.id.notification_loser);
-        everyoneNotification =  view.findViewById(R.id.notification_everyone);
+        cancelNotification = view.findViewById(R.id.notification_cancelled);
 
 
-        drawWinners.setOnClickListener(v -> {
-            if (everyoneNotification.isChecked()) {
 
-            } else {
-                if (loserNotification.isChecked()) {
+        redrawWinners.setOnClickListener(v -> {
+            if (winnerNotification.isChecked()) {
 
-                }
-                if (winnerNotification.isChecked()) {
-
-                }
             }
+        });
+        cancelWinners.setOnClickListener(v -> {
+            if (winnerNotification.isChecked()) {
 
+            }
         });
     }
 }
