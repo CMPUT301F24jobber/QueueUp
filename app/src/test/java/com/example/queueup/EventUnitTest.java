@@ -21,7 +21,8 @@ public class EventUnitTest {
                 new Date(),
                 100,
                 true,  // isActive
-                false  // isPublic
+                false,  // isPublic
+                null
         );
     }
 
