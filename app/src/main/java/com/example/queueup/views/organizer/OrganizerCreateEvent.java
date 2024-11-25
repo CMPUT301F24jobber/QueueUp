@@ -49,7 +49,7 @@ public class OrganizerCreateEvent extends AppCompatActivity {
     private CheckBox unlimitedAttendeeCheckBox;
     private Button submitButton;
     private ImageButton backButton;
-
+    private CheckBox isGeolocationRequired;
     private EventViewModel eventViewModel;
     private Uri imageUri = null;
     private ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
@@ -106,6 +106,7 @@ public class OrganizerCreateEvent extends AppCompatActivity {
         unlimitedAttendeeCheckBox = findViewById(R.id.unlimitedAttendeeCheckBox);
         submitButton = findViewById(R.id.submitButton);
         backButton = findViewById(R.id.backButton);
+        isGeolocationRequired = findViewById(R.id.geolocationRequiredCheckBox);
     }
 
     private void setupClickListeners() {
@@ -232,6 +233,7 @@ public class OrganizerCreateEvent extends AppCompatActivity {
         String description = descriptionEditText.getText().toString().trim();
         String attendeeLimit = attendeeLimitEditText.getText().toString().trim();
         boolean unlimitedAttendees = unlimitedAttendeeCheckBox.isChecked();
+        boolean geolocationRequired = isGeolocationRequired.isChecked();
 
         // Validate required fields
         if (!areRequiredFieldsFilled(eventName, location, startDate, startTime, endDate, endTime)) {
@@ -264,7 +266,6 @@ public class OrganizerCreateEvent extends AppCompatActivity {
 
         // Disable submit button to prevent double submission
         submitButton.setEnabled(false);
-        showToast("Uploading image...");
 
         // First upload the image
         String eventId = UUID.randomUUID().toString();
@@ -286,7 +287,8 @@ public class OrganizerCreateEvent extends AppCompatActivity {
                         endDateTime,
                         attendeeLimitValue,
                         true,
-                        false
+                        false,
+                        geolocationRequired
                 );
 
                 newEvent.setCheckInQrCodeId(qrCodeId);

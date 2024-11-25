@@ -21,6 +21,7 @@ import com.example.queueup.views.SignUp;
 import com.example.queueup.views.admin.AdminHome;
 import com.example.queueup.views.attendee.AttendeeHome;
 import com.example.queueup.views.organizer.OrganizerHome;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -77,6 +78,10 @@ public class MainActivity extends AppCompatActivity {
         // Initialize PushNotificationHandler Singleton
         pushNotificationHandler = PushNotificationHandler.getSingleton();
         pushNotificationHandler.handleNotificationPermissions(this, this);
+
+        // Initialize LocationService
+        LocationServices.getFusedLocationProviderClient(this);
+
     }
 
     private void checkExistingUser() {

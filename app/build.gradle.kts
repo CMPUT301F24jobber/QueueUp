@@ -60,7 +60,7 @@ dependencies {
     implementation("androidx.fragment:fragment:1.8.5")
     implementation("com.google.firebase:firebase-messaging:23.1.2")
     implementation ("com.squareup.okhttp3:okhttp:4.9.1")
-
+    implementation("org.osmdroid:osmdroid-android:6.1.10")
 }
 
 
