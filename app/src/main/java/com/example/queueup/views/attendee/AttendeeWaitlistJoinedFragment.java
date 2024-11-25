@@ -31,9 +31,6 @@ public class AttendeeWaitlistJoinedFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         leaveWaitlistButton = view.findViewById(R.id.leave_waitlist);
         Event event = this.getArguments().getSerializable("event", Event.class);
-        if(event.getIsGeoLocationRequried()) {
-            Toast.makeText(getContext(), "Geolocation is required for this event.", Toast.LENGTH_LONG).show();
-        }
         attendeeController = AttendeeController.getInstance();
         eventController = EventController.getInstance();
         currentUserHandler = CurrentUserHandler.getSingleton();
