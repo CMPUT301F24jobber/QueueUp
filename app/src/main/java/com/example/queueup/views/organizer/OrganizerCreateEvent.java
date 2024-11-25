@@ -37,7 +37,6 @@ import java.util.UUID;
 
 public class OrganizerCreateEvent extends AppCompatActivity {
 
-    // Constants for date and time formats
     private static final String DATE_FORMAT = "yyyy-MM-dd";
     private static final String TIME_FORMAT = "HH:mm";
     private static final String DATETIME_FORMAT = "yyyy-MM-dd HH:mm";

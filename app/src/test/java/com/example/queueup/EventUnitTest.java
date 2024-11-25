@@ -10,9 +10,19 @@ import java.util.Date;
 
 public class EventUnitTest {
     private Event mockEvent() {
-        Event mockEvent = new Event("123", "Event Name", "Event Description", "https://www.example.com/image.jpg",
-                "Event Location", "Organizer ID", new Date(), new Date(), 100, true);
-        return mockEvent;
+        return new Event(
+                "123",
+                "Event Name",
+                "Event Description",
+                "https://www.example.com/image.jpg",
+                "Location",
+                "Organizer",
+                new Date(),
+                new Date(),
+                100,
+                true,  // isActive
+                false  // isPublic
+        );
     }
 
     @Test
