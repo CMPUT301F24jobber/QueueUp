@@ -54,4 +54,8 @@ public class NotificationService extends FirebaseMessagingService {
         notificationManager.notify(0, notificationBuilder.build());
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 }
