@@ -21,6 +21,7 @@ public class Event implements Serializable {
     private String checkInQrCodeId;
     private Boolean isActive;
     private Boolean isDrawn;
+    private Boolean isGeoLocationRequried;
 
     private int maxCapacity;
     private int currentCapacity;
@@ -29,7 +30,7 @@ public class Event implements Serializable {
     }
     public Event(String eventId, String eventName, String eventDescription, String eventBannerImageUrl,
                  String eventLocation, String organizerId, Date eventStartDate, Date eventEndDate,
-                 int maxCapacity, Boolean isActive, Boolean isDrawn) {
+                 int maxCapacity, Boolean isActive, Boolean isDrawn, Boolean isGeoLocationRequried) {
         this.eventId = eventId;
         this.eventName = eventName;
         this.eventDescription = eventDescription;
@@ -45,6 +46,15 @@ public class Event implements Serializable {
         this.currentCapacity = 0;
         this.creationDate = new Date();
         this.isDrawn = isDrawn;
+        this.isGeoLocationRequried = isGeoLocationRequried;
+    }
+
+    public Boolean getIsGeoLocationRequried() {
+        return isGeoLocationRequried;
+    }
+
+    public void setIsGeoLocationRequried(Boolean isGeoLocationRequried) {
+        this.isGeoLocationRequried = isGeoLocationRequried;
     }
 
     /**
