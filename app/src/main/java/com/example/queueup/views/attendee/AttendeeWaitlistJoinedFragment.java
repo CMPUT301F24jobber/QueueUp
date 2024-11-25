@@ -3,6 +3,7 @@ package com.example.queueup.views.attendee;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -30,6 +31,9 @@ public class AttendeeWaitlistJoinedFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         leaveWaitlistButton = view.findViewById(R.id.leave_waitlist);
         Event event = this.getArguments().getSerializable("event", Event.class);
+        if(event.getIsGeoLocationRequried()) {
+            Toast.makeText(getContext(), "Geolocation is required for this event.", Toast.LENGTH_LONG).show();
+        }
         attendeeController = AttendeeController.getInstance();
         eventController = EventController.getInstance();
         currentUserHandler = CurrentUserHandler.getSingleton();
