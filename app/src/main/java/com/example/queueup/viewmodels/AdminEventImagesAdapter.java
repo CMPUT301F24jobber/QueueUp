@@ -14,15 +14,24 @@ import com.example.queueup.models.Event;
 
 import java.util.ArrayList;
 
-/**
- * Adapter for displaying event images and names in a list for the admin.
- */
 public class AdminEventImagesAdapter extends ArrayAdapter<Event> {
 
+    /**
+     * Constructor for the AdminEventImagesAdapter
+     * @param context
+     * @param events
+     */
     public AdminEventImagesAdapter(Context context, ArrayList<Event> events) {
         super(context, 0, events);
     }
 
+    /**
+     * Returns the view for the AdminEventImagesAdapter
+     * @param position
+     * @param convertView
+     * @param parent
+     * @return
+     */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;

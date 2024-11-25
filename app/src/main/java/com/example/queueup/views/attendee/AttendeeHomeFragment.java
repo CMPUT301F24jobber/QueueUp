@@ -14,6 +14,7 @@ import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.models.Event;
 import com.example.queueup.viewmodels.AttendeeEventArrayAdapter;
 import com.example.queueup.viewmodels.EventViewModel;
+import com.example.queueup.viewmodels.UserViewModel;
 
 import java.util.ArrayList;
 
@@ -33,6 +34,7 @@ public class AttendeeHomeFragment extends Fragment {
     private ListView eventList;
     private AttendeeEventArrayAdapter eventAdapter;
     private EventViewModel eventViewModel;
+    private UserViewModel userViewModel;
 
     /**
      * Called when the fragment's view is created. This method initializes the event list,
@@ -66,12 +68,12 @@ public class AttendeeHomeFragment extends Fragment {
 
     }
     private void observeViewModel() {
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        eventViewModel.fetchEventsByOrganizer(userViewModel.getCurrentUser().getValue().getUuid());
         eventViewModel.getEventsByAttendeeLiveData().observe(getViewLifecycleOwner(), events -> {
-            if (events != null) {
-                dataList.clear();
-                dataList.addAll(events);
-                eventAdapter.notifyDataSetChanged();
-            }
+            dataList.clear();
+            dataList.addAll(events);
+            eventAdapter.notifyDataSetChanged();
         });
     }
     @Override

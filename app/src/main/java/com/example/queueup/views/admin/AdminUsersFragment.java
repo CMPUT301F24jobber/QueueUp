@@ -28,6 +28,12 @@ public class AdminUsersFragment extends Fragment implements AdminClickUserFragme
     private UsersArrayAdapter usersAdapter;
     private FirebaseFirestore db;
 
+    /**
+     * Called when the fragment's view has been created.
+     *
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);

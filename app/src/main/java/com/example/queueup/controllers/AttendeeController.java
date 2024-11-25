@@ -22,30 +22,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Controller class for managing Attendees in the Event Lottery System.
- * Handles CRUD operations, waiting list management, updating statuses,
- * and fetching user information.
- */
 public class AttendeeController {
     private static AttendeeController singleInstance = null;
     private static final String TAG = "AttendeeController";
-
     private final CollectionReference attendeeCollectionReference = FirebaseFirestore.getInstance().collection("attendees");
     private final CollectionReference userCollectionReference = FirebaseFirestore.getInstance().collection("users");
     private final CurrentUserHandler currentUserHandler = CurrentUserHandler.getSingleton();
     private final PushNotificationHandler pushNotificationHandler = PushNotificationHandler.getSingleton();
 
-    /**
-     * Private constructor to enforce Singleton pattern.
-     */
     private AttendeeController() {}
 
-    /**
-     * Retrieves the single instance of AttendeeController.
-     *
-     * @return the singleton instance of AttendeeController
-     */
     public static synchronized AttendeeController getInstance() {
         if (singleInstance == null) {
             singleInstance = new AttendeeController();
@@ -56,7 +42,7 @@ public class AttendeeController {
     /**
      * Retrieves all attendance records for the current user.
      *
-     * @return Task<QuerySnapshot> containing all attendance records for the current user
+     * @return Task<QuerySnapshot>
      */
     public Task<QuerySnapshot> getAllAttendance() {
         User currentUser = currentUserHandler.getCurrentUser().getValue();
@@ -71,7 +57,7 @@ public class AttendeeController {
      * Retrieves attendance records by a specific event ID.
      *
      * @param eventId The ID of the event
-     * @return Task<QuerySnapshot> containing all attendees for the specified event
+     * @return Task<QuerySnapshot>
      */
     public Task<QuerySnapshot> getAttendanceByEventId(String eventId) {
         return attendeeCollectionReference.whereEqualTo("eventId", eventId).get();
@@ -81,7 +67,7 @@ public class AttendeeController {
      * Retrieves attendance records by a specific user ID.
      *
      * @param userId The ID of the user
-     * @return Task<QuerySnapshot> containing all attendance records for the specified user
+     * @return Task<QuerySnapshot>
      */
     public Task<QuerySnapshot> getAttendanceByUserId(String userId) {
         return attendeeCollectionReference.whereEqualTo("userId", userId).get();
@@ -90,8 +76,8 @@ public class AttendeeController {
     /**
      * Retrieves a specific attendance record by its ID.
      *
-     * @param id The ID of the attendance record
-     * @return Task<DocumentSnapshot> containing the attendance record
+     * @param id
+     * @return Task<DocumentSnapshot>
      */
     public Task<DocumentSnapshot> getAttendanceById(String id) {
         return attendeeCollectionReference.document(id).get();
@@ -99,10 +85,9 @@ public class AttendeeController {
 
     /**
      * Creates a new attendance record for the current user and a specified event.
-     * (Join Waiting List)
      *
-     * @param eventId The ID of the event
-     * @return Task<Void> indicating the completion of the operation
+     * @param eventId
+     * @return Task<Void>
      */
     public Task<Void> joinWaitingList(String eventId) {
         User currentUser = currentUserHandler.getCurrentUser().getValue();
@@ -118,14 +103,14 @@ public class AttendeeController {
     /**
      * Creates a new attendance record with optional geolocation.
      *
-     * @param userId   The ID of the user
-     * @param eventId  The ID of the event
-     * @param location The location of the user (optional)
-     * @return Task<Void> indicating the completion of the operation
+     * @param userId
+     * @param eventId
+     * @param location
+     * @return Task<Void>
      */
     public Task<Void> joinWaitingList(String userId, String eventId, @Nullable Location location) {
         Attendee newAttendee = new Attendee(userId, eventId);
-        newAttendee.setStatus("waiting"); // Set initial status to "waiting"
+        newAttendee.setStatus("waiting");
         if (location != null) {
             GeoLocation newLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
             newAttendee.setLocation(newLocation);
@@ -136,8 +121,8 @@ public class AttendeeController {
     /**
      * Leaves the waiting list for the current user and a specific event.
      *
-     * @param eventId The ID of the event
-     * @return Task<Void> indicating the completion of the operation
+     * @param eventId
+     * @return Task<Void>
      */
     public Task<Void> leaveWaitingList(String eventId) {
         User currentUser = currentUserHandler.getCurrentUser().getValue();
@@ -155,9 +140,9 @@ public class AttendeeController {
      * Leaves the waiting list for a specific user and event.
      * Useful for admin operations or when handling replacements.
      *
-     * @param eventId The ID of the event.
-     * @param userId  The ID of the user.
-     * @return Task<Void> indicating the completion of the operation
+     * @param eventId
+     * @param userId
+     * @return Task<Void>
      */
     public Task<Void> leaveWaitingList(String eventId, String userId) {
         String attendeeId = Attendee.generateId(userId, eventId);
@@ -166,10 +151,8 @@ public class AttendeeController {
 
     /**
      * Updates an existing attendance record.
-     * (Used for updating status, e.g., accepting or declining an invitation)
-     *
-     * @param attendee The attendee object with updated information
-     * @return Task<Void> indicating the completion of the operation
+     * @param attendee
+     * @return Task<Void>
      */
     public Task<Void> updateAttendance(Attendee attendee) {
         return attendeeCollectionReference.document(attendee.getId()).set(attendee);
@@ -177,20 +160,19 @@ public class AttendeeController {
 
     /**
      * Deletes an attendance record by its ID.
-     *
-     * @param id The ID of the attendance record to delete
-     * @return Task<Void> indicating the completion of the operation
+     * @param id
+     * @return Task<Void>
      */
     public Task<Void> deleteAttendance(String id) {
         return attendeeCollectionReference.document(id).delete();
     }
 
     /**
-     * Handles attendee check-in by updating their geolocation and check-in status.
+     * Handles attendee check-in
      *
-     * @param attendeeId The ID of the attendee
-     * @param location   The location during check-in (optional)
-     * @return Task<Void> indicating the completion of the operation
+     * @param attendeeId
+     * @param location
+     * @return Task<Void>
      */
     public Task<Void> checkInAttendee(String attendeeId, @Nullable Location location) {
         if (location != null) {
@@ -210,8 +192,8 @@ public class AttendeeController {
     /**
      * Notifies an attendee about their selection status.
      *
-     * @param attendeeId The ID of the attendee
-     * @param isSelected Whether the attendee was selected or not
+     * @param attendeeId
+     * @param isSelected
      */
     public void notifyAttendee(String attendeeId, boolean isSelected) {
         attendeeCollectionReference.document(attendeeId).get().addOnCompleteListener(task -> {
@@ -248,8 +230,8 @@ public class AttendeeController {
     /**
      * Replaces an attendee if they decline the invitation.
      *
-     * @param eventId The ID of the event
-     * @return Task<QuerySnapshot> containing the new attendee selected
+     * @param eventId
+     * @return Task<QuerySnapshot>
      */
     public Task<QuerySnapshot> replaceAttendee(String eventId) {
         // Fetch the next attendee in line based on numberInLine and status "waiting"
@@ -264,7 +246,7 @@ public class AttendeeController {
     /**
      * Fetches user information for a list of attendees.
      *
-     * @param attendees List of attendees to fetch user information for
+     * @param attendees
      * @return Task<Map<String, User>> mapping user IDs to User objects
      */
     public Task<Map<String, User>> fetchUsersForAttendees(List<Attendee> attendees) {
@@ -297,8 +279,8 @@ public class AttendeeController {
     /**
      * Sets the status of an attendee.
      *
-     * @param attendeeId The ID of the attendee
-     * @param status     The new status to set (e.g., "selected", "not_selected")
+     * @param attendeeId
+     * @param status
      * @return Task<Void> indicating the completion of the operation
      */
     public Task<Void> setAttendeeStatus(String attendeeId, String status) {

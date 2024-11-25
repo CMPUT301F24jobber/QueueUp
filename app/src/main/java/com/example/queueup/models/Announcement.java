@@ -7,27 +7,27 @@ import java.util.Date;
  * Model class representing an Announcement for an event.
  */
 public class Announcement implements Serializable {
-    private String id;          // Unique ID for the announcement (Firestore document ID)
-    private String eventId;     // ID of the event this announcement belongs to
-    private String content;     // The content of the announcement
-    private Date timestamp;     // When the announcement was created
-    private String authorId;    // ID of the user who created the announcement
+    private String id;
+    private String eventId;
+    private String content;
+    private Date timestamp;
+    private String authorId;
 
 
     public Announcement(){}
 
     /**
-     * Parameterized constructor to create a new Announcement instance.
+     * Creates a new announcement with the given event ID, content, and author ID.
      *
-     * @param eventId  The ID of the event.
-     * @param content  The content of the announcement.
-     * @param authorId The ID of the user creating the announcement.
+     * @param eventId
+     * @param content
+     * @param authorId
      */
     public Announcement(String eventId, String content, String authorId) {
         this.eventId = eventId;
         this.content = content;
         this.authorId = authorId;
-        this.timestamp = new Date(); // Sets the timestamp to the current date and time
+        this.timestamp = new Date();
     }
 
 
@@ -42,9 +42,8 @@ public class Announcement implements Serializable {
 
     /**
      * Sets the unique ID of the announcement.
-     * Typically managed by Firestore, but can be set manually if needed.
      *
-     * @param id The announcement ID.
+     * @param id
      */
     public void setId(String id) {
         this.id = id;
@@ -62,7 +61,7 @@ public class Announcement implements Serializable {
     /**
      * Sets the event ID associated with this announcement.
      *
-     * @param eventId The event ID.
+     * @param eventId
      */
     public void setEventId(String eventId) {
         this.eventId = eventId;
@@ -71,7 +70,7 @@ public class Announcement implements Serializable {
     /**
      * Gets the content of the announcement.
      *
-     * @return The announcement content.
+     * @return
      */
     public String getContent() {
         return content;
@@ -80,7 +79,7 @@ public class Announcement implements Serializable {
     /**
      * Sets the content of the announcement.
      *
-     * @param content The announcement content.
+     * @param content
      */
     public void setContent(String content) {
         this.content = content;
@@ -124,11 +123,10 @@ public class Announcement implements Serializable {
 
 
     /**
-     * Generates a unique announcement ID based on event ID and timestamp.
-     * Can be customized based on specific requirements.
+     * Generates a unique id
      *
-     * @param eventId The ID of the event.
-     * @param timestamp The timestamp of creation.
+     * @param eventId
+     * @param timestamp
      * @return A unique announcement ID.
      */
     public static String generateAnnouncementId(String eventId, Date timestamp) {

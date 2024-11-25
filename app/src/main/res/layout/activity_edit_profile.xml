@@ -5,7 +5,6 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Profile Image Section -->
     <FrameLayout
         android:id="@+id/profileImageFrame"
         android:layout_width="100dp"
@@ -34,7 +33,6 @@
             android:contentDescription="Profile Picture" />
     </FrameLayout>
 
-    <!-- Personal Information Section -->
     <EditText
         android:id="@+id/editFirstName"
         android:layout_width="match_parent"
@@ -85,7 +83,6 @@
         android:inputType="phone"
         android:maxLength="10" />
 
-    <!-- Notification Settings Section -->
     <TextView
         android:id="@+id/notifTitle"
         android:layout_width="wrap_content"
@@ -119,13 +116,11 @@
         android:textSize="16sp"
         android:thumbTint="#8C7466" />
 
-    <!-- Spacer -->
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <!-- Action Buttons Section -->
     <Button
         android:id="@+id/editPicButton"
         android:layout_width="match_parent"

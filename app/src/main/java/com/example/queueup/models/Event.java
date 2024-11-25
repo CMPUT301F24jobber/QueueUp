@@ -5,11 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-/**
- * Represents an event with comprehensive details including its schedule,
- * location, organizer, and participant information. This class manages
- * event attendance, announcements, and facilitates event check-ins via QR codes.
- */
+
 public class Event implements Serializable {
     private String eventName;
     private String eventLocation;
@@ -24,17 +20,16 @@ public class Event implements Serializable {
     private Date creationDate;
     private String checkInQrCodeId;
     private Boolean isActive;
+    private Boolean isDrawn;
+
     private int maxCapacity;
     private int currentCapacity;
 
     public Event() {
     }
-    /**
-     * Constructs a new {@code Event} instance with default values.
-     */
     public Event(String eventId, String eventName, String eventDescription, String eventBannerImageUrl,
                  String eventLocation, String organizerId, Date eventStartDate, Date eventEndDate,
-                 int maxCapacity, Boolean isActive) {
+                 int maxCapacity, Boolean isActive, Boolean isDrawn) {
         this.eventId = eventId;
         this.eventName = eventName;
         this.eventDescription = eventDescription;
@@ -47,8 +42,9 @@ public class Event implements Serializable {
         this.isActive = isActive;
         this.attendeeIds = new ArrayList<>();
         this.announcementList = new ArrayList<>();
-        this.currentCapacity = 0; // Initialize current capacity to 0
-        this.creationDate = new Date(); // Set creation date to current date
+        this.currentCapacity = 0;
+        this.creationDate = new Date();
+        this.isDrawn = isDrawn;
     }
 
     /**
@@ -63,14 +59,14 @@ public class Event implements Serializable {
     /**
      * Sets the name of the event.
      *
-     * @param eventName the desired name for the event
+     * @param eventName t
      */
     public void setEventName(String eventName) {
         this.eventName = eventName;
     }
 
     /**
-     * Retrieves the location where the event will take place.
+     * Get the location of the event.
      *
      * @return the event's location
      */
@@ -81,7 +77,7 @@ public class Event implements Serializable {
     /**
      * Sets the location for the event.
      *
-     * @param eventLocation the desired location for the event
+     * @param eventLocation
      */
     public void setEventLocation(String eventLocation) {
         this.eventLocation = eventLocation;
@@ -99,7 +95,7 @@ public class Event implements Serializable {
     /**
      * Sets the description for the event.
      *
-     * @param eventDescription a detailed description of the event
+     * @param eventDescription
      */
     public void setEventDescription(String eventDescription) {
         this.eventDescription = eventDescription;
@@ -117,7 +113,7 @@ public class Event implements Serializable {
     /**
      * Sets the unique identifier for the event.
      *
-     * @param eventId a unique ID for the event
+     * @param eventId
      */
     public void setEventId(String eventId) {
         this.eventId = eventId;
@@ -171,7 +167,7 @@ public class Event implements Serializable {
     /**
      * Sets the start date and time for the event.
      *
-     * @param eventStartDate the desired start date for the event
+     * @param eventStartDate
      */
     public void setEventStartDate(Date eventStartDate) {
         this.eventStartDate = eventStartDate;
@@ -189,7 +185,7 @@ public class Event implements Serializable {
     /**
      * Sets the end date and time for the event.
      *
-     * @param eventEndDate the desired end date for the event
+     * @param eventEndDate
      */
     public void setEventEndDate(Date eventEndDate) {
         this.eventEndDate = eventEndDate;
@@ -207,14 +203,14 @@ public class Event implements Serializable {
     /**
      * Sets the creation date for the event record.
      *
-     * @param creationDate the date when the event was created
+     * @param creationDate
      */
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
 
     /**
-     * Retrieves the QR code identifier used for event check-in.
+     * Retrieves the QR code
      *
      * @return the QR code ID for event check-in
      */
@@ -223,9 +219,9 @@ public class Event implements Serializable {
     }
 
     /**
-     * Sets the QR code identifier for event check-in.
+     * Sets the QR code
      *
-     * @param checkInQrCodeId the QR code ID to be used for check-in
+     * @param checkInQrCodeId
      */
     public void setCheckInQrCodeId(String checkInQrCodeId) {
         this.checkInQrCodeId = checkInQrCodeId;
@@ -243,7 +239,7 @@ public class Event implements Serializable {
     /**
      * Sets the identifier for the event organizer.
      *
-     * @param organizerId the organizer's unique ID
+     * @param organizerId
      */
     public void setOrganizerId(String organizerId) {
         this.organizerId = organizerId;
@@ -261,7 +257,7 @@ public class Event implements Serializable {
     /**
      * Sets the URL for the event's banner image.
      *
-     * @param eventBannerImageUrl the URL of the banner image
+     * @param eventBannerImageUrl
      */
     public void setEventBannerImageUrl(String eventBannerImageUrl) {
         this.eventBannerImageUrl = eventBannerImageUrl;
@@ -279,7 +275,7 @@ public class Event implements Serializable {
     /**
      * Sets the maximum capacity for the event.
      *
-     * @param maxCapacity the maximum number of attendees as an integer
+     * @param maxCapacity
      */
     public void setMaxCapacity(int maxCapacity) {
         this.maxCapacity = maxCapacity;
@@ -297,7 +293,7 @@ public class Event implements Serializable {
     /**
      * Sets the current number of attendees for the event.
      *
-     * @param currentCapacity the current number of attendees as an integer
+     * @param currentCapacity
      */
     public void setCurrentCapacity(int currentCapacity) {
         this.currentCapacity = currentCapacity;
@@ -306,7 +302,7 @@ public class Event implements Serializable {
     /**
      * Checks whether the event is currently active.
      *
-     * @return {@code true} if the event is active; {@code false} otherwise
+     * @return bool
      */
     public Boolean getIsActive() {
         return isActive;
@@ -315,9 +311,26 @@ public class Event implements Serializable {
     /**
      * Sets the active status of the event.
      *
-     * @param isActive {@code true} to mark the event as active, {@code false} to deactivate
+     * @param isActive
      */
     public void setIsActive(Boolean isActive) {
         this.isActive = isActive;
+    }
+    /**
+     * Checks whether the event has been drawn.
+     *
+     * @return bool
+     */
+    public Boolean getIsDrawn() {
+        return isDrawn;
+    }
+
+    /**
+     * Set drawn status of event.
+     *
+     * @param isDrawn {@code true} to mark the event as active, {@code false} to deactivate
+     */
+    public void setIsDrawn(Boolean isDrawn) {
+        this.isDrawn = isDrawn;
     }
 }

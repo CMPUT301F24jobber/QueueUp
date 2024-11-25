@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import com.example.queueup.R;
 import com.example.queueup.models.Event;
 import com.example.queueup.viewmodels.AdminEventImagesAdapter;
+import com.example.queueup.viewmodels.EventViewModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
@@ -21,10 +22,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
-/**
- * Fragment that displays a gallery of events in a ListView, allowing the admin to view
- * all events fetched from Firestore.
- */
+
 public class AdminGalleryFragment extends Fragment {
     public AdminGalleryFragment() {
         super(R.layout.admin_gallery_fragment);
@@ -34,17 +32,17 @@ public class AdminGalleryFragment extends Fragment {
     private ListView eventListView;
     private AdminEventImagesAdapter eventAdapter;
     private FirebaseFirestore firestore;
+    private EventViewModel eventViewModel;
 
     /**
-     * Initializes the views and binds the data for the gallery of events.
-     * It sets up a ListView with an adapter to display event data.
-     *
-     * @param view The root view of the fragment.
-     * @param savedInstanceState The saved instance state.
+     * Called when the view for the fragment has been created. 
+     * @param view
+     * @param savedInstanceState 
      */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        eventViewModel = new EventViewModel();
 
         firestore = FirebaseFirestore.getInstance();
         eventList = new ArrayList<>();
@@ -55,31 +53,14 @@ public class AdminGalleryFragment extends Fragment {
     }
 
     /**
-     * Fetches events from the Firestore database and updates the event list.
+     * Fetches all events
      */
     private void fetchEventsFromFirestore() {
-        CollectionReference eventsRef = firestore.collection("events");
-        eventsRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
-                    eventList.clear();
-                    for (DocumentSnapshot document : queryDocumentSnapshots) {
-                        Event event = document.toObject(Event.class);
-                        if (event != null) {
-                            eventList.add(event);
-                        }
-                    }
-                    eventAdapter.notifyDataSetChanged();
-                } else {
-                    Toast.makeText(getContext(), "No events found", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getContext(), "Failed to fetch events", Toast.LENGTH_SHORT).show();
-            }
+        eventViewModel.fetchAllEvents();
+        eventViewModel.getAllEventsLiveData().observe(getViewLifecycleOwner(), events -> {
+            eventList.clear();
+            eventList.addAll(events);
+            eventAdapter.notifyDataSetChanged();
         });
     }
 }

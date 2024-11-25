@@ -36,7 +36,7 @@ public class PushNotificationHandler {
     private static final UserController userController = UserController.getInstance();
     private static final String TAG = "PushNotificationHandler";
 
-    private static final String SERVER_KEY = "BLZ2jFq-dnKm43m9o3i__kWIZ19HH7Fr1B6WQ2DKw_tYQ6--3MW1rUvVRYd-zUDTxKdGHZxLGMPH65_y3RjOXhE";
+    private static final String SERVER_KEY = "BGTY0lomG3aOxQPurYXfrYS0-f2m5nhv3OPVLdC-HMloI2Xku2R3wJY8cpawX20NALq6ILxes5Ks_GxETzdeljg";
     private final OkHttpClient client = new OkHttpClient();
 
     public static PushNotificationHandler getSingleton() {
@@ -49,10 +49,10 @@ public class PushNotificationHandler {
     private PushNotificationHandler() {}
 
     /**
-     * Handles notification permissions for Android Tiramisu and above.
+     * Handles notification permissions
      *
-     * @param context The application context.
-     * @param activity The activity from which to request permissions.
+     * @param context
+     * @param activity
      */
     public void handleNotificationPermissions(Context context, Activity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -65,14 +65,12 @@ public class PushNotificationHandler {
         }
     }
 
-    // Enums for Notification Types
     public enum NotificationType {
         GENERAL,
         ORGANIZER,
         ADMIN
     }
 
-    // Send notification to a single user
     public void sendNotificationToUser(String userId, String title, String body, NotificationType type) {
         userController.getUserById(userId).addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
@@ -88,16 +86,13 @@ public class PushNotificationHandler {
         });
     }
 
-    // Send notification to multiple users
     private void sendNotificationToUsers(List<String> userIds, String title, String body, NotificationType type) {
         for (String userId : userIds) {
             sendNotificationToUser(userId, title, body, type);
         }
     }
 
-    // Entrant Notifications
 
-    // Notification when chosen from the waiting list
     public Task<Void> sendLotteryWinNotification(String eventId, String userId) {
         TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
 
@@ -116,7 +111,7 @@ public class PushNotificationHandler {
         return taskCompletionSource.getTask();
     }
 
-    // Notification when not chosen
+
     public Task<Void> sendLotteryLoseNotification(String eventId, String userId) {
         TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
 
@@ -135,7 +130,6 @@ public class PushNotificationHandler {
         return taskCompletionSource.getTask();
     }
 
-    // Notification for another chance
     public Task<Void> sendReplacementNotification(String eventId, String userId, NotificationType general) {
         TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
 
@@ -154,7 +148,6 @@ public class PushNotificationHandler {
         return taskCompletionSource.getTask();
     }
 
-    // Send invitation to chosen entrants
     public Task<Void> sendInvitationNotification(String eventId, String userId) {
         TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
 
@@ -173,7 +166,6 @@ public class PushNotificationHandler {
         return taskCompletionSource.getTask();
     }
 
-    // Send notification to all entrants on the waiting list
     public Task<Void> sendNotificationToWaitingList(String eventId, String message) {
         TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
 
@@ -191,7 +183,6 @@ public class PushNotificationHandler {
         return taskCompletionSource.getTask();
     }
 
-    // Send notification to all selected entrants
     public Task<Void> sendNotificationToSelectedEntrants(String eventId, String message) {
         TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
 
@@ -209,7 +200,6 @@ public class PushNotificationHandler {
         return taskCompletionSource.getTask();
     }
 
-    // Send notification to all cancelled entrants
     public Task<Void> sendNotificationToCancelledEntrants(String eventId, String message) {
         TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
 
@@ -223,23 +213,20 @@ public class PushNotificationHandler {
                 taskCompletionSource.setException(task.getException());
             }
         });
-
         return taskCompletionSource.getTask();
     }
 
-    // Helper method to send notifications asynchronously
     private Task<Void> sendNotificationAsync(String userId, String title, String body, NotificationType type) {
         TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
         sendNotificationToUser(userId, title, body, type);
-        // Assume notification is sent successfully as it's asynchronous
         taskCompletionSource.setResult(null);
         return taskCompletionSource.getTask();
     }
 
     /**
-     * Sends a push notification using Firebase Cloud Messaging (FCM) HTTP API.
+     * Sends a push notification
      *
-     * @param root The JSON payload containing notification details.
+     * @param root JSON payload
      */
     public void sendPushNotification(JSONObject root) {
         MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
@@ -268,9 +255,9 @@ public class PushNotificationHandler {
     /**
      * Sends a push notification to a specific FCM token.
      *
-     * @param token The recipient's FCM token.
-     * @param title The title of the notification.
-     * @param body The body content of the notification.
+     * @param token
+     * @param title
+     * @param body
      */
     private void sendNotificationToToken(String token, String title, String body) {
         try {

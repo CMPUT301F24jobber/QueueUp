@@ -33,11 +33,10 @@ public class AdminHomeFragment extends Fragment {
     private EventViewModel eventViewModel;
 
     /**
-     * Called when the view for the fragment has been created. Initializes the ListView and its adapter,
-     * sets up the ViewModel, and observes LiveData for events and errors.
+     * Called when the fragment's view has been created.
      *
-     * @param view The View returned by onCreateView().
-     * @param savedInstanceState A Bundle containing the activity's previous state (if any).
+     * @param view
+     * @param savedInstanceState
      */
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
@@ -45,10 +44,10 @@ public class AdminHomeFragment extends Fragment {
 
         eventViewModel = new ViewModelProvider(this).get(EventViewModel.class);
         // Initialize the data list and add an event
-        dataList = new ArrayList<>();  // Proper initialization of ArrayList
+        dataList = new ArrayList<>();
 
         // Set up the ListView and its adapter
-        eventList = view.findViewById(R.id.event_list);  // Use 'view' to find the ListView in the fragment's layout
+        eventList = view.findViewById(R.id.event_list);
         eventAdapter = new AdminEventArrayAdapter(view.getContext(), dataList);  // Initialize the adapter with the context and data list
         eventList.setAdapter(eventAdapter);  // Set the adapter to the ListView
         observeViewModel();
@@ -57,7 +56,7 @@ public class AdminHomeFragment extends Fragment {
     }
 
     /**
-     * Called when the fragment is resumed. Refetches all events from the ViewModel.
+     * Called when the fragment is resumed. Fetches all events from the ViewModel.
      */
     @Override
     public void onResume() {
@@ -67,8 +66,7 @@ public class AdminHomeFragment extends Fragment {
     }
 
     /**
-     * Observes LiveData from the ViewModel for changes in the list of events and error messages.
-     * Updates the UI based on the data or error received.
+     * Observes the ViewModel for changes in the list of events. Updates the UI accordingly.
      */
     private void observeViewModel() {
         eventViewModel.getAllEventsLiveData().observe(getViewLifecycleOwner(), events -> {

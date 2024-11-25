@@ -42,7 +42,6 @@ public class OrganizerCreateEvent extends AppCompatActivity {
     private static final String TIME_FORMAT = "HH:mm";
     private static final String DATETIME_FORMAT = "yyyy-MM-dd HH:mm";
 
-    // UI Components
     private ImageView eventImage;
     private EditText eventNameEditText;
     private EditText startDateEditText, startTimeEditText;
@@ -306,7 +305,8 @@ public class OrganizerCreateEvent extends AppCompatActivity {
                 startDateTime,
                 endDateTime,
                 attendeeLimitValue,
-                true // Active by default
+                true,
+                false
         );
 
         newEvent.setCheckInQrCodeId(qrCodeId);
