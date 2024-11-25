@@ -306,7 +306,8 @@ public class OrganizerCreateEvent extends AppCompatActivity {
                 startDateTime,
                 endDateTime,
                 attendeeLimitValue,
-                true // Active by default
+                true, // Active by default
+                false
         );
 
         newEvent.setCheckInQrCodeId(qrCodeId);

@@ -36,7 +36,7 @@ public class Event implements Serializable {
      */
     public Event(String eventId, String eventName, String eventDescription, String eventBannerImageUrl,
                  String eventLocation, String organizerId, Date eventStartDate, Date eventEndDate,
-                 int maxCapacity, Boolean isActive) {
+                 int maxCapacity, Boolean isActive, Boolean isDrawn) {
         this.eventId = eventId;
         this.eventName = eventName;
         this.eventDescription = eventDescription;
@@ -51,6 +51,7 @@ public class Event implements Serializable {
         this.announcementList = new ArrayList<>();
         this.currentCapacity = 0; // Initialize current capacity to 0
         this.creationDate = new Date(); // Set creation date to current date
+        this.isDrawn = isDrawn;
     }
 
     /**

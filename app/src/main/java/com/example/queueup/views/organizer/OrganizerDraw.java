@@ -112,40 +112,75 @@ public class OrganizerDraw extends Fragment {
                     .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
                     .build());
         });
+        winnerNotification.setOnCheckedChangeListener((v, isChecked) -> {
+            if (isChecked) {
+                winnerNotification.setBackgroundResource(R.drawable.filled_button);
+            } else {
+                winnerNotification.setBackgroundResource(R.drawable.hollow_button);
+            }
 
-//        if (event.getIsDrawn()) {
-//            redrawLayout.setVisibility(View.VISIBLE);
-//            drawLayout.setVisibility(View.INVISIBLE);
-//
-//            drawWinners.setOnClickListener(v -> {
-//                if (everyoneNotification.isChecked()) {
-//
-//                } else {
-//                    if (loserNotification.isChecked()) {
-//
-//                    }
-//                    if (winnerNotification.isChecked()) {
-//
-//                    }
-//                }
-//            });
-//        } else {
-//            redrawLayout.setVisibility(View.INVISIBLE);
-//            drawLayout.setVisibility(View.VISIBLE);
-//
-//            drawWinners.setOnClickListener(v -> {
-//                if (everyoneNotification.isChecked()) {
-//
-//                } else {
-//                    if (loserNotification.isChecked()) {
-//
-//                    }
-//                    if (winnerNotification.isChecked()) {
-//
-//                    }
-//                }
-//            });
-//        }
+        });
+        loserNotification.setOnCheckedChangeListener((v, isChecked) -> {
+            if (isChecked) {
+                loserNotification.setBackgroundResource(R.drawable.filled_button);
+            } else {
+                loserNotification.setBackgroundResource(R.drawable.hollow_button);
+            }
+
+        });
+        everyoneNotification.setOnCheckedChangeListener((v, isChecked) -> {
+            if (isChecked) {
+                everyoneNotification.setBackgroundResource(R.drawable.filled_button);
+            } else {
+                everyoneNotification.setBackgroundResource(R.drawable.hollow_button);
+            }
+
+        });
+        rewinnerNotification.setOnCheckedChangeListener((v, isChecked) -> {
+            if (isChecked) {
+                rewinnerNotification.setBackgroundResource(R.drawable.filled_button);
+            } else {
+                rewinnerNotification.setBackgroundResource(R.drawable.hollow_button);
+            }
+
+        });
+        cancelNotification.setOnCheckedChangeListener((v, isChecked) -> {
+            if (isChecked) {
+                cancelNotification.setBackgroundResource(R.drawable.filled_button);
+            } else {
+                cancelNotification.setBackgroundResource(R.drawable.hollow_button);
+            }
+
+        });
+        if (event.getIsDrawn()) {
+            redrawLayout.setVisibility(View.VISIBLE);
+            drawLayout.setVisibility(View.INVISIBLE);
+
+            redrawWinners.setOnClickListener(v -> {
+                if (rewinnerNotification.isChecked()) {
+
+                }
+                if (cancelNotification.isChecked()) {
+
+                }
+            });
+        } else {
+            redrawLayout.setVisibility(View.INVISIBLE);
+            drawLayout.setVisibility(View.VISIBLE);
+
+            drawWinners.setOnClickListener(v -> {
+                if (everyoneNotification.isChecked()) {
+
+                } else {
+                    if (loserNotification.isChecked()) {
+
+                    }
+                    if (winnerNotification.isChecked()) {
+
+                    }
+                }
+            });
+        }
 
     }
 
