@@ -10,11 +10,6 @@ import androidx.fragment.app.Fragment;
 
 import com.example.queueup.R;
 
-/**
- * AttendeeEventFragment is a fragment that displays the details of an event for an attendee.
- * It includes the event's date, location, time, and poster image.
- * This fragment is part of the attendee's experience in viewing and interacting with the event.
- */
 public class AttendeeEventFragment extends Fragment {
     public AttendeeEventFragment() {
         super(R.layout.attendee_event_activity);
@@ -23,11 +18,10 @@ public class AttendeeEventFragment extends Fragment {
 
 
     /**
-     * Called when the fragment's view is created. This method is used to initialize the UI components
-     * such as the event's date, location, time, and poster image. It also sets the event poster
-     * image from a drawable resource.
+     * Called when the fragment is created.
      *
-     * @param view The root view of the fragment's layout.
+     * @param view
+     * @param savedInstanceState
      */
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {

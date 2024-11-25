@@ -18,30 +18,27 @@ import com.example.queueup.viewmodels.OrganizerEventArrayAdapter;
 
 import java.util.ArrayList;
 
-/**
- * Fragment representing the home screen for an organizer, displaying a list of events they have created.
- * It fetches and displays events associated with the current organizer using a ViewModel and LiveData.
- */
+
 public class OrganizerHomeFragment extends Fragment {
 
     private static final String TAG = "OrganizerHomeFragment";
-
     private ArrayList<Event> dataList;
     private ListView eventList;
     private OrganizerEventArrayAdapter eventAdapter;
     private EventViewModel eventViewModel;
 
     public OrganizerHomeFragment() {
-        super(R.layout.organizer_home_fragment);  // Ensure this layout exists
+        super(R.layout.organizer_home_fragment);
     }
+
 
     /**
      * Called to have the fragment instantiate its user interface view.
      *
-     * @param inflater The LayoutInflater object that can be used to inflate any views in the fragment.
-     * @param container If non-null, this is the parent view that the fragment's UI should be attached to.
-     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state.
-     * @return Return the View for the fragment's UI.
+     * @param inflater
+     * @param container
+     * @param savedInstanceState I
+     * @return Return the View
      */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -52,11 +49,10 @@ public class OrganizerHomeFragment extends Fragment {
     }
 
     /**
-     * Called when the view is created. Sets up the UI elements, initializes the ViewModel,
-     * and observes LiveData from the ViewModel to fetch and display events.
+     * Called when the view is created.
      *
-     * @param view The view returned by onCreateView.
-     * @param savedInstanceState The saved instance state if the fragment is being recreated.
+     * @param view
+     * @param savedInstanceState
      */
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
@@ -81,9 +77,8 @@ public class OrganizerHomeFragment extends Fragment {
     }
 
     /**
-     * Observes LiveData from EventViewModel to update the UI accordingly.
+     * Method to observe LiveData from the ViewModel.
      */
-// OrganizerHomeFragment.java
     private void observeViewModel() {
         eventViewModel.getEventsByOrganizerLiveData().observe(getViewLifecycleOwner(), events -> {
             dataList.clear();

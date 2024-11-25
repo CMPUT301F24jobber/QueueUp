@@ -27,20 +27,18 @@ public class ImageUploader {
         void onUploadFailure(Exception exception);
     }
 
+
     /**
-     * Upload an image to Firebase Cloud Storage
-     *
-     * @param storagePath The path to store the image in Firebase Cloud Storage (e.g., user/profile, event/banner, etc.)
-     * @param imageUri    The URI of the image to upload
-     * @param listener    The listener to handle the upload success or failure
+     * Upload image to Firebase Cloud Storage
+     * @param storagePath
+     * @param imageUri
+     * @param listener
      */
     public void uploadImage(String storagePath, Uri imageUri, UploadListener listener) {
         if (imageUri == null) {
             listener.onUploadFailure(new IllegalArgumentException("Image URI cannot be null"));
             return;
         }
-
-        // Get a reference to Firebase Cloud Storage
         StorageReference firebaseStorageRef = FirebaseStorage.getInstance().getReference();
 
         // Create a unique reference for the image file
@@ -66,11 +64,10 @@ public class ImageUploader {
 
     /**
      * Save image to local storage
-     *
-     * @param context      The context for accessing files directory
-     * @param bitmapImage  The bitmap of the image to save
-     * @param filename     The filename to save the image as
-     * @return The URI of the saved image
+     * @param context
+     * @param bitmapImage
+     * @param filename
+     * @return
      */
     public static Uri saveImage(Context context, Bitmap bitmapImage, String filename) {
         // Create directory and file path
@@ -100,12 +97,11 @@ public class ImageUploader {
 
     /**
      * Compress image
-     *
-     * @param context             The context for accessing content resolver and files
-     * @param originalImageUri    The URI of the image to compress
-     * @param compressionQuality  The quality (0 < quality <= 1) of the compressed image
-     * @return The URI of the compressed image
-     * @throws IOException If an error occurs during compression
+     * @param context
+     * @param originalImageUri
+     * @param compressionQuality
+     * @return Uri
+     * @throws IOException
      */
     public static Uri compressImage(Context context, Uri originalImageUri, double compressionQuality) throws IOException {
         // Validate compression quality

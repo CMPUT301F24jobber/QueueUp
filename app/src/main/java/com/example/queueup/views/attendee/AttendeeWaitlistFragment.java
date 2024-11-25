@@ -22,10 +22,6 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
-/**
- * AttendeeWaitlistFragment represents the fragment where an attendee can join an event's waitlist.
- * It provides a button to register the user to the event's waitlist and transitions to another fragment once registered.
- */
 public class AttendeeWaitlistFragment extends Fragment {
     public AttendeeWaitlistFragment() {
         super(R.layout.attendee_join_waitlist_fragment);
@@ -35,11 +31,10 @@ public class AttendeeWaitlistFragment extends Fragment {
     AttendeeController attendeeController;
 
     /**
-     * Called when the fragment's view has been created. This method sets up the button for joining the waitlist
-     * and initializes the EventController to handle the waitlist registration logic.
+     * Called when the fragment is created.
      *
-     * @param view The view returned by {@link Fragment#onCreateView(LayoutInflater, ViewGroup, Bundle)}.
-     * @param savedInstanceState A Bundle containing the fragment's previous saved state, if any.
+     * @param view
+     * @param savedInstanceState
      */
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {

@@ -13,39 +13,38 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-/**
- * ViewModel class that handles user-related operations such as loading, creating, updating,
- * and managing user data in Firestore. This ViewModel interacts with the UserController to
- * perform the necessary database operations and provides LiveData for the current user and error messages.
- */
+
 public class UserViewModel extends AndroidViewModel {
     private final UserController userController;
     private final MutableLiveData<User> currentUser = new MutableLiveData<>();
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
 
-    /**
-     * Constructor for the UserViewModel.
-     *
-     * @param application The application context.
-     */
+
     public UserViewModel(@NonNull Application application) {
         super(application);
         userController = UserController.getInstance();
 
     }
 
+    /**
+     * Returns the LiveData object for the current user.
+     * @return LiveData<User>
+     */
     public LiveData<User> getCurrentUser() {
         return currentUser;
     }
 
+    /**
+     * Returns the LiveData object for the error message.
+     * @return LiveData<String>
+     */
     public LiveData<String> getErrorMessage() {
         return errorMessage;
     }
 
+
     /**
-     * Loads a user by device ID.
-     *
-     * @param deviceId The device ID to search for.
+     * load device id
      */
     public void loadUserByDeviceId(String deviceId) {
         userController.getUserByDeviceId(deviceId)
@@ -62,10 +61,7 @@ public class UserViewModel extends AndroidViewModel {
     }
 
     /**
-     * Creates a new user in Firestore.
-     *
-     * @param user The user to create.
-     * @return A task that resolves when the user is created.
+     * create user
      */
     public Task<Void> createUser(User user) {
         return userController.createUser(user)
@@ -74,10 +70,7 @@ public class UserViewModel extends AndroidViewModel {
     }
 
     /**
-     * Updates an existing user in Firestore.
-     *
-     * @param user The user to update.
-     * @return A task that resolves when the user is updated.
+     * update user
      */
     public Task<Void> updateUser(User user) {
         return userController.updateUser(user)
@@ -86,11 +79,7 @@ public class UserViewModel extends AndroidViewModel {
     }
 
     /**
-     * Updates a user's profile picture.
-     *
-     * @param userId The user ID to update.
-     * @param profileImageUrl The new profile image URL.
-     * @return A task that resolves when the profile picture is updated.
+     * update picture
      */
     public Task<Void> updateProfilePicture(String userId, String profileImageUrl) {
         return userController.updateProfilePicture(userId, profileImageUrl)
@@ -104,11 +93,9 @@ public class UserViewModel extends AndroidViewModel {
                 .addOnFailureListener(e -> errorMessage.setValue("Error updating profile picture: " + e.getMessage()));
     }
 
+
     /**
-     * Removes a user's profile picture.
-     *
-     * @param userId The user ID to update.
-     * @return A task that resolves when the profile picture is removed.
+     * remove picture
      */
     public Task<Void> removeProfilePicture(String userId) {
         return userController.removeProfilePicture(userId)
@@ -122,12 +109,9 @@ public class UserViewModel extends AndroidViewModel {
                 .addOnFailureListener(e -> errorMessage.setValue("Error removing profile picture: " + e.getMessage()));
     }
 
+
     /**
-     * Updates a user's notification preferences.
-     *
-     * @param userId The user ID to update.
-     * @param receiveNotifications Whether to receive notifications.
-     * @return A task that resolves when the preferences are updated.
+     * update notification preferences
      */
     public Task<Void> updateNotificationPreferences(String userId, boolean receiveNotifications) {
         return userController.updateNotificationPreferences(userId, receiveNotifications)
@@ -141,12 +125,8 @@ public class UserViewModel extends AndroidViewModel {
                 .addOnFailureListener(e -> errorMessage.setValue("Error updating notification preferences: " + e.getMessage()));
     }
 
-    // Additional methods related to waiting lists can remain unchanged
-
     /**
-     * Retrieves the device ID from the UserController.
-     *
-     * @return The device ID.
+     * get device id
      */
     public String getDeviceId() {
         return userController.getDeviceId(getApplication());

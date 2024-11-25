@@ -17,42 +17,29 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * ViewModel for managing event-related data and operations.
- * Interacts with EventController to perform CRUD operations and exposes LiveData to the UI.
- */
+
 public class EventViewModel extends ViewModel {
 
-    // LiveData for all events
     private final MutableLiveData<List<Event>> allEventsLiveData = new MutableLiveData<>();
 
-    // LiveData for events by organizer
     private final MutableLiveData<List<Event>> eventsByOrganizerLiveData = new MutableLiveData<>();
 
-    // LiveData for events by attendee
     private final MutableLiveData<List<Event>> eventsByAttendeeLiveData = new MutableLiveData<>();
 
-    // LiveData for selected event details
     private final MutableLiveData<Event> selectedEventLiveData = new MutableLiveData<>();
 
-    // LiveData for announcements of a specific event
     private final MutableLiveData<List<HashMap<String, String>>> announcementListLiveData = new MutableLiveData<>();
 
-    // LiveData for error messages
     private final MutableLiveData<String> errorMessageLiveData = new MutableLiveData<>();
 
-    // LiveData for loading states
     private final MutableLiveData<Boolean> isLoadingLiveData = new MutableLiveData<>(false);
 
-    // Instance of EventController
     private final EventController eventController;
 
-    /**
-     * Constructor initializes the EventController instance.
-     */
     public EventViewModel() {
         this.eventController = EventController.getInstance();
     }
+
 
     /**
      * Returns LiveData containing all events.
@@ -103,11 +90,8 @@ public class EventViewModel extends ViewModel {
         return isLoadingLiveData;
     }
 
-    // LiveData setters are private to prevent external modification
-
     /**
      * Fetches all events from the database.
-     * Updates allEventsLiveData upon success or errorMessageLiveData upon failure.
      */
     public void fetchAllEvents() {
         isLoadingLiveData.setValue(true);
@@ -120,7 +104,7 @@ public class EventViewModel extends ViewModel {
                             for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
                                 Event event = doc.toObject(Event.class);
                                 if (event != null) {
-                                    event.setEventId(doc.getId()); // Ensure eventId is set
+                                    event.setEventId(doc.getId());
                                     events.add(event);
                                 }
                             }
@@ -143,9 +127,8 @@ public class EventViewModel extends ViewModel {
 
     /**
      * Fetches events created by a specific organizer.
-     * Updates eventsByOrganizerLiveData upon success or errorMessageLiveData upon failure.
      *
-     * @param organizerId The ID of the organizer.
+     * @param organizerId
      */
     public void fetchEventsByOrganizer(String organizerId) {
         if (organizerId == null || organizerId.isEmpty()) {
@@ -185,10 +168,9 @@ public class EventViewModel extends ViewModel {
     }
 
     /**
-     * Fetches events that a specific attendee is registered for.
-     * Updates eventsByAttendeeLiveData upon success or errorMessageLiveData upon failure.
+     * Fetches events attended by a specific attendee.
      *
-     * @param attendeeId The ID of the attendee.
+     * @param attendeeId T
      */
     public void fetchEventsByAttendee(String attendeeId) {
         if (attendeeId == null || attendeeId.isEmpty()) {
@@ -229,9 +211,8 @@ public class EventViewModel extends ViewModel {
 
     /**
      * Fetches details of a specific event by its ID.
-     * Updates selectedEventLiveData upon success or errorMessageLiveData upon failure.
      *
-     * @param eventId The ID of the event.
+     * @param eventId
      */
     public void fetchEventById(String eventId) {
         if (eventId == null || eventId.isEmpty()) {
@@ -269,9 +250,8 @@ public class EventViewModel extends ViewModel {
 
     /**
      * Creates a new event.
-     * Updates allEventsLiveData upon success or errorMessageLiveData upon failure.
      *
-     * @param newEvent The Event object to be created.
+     * @param .
      */
     public void createEvent(Event newEvent) {
         if (newEvent == null) {
@@ -300,9 +280,8 @@ public class EventViewModel extends ViewModel {
 
     /**
      * Updates an existing event.
-     * Updates selectedEventLiveData upon success or errorMessageLiveData upon failure.
      *
-     * @param updatedEvent The Event object with updated information.
+     * @param updatedEvent
      */
     public void updateEvent(Event updatedEvent) {
         if (updatedEvent == null || updatedEvent.getEventId() == null || updatedEvent.getEventId().isEmpty()) {
@@ -327,9 +306,8 @@ public class EventViewModel extends ViewModel {
 
     /**
      * Deletes an event by its ID.
-     * Updates allEventsLiveData upon success or errorMessageLiveData upon failure.
      *
-     * @param eventId The ID of the event to be deleted.
+     * @param eventId
      */
     public void deleteEvent(String eventId) {
         if (eventId == null || eventId.isEmpty()) {
@@ -340,7 +318,6 @@ public class EventViewModel extends ViewModel {
         isLoadingLiveData.setValue(true);
         eventController.deleteEvent(eventId)
                 .addOnSuccessListener(aVoid -> {
-                    // Fetch all events again to update the LiveData
                     fetchAllEvents();
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -355,7 +332,7 @@ public class EventViewModel extends ViewModel {
     /**
      * Reactivates an event that was previously deactivated.
      *
-     * @param eventId The ID of the event to reactivate.
+     * @param eventId
      */
     public void reactivateEvent(String eventId) {
         if (eventId == null || eventId.isEmpty()) {
@@ -379,9 +356,9 @@ public class EventViewModel extends ViewModel {
     }
 
     /**
-     * Ends an event by setting its active status to false.
+     * Ends an event, preventing further registrations.
      *
-     * @param eventId The ID of the event to end.
+     * @param eventId
      */
     public void endEvent(String eventId) {
         if (eventId == null || eventId.isEmpty()) {
@@ -405,11 +382,10 @@ public class EventViewModel extends ViewModel {
     }
 
     /**
-     * Sets the banner image URL for a specific event.
-     * Updates selectedEventLiveData upon success or errorMessageLiveData upon failure.
+     * Sets the banner image for an event.
      *
-     * @param eventId  The ID of the event.
-     * @param imageUrl The URL of the banner image.
+     * @param eventId
+     * @param imageUrl
      */
     public void setEventBannerImage(String eventId, String imageUrl) {
         if (eventId == null || eventId.isEmpty() || imageUrl == null || imageUrl.isEmpty()) {
@@ -433,10 +409,9 @@ public class EventViewModel extends ViewModel {
     }
 
     /**
-     * Deletes all events created by a specific user.
-     * Updates allEventsLiveData upon success or errorMessageLiveData upon failure.
+     * Deletes the banner image for an event.
      *
-     * @param userId The ID of the user whose events are to be deleted.
+     * @param userId
      */
     public void deleteEventsByUser(String userId) {
         if (userId == null || userId.isEmpty()) {
@@ -447,7 +422,7 @@ public class EventViewModel extends ViewModel {
         isLoadingLiveData.setValue(true);
         eventController.deleteEventsByUser(userId)
                 .addOnSuccessListener(aVoid -> {
-                    // Fetch all events again to update the LiveData
+
                     fetchAllEvents();
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -487,10 +462,8 @@ public class EventViewModel extends ViewModel {
     }
 
     /**
-     * Unregisters the current user from an event (leaves the waiting list).
-     * Updates relevant LiveData upon success or errorMessageLiveData upon failure.
-     *
-     * @param eventId The ID of the event to unregister from.
+     * Unregisters the current user from an event.
+     * @param eventId
      */
     public void unregisterFromEvent(String eventId) {
         if (eventId == null || eventId.isEmpty()) {
@@ -507,7 +480,7 @@ public class EventViewModel extends ViewModel {
         isLoadingLiveData.setValue(true);
         eventController.unregisterFromEvent(eventId, userId)
                 .addOnSuccessListener(aVoid -> {
-                    // Fetch the event details again to update the LiveData
+
                     fetchEventById(eventId);
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -520,11 +493,10 @@ public class EventViewModel extends ViewModel {
     }
 
     /**
-     * Adds an announcement to a specific event.
-     * Updates announcementListLiveData upon success or errorMessageLiveData upon failure.
+     * Adds an announcement to an event.
      *
-     * @param eventId      The ID of the event.
-     * @param announcement The announcement to add as a HashMap.
+     * @param eventId
+     * @param announcement
      */
     public void addAnnouncement(String eventId, HashMap<String, String> announcement) {
         if (eventId == null || eventId.isEmpty() || announcement == null || announcement.isEmpty()) {
@@ -535,7 +507,6 @@ public class EventViewModel extends ViewModel {
         isLoadingLiveData.setValue(true);
         eventController.addAnnouncement(eventId, announcement)
                 .addOnSuccessListener(aVoid -> {
-                    // Fetch the updated list of announcements
                     fetchAnnouncements(eventId);
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -549,9 +520,8 @@ public class EventViewModel extends ViewModel {
 
     /**
      * Fetches announcements for a specific event.
-     * Updates announcementListLiveData upon success or errorMessageLiveData upon failure.
      *
-     * @param eventId The ID of the event.
+     * @param eventId
      */
     public void fetchAnnouncements(String eventId) {
         if (eventId == null || eventId.isEmpty()) {
@@ -583,11 +553,10 @@ public class EventViewModel extends ViewModel {
     }
 
     /**
-     * Draws a lottery to select a specified number of attendees from the waiting list.
-     * Updates relevant LiveData upon success or errorMessageLiveData upon failure.
+     * Draws a lottery for an event to select a specified number of attendees.
      *
-     * @param eventId        The ID of the event.
-     * @param numberToSelect The number of attendees to select.
+     * @param eventId
+     * @param numberToSelect
      */
     public void drawLottery(String eventId, int numberToSelect) {
         if (eventId == null || eventId.isEmpty() || numberToSelect <= 0) {
@@ -604,7 +573,6 @@ public class EventViewModel extends ViewModel {
                             // Notify selected attendees
                             eventController.notifySelectedAttendees(eventId, selectedAttendees)
                                     .addOnSuccessListener(aVoid -> {
-                                        // Fetch updated event details
                                         fetchEventById(eventId);
                                     })
                                     .addOnFailureListener(new OnFailureListener() {
@@ -630,9 +598,9 @@ public class EventViewModel extends ViewModel {
     }
 
     /**
-     * Handles the replacement of an attendee if they decline the invitation.
+     * Handles the replacement of an attendee in the event.
      *
-     * @param eventId The ID of the event.
+     * @param eventId
      */
     public void handleReplacement(String eventId) {
         if (eventId == null || eventId.isEmpty()) {
@@ -643,7 +611,6 @@ public class EventViewModel extends ViewModel {
         isLoadingLiveData.setValue(true);
         eventController.handleReplacement(eventId)
                 .addOnSuccessListener(aVoid -> {
-                    // Fetch updated event details
                     fetchEventById(eventId);
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -656,10 +623,9 @@ public class EventViewModel extends ViewModel {
     }
 
     /**
-     * Fetches user announcements for a specific event.
-     * Updates announcementListLiveData upon success or errorMessageLiveData upon failure.
+     * Fetches announcements created by the current user for a specific event.
      *
-     * @param eventId The ID of the event.
+     * @param eventId
      */
     public void fetchUserAnnouncements(String eventId) {
         if (eventId == null || eventId.isEmpty()) {
@@ -691,10 +657,9 @@ public class EventViewModel extends ViewModel {
     }
 
     /**
-     * Checks in a user to an event by updating their attendance status.
-     * Updates selectedEventLiveData upon success or errorMessageLiveData upon failure.
+     * Checks in the current user to an event.
      *
-     * @param eventId The ID of the event.
+     * @param eventId
      */
     public void checkInUser(String eventId) {
         if (eventId == null || eventId.isEmpty()) {
@@ -707,7 +672,6 @@ public class EventViewModel extends ViewModel {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        // Fetch the event details again to update the LiveData
                         fetchEventById(eventId);
                     }
                 })

@@ -14,23 +14,20 @@ import com.example.queueup.views.profiles.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-/**
- * The AttendeeHome class represents the home screen for attendees.
- * Displays a welcome message, allows navigation to the attendee's profile, and fetches user data.
- */
+
 public class AttendeeHome extends AppCompatActivity {
     private FirebaseFirestore db;
     private TextView titleTextView;
-    private TextView profileInitialsTextView;  // TextView to hold the initials
-    private FrameLayout profileInitialsFrame;  // FrameLayout for the initials circle
+    private TextView profileInitialsTextView;
+    private FrameLayout profileInitialsFrame;
     private String deviceId;
-    private ImageView profileImageView;  // ImageView to display the profile picture
+    private ImageView profileImageView;
     private BottomNavigationView navigationView;
 
     /**
-     * Called when the activity is first created.
+     * Called when the activity is created.
      *
-     * @param savedInstanceState If the activity is being re-initialized after previously being shut down, this contains the saved data.
+     * @param savedInstanceState
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +42,7 @@ public class AttendeeHome extends AppCompatActivity {
         // Get deviceId from intent or UserController
         deviceId = getIntent().getStringExtra("deviceId");
         if (deviceId == null || deviceId.isEmpty()) {
-            deviceId = UserController.getInstance().getDeviceId(getApplicationContext());  // Fetch from UserController if not passed
+            deviceId = UserController.getInstance().getDeviceId(getApplicationContext());
         }
 
         if (savedInstanceState == null) {

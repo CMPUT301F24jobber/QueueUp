@@ -2,23 +2,24 @@ package com.example.queueup.views.admin;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
 import com.example.queueup.R;
 import com.example.queueup.controllers.UserController;
+import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.models.Event;
 import com.example.queueup.models.User;
+import com.example.queueup.viewmodels.UserViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-/**
- * AdminUserFragment is responsible for displaying detailed information about a user in the admin section of the app.
- * It allows the admin to view a user's profile and delete the user from the system.
- */
+
 public class AdminUserFragment extends Fragment {
     public AdminUserFragment() {
         super(R.layout.admin_user_fragment);
@@ -26,15 +27,16 @@ public class AdminUserFragment extends Fragment {
     private FirebaseFirestore db;
     private AdminClickUserFragment.RefreshUsersListener listener;
     private MaterialButton deleteButton;
+    private UserViewModel userViewModel;
 
     /**
-     * Called when the fragment's view has been created. This method initializes the UI elements such as
-     * the profile text views and the delete button. It also populates the UI with user data passed as an argument.
+     * Called when the fragment's view has been created.
      *
-     * @param view The View returned by onCreateView().
-     * @param savedInstanceState A Bundle containing the activity's previous state (if any).
+     * @param view
+     * @param savedInstanceState
      */
     @Override
+
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         db = FirebaseFirestore.getInstance();
@@ -45,6 +47,8 @@ public class AdminUserFragment extends Fragment {
         TextView userName = view.findViewById(R.id.username);
         TextView emailText = view.findViewById(R.id.email);
         TextView phoneText = view.findViewById(R.id.phone_number);
+        ImageView profileImage = view.findViewById(R.id.profile_image);
+
         User user = this.getArguments().getParcelable("user", User.class);
 
         titleText.setText(user.getUsername()+ "'s Profile");
@@ -52,6 +56,15 @@ public class AdminUserFragment extends Fragment {
         userName.setText("@"+user.getUsername());
         emailText.setText("Email: " + user.getEmailAddress());
         phoneText.setText("Phone: " + user.getPhoneNumber());
+
+        // Load profile picture using Glide (add Glide dependency if not already added)
+        if (user.getProfileImageUrl() != null && !user.getProfileImageUrl().isEmpty()) {
+            Glide.with(requireContext())
+                    .load(user.getProfileImageUrl())
+                    .circleCrop()
+                    .into(profileImage);
+        }
+
         deleteButton.setOnClickListener((v) -> {
             UserController.getInstance().deleteUserById(user.getUuid()).addOnSuccessListener((stuf) -> {
                 getActivity().onBackPressed();
@@ -60,6 +73,10 @@ public class AdminUserFragment extends Fragment {
     }
     private void deleteUser(User user) {
         String email = user.getEmailAddress();
+        if(userViewModel.getCurrentUser().getValue().getEmailAddress().equals(email)) {
+            Toast.makeText(requireContext(), "Cannot delete current user", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         if (email == null) {
             if (isAdded()) {

@@ -21,69 +21,65 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * ViewModel for managing attendee-related data and operations.
- * Interacts with AttendeeController to perform CRUD operations, fetch user information,
- * and exposes LiveData to the UI.
- */
+
 public class AttendeeViewModel extends ViewModel {
 
-    // LiveData for all attendance records of the current user
     private final MutableLiveData<List<Attendee>> allAttendancesLiveData = new MutableLiveData<>();
 
-    // LiveData for attendees by event ID
     private final MutableLiveData<List<Attendee>> attendancesByEventLiveData = new MutableLiveData<>();
 
-    // LiveData for a selected attendee's details
     private final MutableLiveData<Attendee> selectedAttendeeLiveData = new MutableLiveData<>();
 
-    // LiveData for error messages
     private final MutableLiveData<String> errorMessageLiveData = new MutableLiveData<>();
 
-    // LiveData for loading states
     private final MutableLiveData<Boolean> isLoadingLiveData = new MutableLiveData<>(false);
 
-    // LiveData for combined attendee and user information
     private final MutableLiveData<List<AttendeeWithUser>> attendeesWithUserLiveData = new MutableLiveData<>();
 
-    // LiveData to indicate if a specific user is on a waiting list
     private final MutableLiveData<Boolean> isOnWaitingListLiveData = new MutableLiveData<>(false);
-
-    // Instance of AttendeeController
     private final AttendeeController attendeeController;
 
-    /**
-     * Inner class to hold combined attendee and user data
-     */
+
     public static class AttendeeWithUser {
         private final Attendee attendee;
         private final User user;
 
+        /**
+         * Constructor for the AttendeeWithUser
+         * @param attendee
+         * @param user
+         */
         public AttendeeWithUser(Attendee attendee, User user) {
             this.attendee = attendee;
             this.user = user;
         }
 
+        /**
+         * Returns the attendee
+         * @return
+         */
         public Attendee getAttendee() {
             return attendee;
         }
 
+        /**
+         * Returns the user
+         * @return
+         */
         public User getUser() {
             return user;
         }
     }
 
     /**
-     * Constructor initializes the AttendeeController instance.
+     * Constructor for the AttendeeViewModel
      */
     public AttendeeViewModel() {
         this.attendeeController = AttendeeController.getInstance();
     }
 
-    // Getters for LiveData
-
     /**
-     * Returns LiveData containing all attendance records for the current user.
+     * Returns LiveData containing all attendance records.
      */
     public LiveData<List<Attendee>> getAllAttendancesLiveData() {
         return allAttendancesLiveData;
@@ -134,8 +130,7 @@ public class AttendeeViewModel extends ViewModel {
     // LiveData setters are private to prevent external modification
 
     /**
-     * Fetches all attendance records for the current user.
-     * Updates allAttendancesLiveData upon success or errorMessageLiveData upon failure.
+     * Fetches all attendance records.
      */
     public void fetchAllAttendances() {
         isLoadingLiveData.setValue(true);
@@ -166,9 +161,7 @@ public class AttendeeViewModel extends ViewModel {
 
     /**
      * Fetches attendance records for a specific event.
-     * Updates attendancesByEventLiveData upon success or errorMessageLiveData upon failure.
-     *
-     * @param eventId The ID of the event.
+     * @param eventId
      */
     public void fetchAttendancesByEvent(String eventId) {
         isLoadingLiveData.setValue(true);
@@ -198,10 +191,8 @@ public class AttendeeViewModel extends ViewModel {
     }
 
     /**
-     * Fetches details of a specific attendee by their ID.
-     * Updates selectedAttendeeLiveData upon success or errorMessageLiveData upon failure.
-     *
-     * @param attendeeId The ID of the attendee.
+     * Fetches details of a specific attendee by ID.
+     * @param attendeeId
      */
     public void fetchAttendeeById(String attendeeId) {
         isLoadingLiveData.setValue(true);
@@ -234,9 +225,7 @@ public class AttendeeViewModel extends ViewModel {
 
     /**
      * Joins the waiting list for a specific event.
-     * Updates allAttendancesLiveData upon success or errorMessageLiveData upon failure.
-     *
-     * @param eventId The ID of the event to join.
+     * @param eventId
      */
     public void joinWaitingList(String eventId) {
         isLoadingLiveData.setValue(true);
@@ -258,12 +247,10 @@ public class AttendeeViewModel extends ViewModel {
     }
 
     /**
-     * Joins the waiting list for a specific event with optional geolocation.
-     * Updates allAttendancesLiveData upon success or errorMessageLiveData upon failure.
-     *
-     * @param userId   The ID of the user.
-     * @param eventId  The ID of the event.
-     * @param location The location of the user (optional).
+     * Joins the waiting list for a specific event with a location.
+     * @param userId
+     * @param eventId
+     * @param location
      */
     public void joinWaitingList(String userId, String eventId, @Nullable Location location) {
         isLoadingLiveData.setValue(true);
@@ -286,9 +273,7 @@ public class AttendeeViewModel extends ViewModel {
 
     /**
      * Leaves the waiting list for a specific event.
-     * Updates allAttendancesLiveData upon success or errorMessageLiveData upon failure.
-     *
-     * @param eventId The ID of the event to leave.
+     * @param eventId
      */
     public void leaveWaitingList(String eventId) {
         isLoadingLiveData.setValue(true);
@@ -310,12 +295,9 @@ public class AttendeeViewModel extends ViewModel {
     }
 
     /**
-     * Leaves the waiting list for a specific user and event.
-     * Useful for admin operations or when handling replacements.
-     * Updates attendancesByEventLiveData upon success or errorMessageLiveData upon failure.
-     *
-     * @param eventId The ID of the event.
-     * @param userId  The ID of the user.
+     * Leaves the waiting list for a specific event.
+     * @param eventId
+     * @param userId
      */
     public void leaveWaitingList(String eventId, String userId) {
         isLoadingLiveData.setValue(true);
@@ -337,10 +319,8 @@ public class AttendeeViewModel extends ViewModel {
     }
 
     /**
-     * Updates an existing attendance record.
-     * Updates selectedAttendeeLiveData upon success or errorMessageLiveData upon failure.
-     *
-     * @param attendee The attendee object with updated information.
+     * Updates an attendance record with new details.
+     * @param attendee
      */
     public void updateAttendance(Attendee attendee) {
         isLoadingLiveData.setValue(true);
@@ -362,10 +342,8 @@ public class AttendeeViewModel extends ViewModel {
     }
 
     /**
-     * Deletes an attendance record by its ID.
-     * Updates allAttendancesLiveData upon success or errorMessageLiveData upon failure.
-     *
-     * @param attendeeId The ID of the attendance record to delete.
+     * Deletes an attendance record.
+     * @param attendeeId
      */
     public void deleteAttendance(String attendeeId) {
         isLoadingLiveData.setValue(true);
@@ -387,11 +365,9 @@ public class AttendeeViewModel extends ViewModel {
     }
 
     /**
-     * Checks in the current user to a specific event.
-     * Updates selectedAttendeeLiveData upon success or errorMessageLiveData upon failure.
-     *
-     * @param eventId  The ID of the event to check in.
-     * @param location The location during check-in (optional).
+     * Checks in a user to an event.
+     * @param eventId
+     * @param location
      */
     public void checkInUser(String eventId, @Nullable Location location) {
         isLoadingLiveData.setValue(true);
@@ -415,11 +391,8 @@ public class AttendeeViewModel extends ViewModel {
     }
 
     /**
-     * Handles the replacement of an attendee if they decline the invitation.
-     * Draws a new attendee and notifies them.
-     * Updates attendancesByEventLiveData upon success or errorMessageLiveData upon failure.
-     *
-     * @param eventId The ID of the event.
+     * Checks out a user from an event.
+     * @param eventId
      */
     public void handleReplacement(String eventId) {
         isLoadingLiveData.setValue(true);
@@ -431,8 +404,6 @@ public class AttendeeViewModel extends ViewModel {
                             DocumentSnapshot newAttendeeDoc = queryDocumentSnapshots.getDocuments().get(0);
                             Attendee newAttendee = newAttendeeDoc.toObject(Attendee.class);
                             if (newAttendee != null) {
-                                // Update the numberInLine or any other necessary fields
-                                // For example, set numberInLine based on current list size
                                 newAttendee.setNumberInLine(calculateNumberInLine(eventId));
                                 // Update the attendee record
                                 attendeeController.updateAttendance(newAttendee)
@@ -441,7 +412,6 @@ public class AttendeeViewModel extends ViewModel {
                                             public void onSuccess(Void aVoid) {
                                                 // Notify the new attendee about their selection
                                                 attendeeController.notifyAttendee(newAttendee.getId(), true);
-                                                // Fetch updated attendances by event
                                                 fetchAttendancesByEvent(eventId);
                                                 isLoadingLiveData.setValue(false);
                                             }
@@ -473,10 +443,9 @@ public class AttendeeViewModel extends ViewModel {
     }
 
     /**
-     * Calculates the number in line for a new attendee based on current attendees.
-     *
-     * @param eventId The ID of the event.
-     * @return The calculated number in line.
+     * Calculates the number of attendees in line for an event.
+     * @param eventId
+     * @return
      */
     private int calculateNumberInLine(String eventId) {
         List<Attendee> currentAttendances = attendancesByEventLiveData.getValue();
@@ -488,9 +457,8 @@ public class AttendeeViewModel extends ViewModel {
 
     /**
      * Notifies an attendee about their selection status.
-     *
-     * @param attendeeId The ID of the attendee.
-     * @param isSelected Whether the attendee was selected or not.
+     * @param attendeeId
+     * @param isSelected
      */
     private void notifyAttendee(String attendeeId, boolean isSelected) {
         // This method is now handled by AttendeeController's notifyAttendee method
@@ -498,17 +466,16 @@ public class AttendeeViewModel extends ViewModel {
     }
 
     /**
-     * Clears the current error message.
+     * Clears the error message LiveData.
      */
     public void clearErrorMessage() {
         errorMessageLiveData.setValue(null);
     }
 
     /**
-     * Generates the attendee ID based on the current user and event IDs.
-     *
-     * @param eventId The ID of the event.
-     * @return The generated attendee ID.
+     * Generates an attendee ID based on the current user and event ID.
+     * @param eventId
+     * @return
      */
     private String generateAttendeeId(String eventId) {
         String userId = CurrentUserHandler.getSingleton().getCurrentUserId();
@@ -516,10 +483,8 @@ public class AttendeeViewModel extends ViewModel {
     }
 
     /**
-     * Fetches attendance records for a specific event, including user information.
-     * Updates attendeesWithUserLiveData with combined attendee and user information.
-     *
-     * @param eventId The ID of the event
+     * Fetches attendees for an event with user information.
+     * @param eventId
      */
     public void fetchAttendeesWithUserInfo(String eventId) {
         isLoadingLiveData.setValue(true);
@@ -577,11 +542,9 @@ public class AttendeeViewModel extends ViewModel {
     }
 
     /**
-     * Checks if a specific user is on the waiting list for an event.
-     * Updates isOnWaitingListLiveData with the result.
-     *
-     * @param userId  The ID of the user to check
-     * @param eventId The ID of the event to check
+     * Checks if a user is on the waiting list for an event.
+     * @param userId
+     * @param eventId
      */
     public void checkWaitingListStatus(String userId, String eventId) {
         isLoadingLiveData.setValue(true);

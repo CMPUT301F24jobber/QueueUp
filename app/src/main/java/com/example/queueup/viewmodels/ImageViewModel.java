@@ -24,14 +24,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * ViewModel class responsible for managing and interacting with image data. It handles the fetching,
- * processing, and deletion of images, and exposes relevant LiveData to the UI for observing changes.
- */
+
 public class ImageViewModel extends ViewModel {
-    /**
-     * Callback interface for deleting images
-     */
     public interface DeleteImageCallback {
         void onImageDeleted();
         void onImageDeleteFailed();
@@ -51,9 +45,9 @@ public class ImageViewModel extends ViewModel {
     }
 
     /**
-     * Set the selected image to be stored in the ViewModel state
+     * Set the selected image
      *
-     * @param image the image object to be stored
+     * @param
      */
     public void setSelectedImage(Image image) {
         selectedImageLiveData.setValue(image);
@@ -61,7 +55,7 @@ public class ImageViewModel extends ViewModel {
     }
 
     /**
-     * Get the selected image stored in the ViewModel state
+     * Get the selected image
      *
      * @return LiveData<Image>
      */
@@ -70,7 +64,7 @@ public class ImageViewModel extends ViewModel {
     }
 
     /**
-     * Fetch all images from the specified paths
+     * Fetches all images from the storage
      */
     public void fetchAllImages() {
         List<String> imagePaths = List.of("event/banner", "user/profile");
@@ -96,10 +90,10 @@ public class ImageViewModel extends ViewModel {
     }
 
     /**
-     * Processes the ListResult returned by Firebase and converts it into a list of Image objects
+     * Processes the list result and returns a list of Image objects
      *
-     * @param listResult the list of storage references
-     * @return List<Image> fetched from the storage
+     * @param listResult
+     * @return
      */
     private List<Image> processImageListResult(ListResult listResult) {
         List<Image> images = new ArrayList<>();
@@ -138,11 +132,11 @@ public class ImageViewModel extends ViewModel {
     }
 
     /**
-     * Creates an Image object from the given metadata and URI
+     * Creates an Image object from the provided metadata
      *
-     * @param uri             the download URI of the image
-     * @param storageMetadata the metadata of the image
-     * @return an Image object
+     * @param uri
+     * @param storageMetadata
+     * @return
      */
     private Image createImageFromMetadata(Uri uri, StorageMetadata storageMetadata) {
         Image image = new Image();
@@ -161,7 +155,7 @@ public class ImageViewModel extends ViewModel {
     }
 
     /**
-     * Returns the LiveData object containing all images
+     * Returns all images
      *
      * @return LiveData<List<Image>>
      */
@@ -170,10 +164,10 @@ public class ImageViewModel extends ViewModel {
     }
 
     /**
-     * Deletes an image and triggers the provided callback
+     * Deletes the provided image
      *
-     * @param image    the image to delete
-     * @param callback the callback to trigger upon success or failure
+     * @param image
+     * @param callback
      */
     public void deleteImage(Image image, DeleteImageCallback callback) {
         imageController.deleteImage(image).addOnSuccessListener(aVoid -> {

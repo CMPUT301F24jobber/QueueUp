@@ -19,12 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * ImageController manages image operations for uploading, retrieving,
- * and deleting images from Firebase Firestore and Storage. It handles
- * tasks such as adding images to storage and Firestore, removing references,
- * and deleting images while updating user information as necessary.
- */
 public class ImageController {
     private static ImageController instance = null;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -32,9 +26,6 @@ public class ImageController {
     private CollectionReference imageRef = db.collection("images");
     private CurrentUserHandler currentUserHandler = CurrentUserHandler.getSingleton();
 
-    /**
-     * Singleton instance getter for ImageController
-     */
     public static ImageController getSingleton() {
         if (instance == null) {
             synchronized (ImageController.class) {
@@ -46,16 +37,14 @@ public class ImageController {
         return instance;
     }
 
-    /**
-     * Private constructor for ImageController
-     */
+
     private ImageController() {
     }
 
     /**
      * Get all images from a specific storage path
-     * @param path The path to the storage folder
-     * @return A Task containing the ListResult of all images
+     * @param path
+     * @return A Task containing the ListResult of all images in the path
      */
     public Task<ListResult> getAllImages(String path) {
         StorageReference storageRef = storage.getReference(path);
@@ -64,8 +53,8 @@ public class ImageController {
 
     /**
      * Get image metadata by its ID
-     * @param id The ID of the image document
-     * @return A Task containing the DocumentSnapshot with image details
+     * @param id
+     * @return
      */
     public Task<DocumentSnapshot> getImageById(String id) {
         return imageRef.document(id).get();
@@ -73,9 +62,9 @@ public class ImageController {
 
     /**
      * Add an image to storage and Firestore
-     * @param storagePath The path where the image will be stored
-     * @param imageUri The URI of the image to be uploaded
-     * @return A Task containing the download URL of the uploaded image
+     * @param storagePath
+     * @param imageUri
+     * @return A Task representing the addition operation
      */
     public Task<String> addImage(String storagePath, Uri imageUri) {
         String uuid = UUID.randomUUID().toString();
@@ -109,8 +98,8 @@ public class ImageController {
 
     /**
      * Remove image reference from Firestore
-     * @param image The Image object to remove reference from
-     * @return A Task representing the deletion operation
+     * @param image
+     * @return deletion image
      */
     public Task<Void> removeReference(Image image) {
         if (image.getImageId() == null) {
@@ -125,8 +114,8 @@ public class ImageController {
 
     /**
      * Delete an image from storage and Firestore
-     * @param image The Image object to delete
-     * @return A Task representing the deletion operation
+     * @param image
+     * @return deletion image
      */
     public Task<Void> deleteImage(Image image) {
         if (image == null || image.getImageUrl() == null || image.getImageId() == null) {

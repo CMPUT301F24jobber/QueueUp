@@ -1,9 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="#FDF7F4">
+    android:padding="16dp">
 
     <FrameLayout
         android:id="@+id/profileImageFrame"
@@ -13,74 +13,130 @@
         android:layout_marginBottom="16dp"
         android:background="@drawable/circle_shape">
 
-        <!-- Initials TextView -->
         <TextView
             android:id="@+id/profileInitialsTextView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:gravity="center"
             android:text="Initials"
+            android:textColor="@android:color/white"
             android:textSize="32sp"
             android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:gravity="center"
             android:visibility="visible" />
 
-        <!-- Profile ImageView -->
         <ImageView
             android:id="@+id/profileImageView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:contentDescription="Profile Picture" />
     </FrameLayout>
 
     <EditText
         android:id="@+id/editFirstName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/poppins"
         android:hint="First Name"
-        android:maxLength="50"/>
+        android:inputType="textPersonName"
+        android:maxLength="50" />
 
     <EditText
         android:id="@+id/editLastName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/poppins"
         android:hint="Last Name"
-        android:maxLength="50"/>
+        android:inputType="textPersonName"
+        android:maxLength="50" />
 
     <EditText
         android:id="@+id/editUsername"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/poppins"
         android:hint="Username"
-        android:maxLength="50"/>
+        android:inputType="text"
+        android:maxLength="50" />
 
     <EditText
         android:id="@+id/editEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/poppins"
         android:hint="Email"
-        android:maxLength="50"/>
+        android:inputType="textEmailAddress"
+        android:maxLength="50" />
 
     <EditText
         android:id="@+id/editPhone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="@font/poppins"
         android:hint="Phone Number"
-        android:maxLength="10"/>
+        android:inputType="phone"
+        android:maxLength="10" />
+
+    <TextView
+        android:id="@+id/notifTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="@font/poppins_bold"
+        android:paddingVertical="16dp"
+        android:text="Notification Settings"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <Switch
+        android:id="@+id/notifSwitch2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/poppins"
+        android:paddingVertical="8dp"
+        android:text="Notification when chosen from the waiting list"
+        android:textSize="16sp"
+        android:thumbTint="#8C7466" />
+
+    <Switch
+        android:id="@+id/notifSwitch3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="@font/poppins"
+        android:paddingVertical="8dp"
+        android:text="Notification when not chosen from the waiting list"
+        android:textSize="16sp"
+        android:thumbTint="#8C7466" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
     <Button
         android:id="@+id/editPicButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:backgroundTint="#8C7466"
+        android:fontFamily="@font/poppins_bold"
         android:text="Edit Profile Picture" />
 
     <Button
         android:id="@+id/removePicButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:backgroundTint="#8C7466"
+        android:fontFamily="@font/poppins_bold"
         android:text="Remove Profile Picture" />
 
     <Button
@@ -88,6 +144,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:backgroundTint="#8C7466"
+        android:fontFamily="@font/poppins_bold"
         android:text="Save" />
 
 </LinearLayout>
