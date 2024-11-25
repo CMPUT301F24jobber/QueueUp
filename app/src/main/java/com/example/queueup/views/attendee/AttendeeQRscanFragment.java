@@ -21,10 +21,7 @@ import com.example.queueup.controllers.EventController;
 import com.example.queueup.models.Event;
 import com.google.android.material.button.MaterialButton;
 
-/**
- * AttendeeWaitlistFragment represents the fragment where an attendee can join an event's waitlist.
- * It provides a button to register the user to the event's waitlist and transitions to another fragment once registered.
- */
+
 public class AttendeeQRscanFragment extends Fragment {
     public AttendeeQRscanFragment() {
         super(R.layout.attendee_qr_fragment);
@@ -34,11 +31,10 @@ public class AttendeeQRscanFragment extends Fragment {
     AttendeeController attendeeController;
 
     /**
-     * Called when the fragment's view has been created. This method sets up the button for joining the waitlist
-     * and initializes the EventController to handle the waitlist registration logic.
+     * Called when the fragment is created.
      *
-     * @param view The view returned by {@link Fragment#onCreateView(LayoutInflater, ViewGroup, Bundle)}.
-     * @param savedInstanceState A Bundle containing the fragment's previous saved state, if any.
+     * @param view
+     * @param savedInstanceState
      */
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
@@ -51,7 +47,6 @@ public class AttendeeQRscanFragment extends Fragment {
                     public void onActivityResult(ActivityResult result) {
                         if (result.getResultCode() == Activity.RESULT_OK) {
                             Intent intent = result.getData();
-                            // Handle the Intent
                         }
                     }
                 });;
