@@ -18,6 +18,7 @@ import com.example.queueup.R;
 import com.example.queueup.models.Event;
 import com.example.queueup.services.ImageUploader;
 import com.example.queueup.viewmodels.EventViewModel;
+import com.example.queueup.views.attendee.AttendeeWaitlistJoinedFragment;
 
 import java.time.format.DateTimeFormatter;
 
@@ -86,7 +87,21 @@ public class OrganizerDraw extends Fragment {
                     .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
                     .build());
         });
-        if (event.is)
+        if (event.getIsDrawn()) {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("event", event);
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .replace(R.id.organizer_draw_fragment, OrganizerRedrawFragment.class, bundle)
+                    .commit();
+        } else {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("event", event);
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .replace(R.id.organizer_draw_fragment, OrganizerDrawFragment.class, bundle)
+                    .commit();
+        }
 
 
 

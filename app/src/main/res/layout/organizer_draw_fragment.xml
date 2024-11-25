@@ -79,7 +79,7 @@
         </LinearLayout>
 
         <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/organizer_activity_fragment"
+            android:id="@+id/organizer_draw_fragment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"

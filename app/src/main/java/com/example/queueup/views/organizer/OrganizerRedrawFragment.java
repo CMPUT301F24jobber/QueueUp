@@ -14,11 +14,9 @@ import com.example.queueup.controllers.EventController;
 import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.handlers.PushNotificationHandler;
 import com.example.queueup.models.Event;
-import com.example.queueup.views.attendee.AttendeeWaitlistFragment;
-import com.example.queueup.views.attendee.AttendeeWaitlistJoinedFragment;
 
-public class OrganizerDrawFragment extends Fragment {
-    public OrganizerDrawFragment() {
+public class OrganizerRedrawFragment extends Fragment {
+    public OrganizerRedrawFragment() {
         super(R.layout.organizer_draw_winners_fragment);
     }
 
@@ -27,7 +25,6 @@ public class OrganizerDrawFragment extends Fragment {
     ToggleButton winnerNotification;
     ToggleButton loserNotification;
     ToggleButton everyoneNotification;
-
     private Event event;
 
     EventController eventController;
@@ -38,7 +35,6 @@ public class OrganizerDrawFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         event = this.getArguments().getSerializable("event", Event.class);
-
         drawWinners = view.findViewById(R.id.draw_winners);
         winnerNotification = view.findViewById(R.id.notification_winner);
         loserNotification = view.findViewById(R.id.notification_loser);
@@ -56,12 +52,7 @@ public class OrganizerDrawFragment extends Fragment {
 
                 }
             }
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("event", event);
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .setReorderingAllowed(true)
-                    .replace(R.id.organizer_draw_fragment, OrganizerRedrawFragment.class, bundle)
-                    .commit();
+
         });
     }
 }
