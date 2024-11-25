@@ -41,7 +41,6 @@ public class OrganizerCreateEvent extends AppCompatActivity {
     private static final String TIME_FORMAT = "HH:mm";
     private static final String DATETIME_FORMAT = "yyyy-MM-dd HH:mm";
 
-    // UI Components
     private ImageView eventImage;
     private EditText eventNameEditText;
     private EditText startDateEditText, startTimeEditText;
@@ -51,7 +50,6 @@ public class OrganizerCreateEvent extends AppCompatActivity {
     private Button submitButton;
     private ImageButton backButton;
 
-    // View Model and Data
     private EventViewModel eventViewModel;
     private Uri imageUri = null;
     private ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
@@ -281,7 +279,7 @@ public class OrganizerCreateEvent extends AppCompatActivity {
                         eventId,
                         eventName,
                         description,
-                        imageUrl,  // Using the uploaded image URL
+                        imageUrl,
                         location,
                         CurrentUserHandler.getSingleton().getCurrentUserId(),
                         startDateTime,
