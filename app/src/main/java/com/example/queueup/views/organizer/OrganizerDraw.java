@@ -90,14 +90,14 @@ public class OrganizerDraw extends Fragment {
         if (event.getIsDrawn()) {
             Bundle bundle = new Bundle();
             bundle.putSerializable("event", event);
-            getActivity().getSupportFragmentManager().beginTransaction()
+            this.getSupport().beginTransaction()
                     .setReorderingAllowed(true)
                     .replace(R.id.organizer_draw_fragment, OrganizerRedrawFragment.class, bundle)
                     .commit();
         } else {
             Bundle bundle = new Bundle();
             bundle.putSerializable("event", event);
-            getActivity().getSupportFragmentManager().beginTransaction()
+            getChildFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
                     .replace(R.id.organizer_draw_fragment, OrganizerDrawFragment.class, bundle)
                     .commit();

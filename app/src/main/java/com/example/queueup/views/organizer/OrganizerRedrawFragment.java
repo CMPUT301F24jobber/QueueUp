@@ -17,7 +17,7 @@ import com.example.queueup.models.Event;
 
 public class OrganizerRedrawFragment extends Fragment {
     public OrganizerRedrawFragment() {
-        super(R.layout.organizer_draw_winners_fragment);
+        super(R.layout.organizer_redraw_winners_fragment);
     }
 
 
@@ -37,7 +37,7 @@ public class OrganizerRedrawFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         event = this.getArguments().getSerializable("event", Event.class);
         redrawWinners = view.findViewById(R.id.redraw_winners);
-        redrawWinners = view.findViewById(R.id.redraw_winners);
+        cancelWinners = view.findViewById(R.id.cancel_winners);
 
         winnerNotification = view.findViewById(R.id.notification_winner);
         cancelNotification = view.findViewById(R.id.notification_cancelled);

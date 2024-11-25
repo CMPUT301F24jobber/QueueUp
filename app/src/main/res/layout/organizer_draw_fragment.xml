@@ -48,7 +48,7 @@
                 android:id="@+id/event_location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
                 android:fontFamily="@font/poppins_extralight"
                 android:text="location" />
 
@@ -78,28 +78,18 @@
                 android:text="time" />
         </LinearLayout>
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/organizer_draw_fragment"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/info_constraint_layout"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHeight_max="650dp"
-            android:clickable="true"
-            />
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="1">
+        </androidx.viewpager.widget.ViewPager>
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <include
-        android:id="@+id/draw_attendees_fragment"
-        layout="@layout/organizer_draw_winners_fragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        app:layout_constraintTop_toBottomOf="@id/info_constraint_layout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
