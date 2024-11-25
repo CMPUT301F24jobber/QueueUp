@@ -19,16 +19,13 @@ import com.example.queueup.R;
 import com.example.queueup.controllers.UserController;
 import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.models.User;
+import com.example.queueup.viewmodels.UserViewModel;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-/**
- * EditProfileActivity provides functionality for users to edit their profile information,
- * including updating their first name, last name, username, email, and phone number.
- * The activity also supports changing the user's profile picture by uploading it to Firebase Storage.
- */
+
 public class EditProfileActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private User currentUser;
@@ -41,14 +38,11 @@ public class EditProfileActivity extends AppCompatActivity {
     private FirebaseStorage storage;
     private String deviceId;
     private CurrentUserHandler currentUserHandler;
+    private UserViewModel userViewModel;
 
     /**
-     * Called when the activity is first created. Initializes UI components,
-     * sets up click listeners for buttons, and retrieves user data if available.
-     *
-     * @param savedInstanceState If the activity is being re-initialized after previously being shut down,
-     *                           this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
-     *                           Note: Otherwise, it is null.
+     * Called when the activity is created. Initializes UI elements and sets up click listeners.
+     * @param savedInstanceState
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,28 +80,17 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     /**
-     * Fetches the current user data from Firestore based on the device ID.
+     * Fetches the current user's data from the Firestore database.
      */
     private void fetchUserData() {
-        db.collection("users")
-                .whereEqualTo("deviceId", deviceId)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            currentUser = document.toObject(User.class);
-                            loadUserData();
-                        }
-                    } else {
-                        Toast.makeText(this, "Failed to load user data", Toast.LENGTH_SHORT).show();
-                        finish();
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("EditProfileActivity", "Error fetching user data", e);
-                    Toast.makeText(this, "Failed to load user data", Toast.LENGTH_SHORT).show();
-                    finish();
-                });
+        userViewModel = new UserViewModel(getApplication());
+        userViewModel.loadUserByDeviceId(deviceId);
+        userViewModel.getCurrentUser().observe(this, user -> {
+            if (user != null) {
+                currentUser = user;
+                loadUserData();
+            }
+        });
     }
 
     /**
@@ -142,18 +125,7 @@ public class EditProfileActivity extends AppCompatActivity {
      * Removes the profile picture of the current user by updating the Firestore database.
      */
     private void removeProfilePicture() {
-        if (currentUser != null && currentUser.getProfileImageUrl() != null && !currentUser.getProfileImageUrl().isEmpty()) {
-            currentUser.setProfileImageUrl(null);
-            db.collection("users").document(currentUser.getUuid())
-                    .update("profileImageUrl", null)
-                    .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(EditProfileActivity.this, "Profile picture removed successfully", Toast.LENGTH_SHORT).show();
-                        displayProfileImageOrInitials();  // Update UI to show initials
-                    })
-                    .addOnFailureListener(e -> Toast.makeText(EditProfileActivity.this, "Failed to remove profile picture", Toast.LENGTH_SHORT).show());
-        } else {
-            Toast.makeText(this, "No profile picture to remove", Toast.LENGTH_SHORT).show();
-        }
+       userViewModel.removeProfilePicture(currentUser.getUuid());
     }
 
     /**
@@ -225,20 +197,8 @@ public class EditProfileActivity extends AppCompatActivity {
 
         // Handle profile picture upload
         if (imageUri != null) {
-            StorageReference fileReference = storage.getReference("profileImages").child(currentUser.getUuid() + ".jpg");
-            fileReference.putFile(imageUri)
-                    .addOnSuccessListener(taskSnapshot -> fileReference.getDownloadUrl()
-                            .addOnSuccessListener(uri -> {
-                                String downloadUrl = uri.toString();
-                                currentUser.setProfileImageUrl(downloadUrl);
-                                Glide.with(this).load(downloadUrl).circleCrop().into(profileImageView);
-                                profileInitialsTextView.setVisibility(View.GONE);
-                                profileImageView.setVisibility(View.VISIBLE);
-                                currentUserHandler.updateUser(currentUser);
-                                finish();
-                            })
-                            .addOnFailureListener(e -> Toast.makeText(EditProfileActivity.this, "Failed to get image URL", Toast.LENGTH_SHORT).show()))
-                    .addOnFailureListener(e -> Toast.makeText(EditProfileActivity.this, "Failed to upload profile picture", Toast.LENGTH_SHORT).show());
+            userViewModel.updateProfilePicture(currentUser.getUuid(), imageUri.toString());
+            finish();
         } else {
             currentUserHandler.updateUser(currentUser);
             finish();

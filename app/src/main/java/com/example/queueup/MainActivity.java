@@ -42,11 +42,9 @@ public class MainActivity extends AppCompatActivity {
         FirebaseApp.initializeApp(this);
         setContentView(R.layout.activity_main);
 
-        // Initialize Firestore and UserViewModel
         db = FirebaseFirestore.getInstance();
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
-        // Initialize buttons
         adminButton = findViewById(R.id.adminButton);
         organizerButton = findViewById(R.id.organizerButton);
         attendeeButton = findViewById(R.id.attendeeButton);
@@ -109,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // Only query database if we don't have the user
         db.collection("users")
                 .whereEqualTo("deviceId", deviceId)
                 .get()

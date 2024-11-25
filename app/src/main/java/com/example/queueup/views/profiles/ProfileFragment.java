@@ -1,7 +1,4 @@
-// package declaration
 package com.example.queueup.views.profiles;
-
-// import statements
 
 import android.app.Activity;
 import android.content.Intent;
@@ -27,14 +24,10 @@ import com.example.queueup.models.User;
 import com.example.queueup.viewmodels.UserViewModel;
 import com.google.android.material.button.MaterialButton;
 
-/**
- * ProfileFragment is responsible for displaying and managing the user's profile information.
- * It allows the user to edit their profile, view their details, and switch roles.
- */
+
 public class ProfileFragment extends Fragment {
     private static final int EDIT_PROFILE_REQUEST_CODE = 1;
 
-    // UI Elements
     private TextView profileNameTextView;
     private TextView profileUsernameTextView;
     private TextView profileEmailTextView;
@@ -43,27 +36,18 @@ public class ProfileFragment extends Fragment {
     private ImageView profileImageView;
     private MaterialButton switchRoleButton;
     private Button editButton;
-
-    // ViewModel
     private UserViewModel userViewModel;
-
-    // User Data
     private User currentUser;
 
-    // Device ID
     private String deviceId;
 
-    /**
-     * Required empty public constructor
-     */
     public ProfileFragment() {
-        // No-argument constructor
     }
+
 
     /**
      * Called when the fragment is created. Initializes the ViewModel.
-     *
-     * @param savedInstanceState If non-null, contains the data previously saved by the fragment.
+     * @param savedInstanceState
      */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,12 +57,11 @@ public class ProfileFragment extends Fragment {
     }
 
     /**
-     * Called when the fragment's view is created. Inflates the layout and initializes the UI elements.
-     *
-     * @param inflater           The LayoutInflater object used to inflate the view.
-     * @param container          The parent view that the fragment's UI will be attached to, if non-null.
-     * @param savedInstanceState If non-null, contains the data previously saved by the fragment.
-     * @return The inflated view representing the fragment's layout.
+     * Called when the fragment's view is created. Initializes UI elements and sets up click listeners.
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
      */
     @Nullable
     @Override
@@ -103,7 +86,6 @@ public class ProfileFragment extends Fragment {
         // Observe LiveData from UserViewModel
         observeViewModel();
 
-        // Fetch user data
         fetchUserData();
 
         // Set up Edit Button Click Listener
@@ -124,10 +106,9 @@ public class ProfileFragment extends Fragment {
     }
 
     /**
-     * Observes LiveData objects from the UserViewModel to update the UI accordingly.
+     * Observes LiveData from the UserViewModel.
      */
     private void observeViewModel() {
-        // Observe currentUser LiveData
         userViewModel.getCurrentUser().observe(getViewLifecycleOwner(), user -> {
             if (user != null) {
                 currentUser = user;
@@ -135,7 +116,6 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        // Observe errorMessage LiveData
         userViewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
             if (error != null) {
                 Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
@@ -183,9 +163,7 @@ public class ProfileFragment extends Fragment {
     }
 
     /**
-     * Displays the user's profile image or their initials if the image is not available.
-     * If the profile image is set, it is displayed using Glide. If the image is not available,
-     * the user's initials (first letter of the first and last name) are displayed instead.
+     * Displays the user's profile image if available, or their initials if not.
      */
     private void displayProfileImageOrInitials() {
         if (currentUser == null) {
@@ -223,21 +201,19 @@ public class ProfileFragment extends Fragment {
     }
 
     /**
-     * Called when the fragment resumes. Reloads user data to ensure the UI is up-to-date.
+     * Called when the fragment is resumed. Fetches the user's data.
      */
     @Override
     public void onResume() {
         super.onResume();
-        // Refresh user data when the fragment resumes
         fetchUserData();
     }
 
     /**
-     * Handles the result of the activity launched for editing the user's profile.
-     *
-     * @param requestCode The request code passed in startActivityForResult().
-     * @param resultCode  The result code returned by the child activity.
-     * @param data        An Intent containing the result data from the activity.
+     * Called when the fragment receives a result from another activity.
+     * @param requestCode
+     * @param resultCode
+     * @param data
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -245,8 +221,6 @@ public class ProfileFragment extends Fragment {
 
         // Check if the result is from EditProfileActivity
         if (requestCode == EDIT_PROFILE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            // Optionally, you can extract data from the intent if needed
-            // For now, we'll just refresh the user data
             fetchUserData();
         }
     }

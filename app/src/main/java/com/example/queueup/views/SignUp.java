@@ -31,10 +31,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.UUID;
 
-/**
- * SignUp activity allows new users to register by providing their details, uploading a profile picture,
- * and selecting their role. It collects the user's information, validates it, and stores the data in Firestore.
- */
+
 public class SignUp extends AppCompatActivity {
 
     private TextView titleTextView;
@@ -115,9 +112,7 @@ public class SignUp extends AppCompatActivity {
         submitButton.setOnClickListener(v -> submitUserInformation());
     }
 
-    /**
-     * Launches an intent to select an image from the device.
-     */
+
     private void selectImage() {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
@@ -130,12 +125,12 @@ public class SignUp extends AppCompatActivity {
 
         if (requestCode == IMAGE_PICK_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             profileImageUri = data.getData();
-            profileImageView.setImageURI(profileImageUri); // Display chosen image
+            profileImageView.setImageURI(profileImageUri);
         }
     }
 
     /**
-     * Collects user information and submits it to Firestore.
+     * submits the user information to the database.
      */
     private void submitUserInformation() {
         // Get input values from TextInputEditText fields
@@ -190,7 +185,6 @@ public class SignUp extends AppCompatActivity {
 
         if (deviceId == null || deviceId.isEmpty()) {
             Toast.makeText(SignUp.this, "Device ID not available.", Toast.LENGTH_SHORT).show();
-            // You might want to handle this case appropriately
             return;
         }
 
@@ -221,15 +215,14 @@ public class SignUp extends AppCompatActivity {
                 }
             });
         } else {
-            // If no image, proceed without a profile picture
             proceedToSaveUser(user);
         }
     }
 
     /**
-     * Saves the user to Firestore and handles post-save actions.
-     *
-     * @param user The user object to save.
+    * Saves the user
+    *
+    * @param user The user object containing user details.
      */
     private void proceedToSaveUser(User user) {
         userViewModel.createUser(user).addOnCompleteListener(task -> {
@@ -244,10 +237,10 @@ public class SignUp extends AppCompatActivity {
     }
 
     /**
-     * Redirects to the appropriate activity based on the user's role.
+     * Redirects the user to the appropriate home screen based on their role.
      *
-     * @param role The role of the user (Admin, Organizer, Attendee).
-     * @param user The user object containing user details.
+     * @param role
+     * @param user
      */
     private void redirectToRoleBasedActivity(String role, User user) {
         Intent intent;
@@ -265,6 +258,6 @@ public class SignUp extends AppCompatActivity {
                 break;
         }
         startActivity(intent);
-        finish(); // Close the current activity
+        finish();
     }
 }
