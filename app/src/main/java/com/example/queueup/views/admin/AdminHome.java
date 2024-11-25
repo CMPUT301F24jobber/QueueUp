@@ -19,11 +19,7 @@ import com.example.queueup.views.profiles.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-/**
- * AdminHome activity serves as the main screen for the admin interface. It provides navigation to different
- * sections such as Home, Users, Gallery, and Profile through a BottomNavigationView. It also manages fragment
- * transactions and device ID handling.
- */
+
 public class AdminHome extends AppCompatActivity {
 
     private FirebaseFirestore db;
@@ -33,12 +29,8 @@ public class AdminHome extends AppCompatActivity {
     private ImageButton backButton;
 
     /**
-     * Called when the activity is first created. Initializes views, sets up the back button,
-     * and handles fragment transactions based on the selected bottom navigation item.
-     *
-     * @param savedInstanceState If the activity is being re-initialized after previously being shut down,
-     *                           this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
-     *                           (Otherwise it is null.)
+     * Called when the activity is created. Initializes the UI elements and sets up the navigation bar.
+     * @param savedInstanceState
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +39,7 @@ public class AdminHome extends AppCompatActivity {
 
         navigationView = findViewById(R.id.bottom_navigation);
         db = FirebaseFirestore.getInstance();
-        titleTextView = findViewById(R.id.titleTextView);  // Assuming you have a TextView for the title
+        titleTextView = findViewById(R.id.titleTextView);
         backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener((view) -> {
             onBackPressed();
@@ -55,7 +47,7 @@ public class AdminHome extends AppCompatActivity {
         // Get deviceId from intent or UserController
         deviceId = getIntent().getStringExtra("deviceId");
         if (deviceId == null || deviceId.isEmpty()) {
-            deviceId = UserController.getInstance().getDeviceId(getApplicationContext());  // Fetch from UserController if not passed
+            deviceId = UserController.getInstance().getDeviceId(getApplicationContext());
         }
 
         NavHostFragment navHostFragment =

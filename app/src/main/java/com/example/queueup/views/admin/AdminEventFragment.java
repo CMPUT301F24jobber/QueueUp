@@ -3,7 +3,9 @@ package com.example.queueup.views.admin;
 import static android.content.Intent.getIntent;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -20,11 +22,7 @@ import com.google.android.material.button.MaterialButton;
 
 import java.time.format.DateTimeFormatter;
 
-/**
- * Fragment that displays event details for an admin and allows deletion of the event.
- * The admin can toggle QR functionality, view the event's title, date, location, and image,
- * and delete the event from the database.
- */
+
 public class AdminEventFragment extends Fragment {
     public AdminEventFragment() {
         super(R.layout.admin_event_fragment);
@@ -38,13 +36,10 @@ public class AdminEventFragment extends Fragment {
     ImageView eventImage;
     MaterialButton deleteButton;
 
-
     /**
-     * Initializes the views and binds the data for the event.
-     * Sets up the toggle button for QR, loads the event data, and handles delete button click.
-     *
-     * @param view The root view of the fragment.
-     * @param savedInstanceState The saved instance state.
+     * call when the fragment's view has been created.
+     * @param view
+     * @param savedInstanceState
      */
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {

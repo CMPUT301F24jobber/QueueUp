@@ -30,11 +30,10 @@ public class AdminClickUserFragment extends DialogFragment {
     private FirebaseFirestore db;
     private RefreshUsersListener listener;
 
+
     /**
-     * Creates the dialog and sets up the user details for viewing.
-     *
-     * @param savedInstanceState The saved instance state.
-     * @return A Dialog object representing the user details dialog.
+     * Called to do initial creation of a fragment. This is called after onAttach and before onCreateView.
+     * @param savedInstanceState
      */
     @NonNull
     @Override
@@ -78,9 +77,8 @@ public class AdminClickUserFragment extends DialogFragment {
     }
 
     /**
-     * Attaches the fragment to its parent and ensures the parent implements the RefreshUsersListener.
-     *
-     * @param context The context of the fragment.
+     * Called when the fragment is associated with an activity.
+     * @param context
      */
     @Override
     public void onAttach(@NonNull Context context) {
@@ -93,19 +91,14 @@ public class AdminClickUserFragment extends DialogFragment {
         }
     }
 
-    /**
-     * Interface for the parent fragment to refresh the user list after a user is deleted.
-     */
     interface RefreshUsersListener {
         void refreshFragment();
     }
 
 
     /**
-     * Deletes a user from Firestore based on their email address.
-     * Displays appropriate toast messages based on success or failure.
-     *
-     * @param user The user to delete.
+     * Method to delete a user from Firestore.
+     * @param user
      */
     private void deleteUser(User user) {
         String email = user.getEmailAddress();
