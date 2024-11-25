@@ -3,13 +3,16 @@ package com.example.queueup.views.organizer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -35,6 +38,18 @@ public class OrganizerDraw extends Fragment {
     private Event event;
     private ImageUploader imageUploader;
     private EventViewModel eventViewModel;
+    private Button drawWinners;
+    private ToggleButton winnerNotification;
+    private ToggleButton loserNotification;
+    private ToggleButton everyoneNotification;
+    private Button redrawWinners;
+    private Button cancelWinners;
+    private ConstraintLayout drawLayout;
+    private ConstraintLayout redrawLayout;
+
+    private ToggleButton rewinnerNotification;
+
+    private ToggleButton cancelNotification;
 
     /**
      * Called when the fragment's view is created. It initializes the UI components, binds data to the views,
@@ -57,6 +72,16 @@ public class OrganizerDraw extends Fragment {
         locationText.setText(event.getEventLocation());
         ImageView posterImage = view.findViewById(R.id.poster_image);
         eventViewModel = new ViewModelProvider(this).get(EventViewModel.class);
+        drawWinners = view.findViewById(R.id.draw_winners);
+        winnerNotification = view.findViewById(R.id.notification_winner);
+        loserNotification = view.findViewById(R.id.notification_loser);
+        everyoneNotification =  view.findViewById(R.id.notification_everyone);
+        redrawWinners = view.findViewById(R.id.redraw_winners);
+        cancelWinners = view.findViewById(R.id.cancel_winners);
+        rewinnerNotification = view.findViewById(R.id.notification_redraw_winner);
+        cancelNotification = view.findViewById(R.id.notification_cancelled);
+        drawLayout = view.findViewById(R.id.draw_layout);
+        redrawLayout = view.findViewById(R.id.redraw_layout);
 
         Glide.with(this).load(event.getEventBannerImageUrl()).into(posterImage);
         timeText.setText(time_text);
@@ -87,23 +112,40 @@ public class OrganizerDraw extends Fragment {
                     .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
                     .build());
         });
-        if (event.getIsDrawn()) {
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("event", event);
-            this.getSupport().beginTransaction()
-                    .setReorderingAllowed(true)
-                    .replace(R.id.organizer_draw_fragment, OrganizerRedrawFragment.class, bundle)
-                    .commit();
-        } else {
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("event", event);
-            getChildFragmentManager().beginTransaction()
-                    .setReorderingAllowed(true)
-                    .replace(R.id.organizer_draw_fragment, OrganizerDrawFragment.class, bundle)
-                    .commit();
-        }
 
-
+//        if (event.getIsDrawn()) {
+//            redrawLayout.setVisibility(View.VISIBLE);
+//            drawLayout.setVisibility(View.INVISIBLE);
+//
+//            drawWinners.setOnClickListener(v -> {
+//                if (everyoneNotification.isChecked()) {
+//
+//                } else {
+//                    if (loserNotification.isChecked()) {
+//
+//                    }
+//                    if (winnerNotification.isChecked()) {
+//
+//                    }
+//                }
+//            });
+//        } else {
+//            redrawLayout.setVisibility(View.INVISIBLE);
+//            drawLayout.setVisibility(View.VISIBLE);
+//
+//            drawWinners.setOnClickListener(v -> {
+//                if (everyoneNotification.isChecked()) {
+//
+//                } else {
+//                    if (loserNotification.isChecked()) {
+//
+//                    }
+//                    if (winnerNotification.isChecked()) {
+//
+//                    }
+//                }
+//            });
+//        }
 
     }
 
