@@ -204,7 +204,6 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private void updateUserAndFinish() {
         currentUserHandler.updateUser(currentUser);
-        Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
         finish();
     }
 }

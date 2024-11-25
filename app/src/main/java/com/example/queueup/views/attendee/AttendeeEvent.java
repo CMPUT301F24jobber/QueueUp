@@ -80,5 +80,4 @@ public class AttendeeEvent extends AppCompatActivity {
         }
     }
 
-
 }

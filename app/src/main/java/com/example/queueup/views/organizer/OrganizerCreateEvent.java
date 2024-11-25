@@ -34,13 +34,14 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.UUID;
 
-
 public class OrganizerCreateEvent extends AppCompatActivity {
 
+    private static final String TAG = "OrganizerCreateEvent";
     private static final String DATE_FORMAT = "yyyy-MM-dd";
     private static final String TIME_FORMAT = "HH:mm";
     private static final String DATETIME_FORMAT = "yyyy-MM-dd HH:mm";
 
+    // UI Components
     private ImageView eventImage;
     private EditText eventNameEditText;
     private EditText startDateEditText, startTimeEditText;
@@ -53,52 +54,47 @@ public class OrganizerCreateEvent extends AppCompatActivity {
     // View Model and Data
     private EventViewModel eventViewModel;
     private Uri imageUri = null;
+    private ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.organizer_create_event);
 
-        // Initialize ViewModel and UI components
+        // Initialize ViewModel
         eventViewModel = new ViewModelProvider(this).get(EventViewModel.class);
+
+        // Initialize UI and setup listeners
         initializeUIComponents();
+        setupPhotoPickerLauncher();
         setupDateTimeListeners();
         setupClickListeners();
         setupObservers();
 
-        // Initially disable submit button
+        // Initially disable submit button until user is authenticated
         submitButton.setEnabled(false);
-
-        // Setup photo picker
-        ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
-                registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
-                    if (uri != null) {
-                        Log.d("PhotoPicker", "Selected URI: " + uri);
-                        imageUri = uri;
-                        Glide.with(this).load(uri).circleCrop().into(eventImage);
-                    } else {
-                        Log.d("PhotoPicker", "No media selected");
-                    }
-                });
 
         // Enable submit button when user is authenticated
         CurrentUserHandler.getSingleton().getCurrentUser().observe(this, user -> {
-            if (user != null && user.getUuid() != null) {
-                submitButton.setEnabled(true);
-            }
-        });
-
-        // Setup image picker click listener
-        eventImage.setOnClickListener(v -> {
-            pickMedia.launch(new PickVisualMediaRequest.Builder()
-                    .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-                    .build());
+            submitButton.setEnabled(user != null && user.getUuid() != null);
         });
     }
 
-    /**
-     * Initializes all UI components by finding their views
-     */
+    private void setupPhotoPickerLauncher() {
+        pickMedia = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+            if (uri != null) {
+                Log.d(TAG, "Selected URI: " + uri);
+                imageUri = uri;
+                Glide.with(this)
+                        .load(uri)
+                        .circleCrop()
+                        .into(eventImage);
+            } else {
+                Log.d(TAG, "No media selected");
+            }
+        });
+    }
+
     private void initializeUIComponents() {
         eventImage = findViewById(R.id.image_view);
         eventNameEditText = findViewById(R.id.eventNameEditText);
@@ -114,19 +110,21 @@ public class OrganizerCreateEvent extends AppCompatActivity {
         backButton = findViewById(R.id.backButton);
     }
 
-    /**
-     * Sets up click listeners for various UI components
-     */
     private void setupClickListeners() {
+        eventImage.setOnClickListener(v -> {
+            pickMedia.launch(new PickVisualMediaRequest.Builder()
+                    .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                    .build());
+        });
+
         backButton.setOnClickListener(v -> finish());
+
         unlimitedAttendeeCheckBox.setOnCheckedChangeListener((buttonView, isChecked) ->
                 toggleAttendeeLimit(isChecked));
+
         submitButton.setOnClickListener(v -> handleSubmit());
     }
 
-    /**
-     * Sets up date and time picker dialogs for both start and end date/time fields
-     */
     private void setupDateTimeListeners() {
         Calendar calendar = Calendar.getInstance();
 
@@ -155,7 +153,7 @@ public class OrganizerCreateEvent extends AppCompatActivity {
                     },
                     calendar.get(Calendar.HOUR_OF_DAY),
                     calendar.get(Calendar.MINUTE),
-                    true); // Use 24-hour format
+                    true);
             timePickerDialog.show();
         });
 
@@ -184,58 +182,48 @@ public class OrganizerCreateEvent extends AppCompatActivity {
                     },
                     calendar.get(Calendar.HOUR_OF_DAY),
                     calendar.get(Calendar.MINUTE),
-                    true); // Use 24-hour format
+                    true);
             timePickerDialog.show();
         });
     }
 
-    /**
-     * Sets up observers for the ViewModel to handle loading states and error messages
-     */
     private void setupObservers() {
+        // Observe error messages
         eventViewModel.getErrorMessageLiveData().observe(this, errorMessage -> {
             if (errorMessage != null && !errorMessage.isEmpty()) {
+                showToast(errorMessage);
             }
         });
 
+        // Observe loading state and event creation success
         eventViewModel.getIsLoadingLiveData().observe(this, isLoading -> {
             if (Boolean.FALSE.equals(isLoading)) {
                 eventViewModel.getAllEventsLiveData().observe(this, events -> {
                     if (events != null) {
-                        // Create a delay for intent so data loads first
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        showToast("Event created successfully");
-                        Intent intent = new Intent(OrganizerCreateEvent.this, OrganizerHome.class);
-                        startActivity(intent);
-                        finish();
+                        navigateToHome();
                     } else {
                         showToast("Event creation failed. Please try again.");
+                        submitButton.setEnabled(true);
                     }
                 });
-            } else {
-                showToast("Creating event...");
             }
         });
     }
 
-    /**
-     * Toggles the attendee limit EditText based on checkbox state
-     */
-    private void toggleAttendeeLimit(boolean isChecked) {
-        attendeeLimitEditText.setEnabled(!isChecked);
-        if (isChecked) {
+    private void navigateToHome() {
+        Intent intent = new Intent(OrganizerCreateEvent.this, OrganizerHome.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void toggleAttendeeLimit(boolean isUnlimited) {
+        attendeeLimitEditText.setEnabled(!isUnlimited);
+        if (isUnlimited) {
             attendeeLimitEditText.setText("");
         }
     }
 
-    /**
-     * Handles the submit button click, validates inputs and creates the event
-     */
-    private synchronized void handleSubmit() {
+    private void handleSubmit() {
         // Get all input values
         String eventName = eventNameEditText.getText().toString().trim();
         String startDate = startDateEditText.getText().toString().trim();
@@ -253,26 +241,19 @@ public class OrganizerCreateEvent extends AppCompatActivity {
             return;
         }
 
-        // Combine date and time strings
+        // Check for image
+        if (imageUri == null) {
+            showToast("Please select an event image");
+            return;
+        }
+
+        // Validate dates
         String startDateTimeStr = startDate + " " + startTime;
         String endDateTimeStr = endDate + " " + endTime;
-
-        // Parse and validate dates
         Date startDateTime = parseDateTime(startDateTimeStr);
         Date endDateTime = parseDateTime(endDateTimeStr);
 
-        if (startDateTime == null || endDateTime == null) {
-            showToast("Invalid date/time format");
-            return;
-        }
-
-        if (!endDateTime.after(startDateTime)) {
-            showToast("End date/time must be after start date/time");
-            return;
-        }
-
-        if (new Date().after(startDateTime)) {
-            showToast("Start date/time cannot be in the past");
+        if (!areDatesValid(startDateTime, endDateTime)) {
             return;
         }
 
@@ -283,51 +264,49 @@ public class OrganizerCreateEvent extends AppCompatActivity {
             return;
         }
 
-        // Check for required image and organizer ID
-        String organizerId = CurrentUserHandler.getSingleton().getCurrentUserId();
-        if (imageUri == null) {
-            showToast("Image is missing. Please add an image");
-            return;
-        }
+        // Disable submit button to prevent double submission
+        submitButton.setEnabled(false);
+        showToast("Uploading image...");
 
-        // Create and upload event
+        // First upload the image
+        String eventId = UUID.randomUUID().toString();
         String qrCodeId = UUID.randomUUID().toString();
         ImageUploader imageUploader = new ImageUploader();
 
-        Event newEvent = new Event(
-                UUID.randomUUID().toString(),
-                eventName,
-                description,
-                null, // Image URL will be set after upload
-                location,
-                organizerId,
-                startDateTime,
-                endDateTime,
-                attendeeLimitValue,
-                true,
-                false
-        );
-
-        newEvent.setCheckInQrCodeId(qrCodeId);
-        eventViewModel.createEvent(newEvent);
-
-        // Upload the event image
-        imageUploader.uploadImage("profile_pictures/", imageUri, new ImageUploader.UploadListener() {
+        imageUploader.uploadImage("event_images/" + eventId + "/", imageUri, new ImageUploader.UploadListener() {
             @Override
             public void onUploadSuccess(String imageUrl) {
-                eventViewModel.setEventBannerImage(newEvent.getEventId(), imageUrl);
+                // Create event object with the uploaded image URL
+                Event newEvent = new Event(
+                        eventId,
+                        eventName,
+                        description,
+                        imageUrl,  // Using the uploaded image URL
+                        location,
+                        CurrentUserHandler.getSingleton().getCurrentUserId(),
+                        startDateTime,
+                        endDateTime,
+                        attendeeLimitValue,
+                        true,
+                        false
+                );
+
+                newEvent.setCheckInQrCodeId(qrCodeId);
+
+                // Create the event in database
+                eventViewModel.createEvent(newEvent);
+                showToast("Creating event...");
             }
 
             @Override
             public void onUploadFailure(Exception exception) {
-                showToast("Failed to upload image. Event created without image.");
+                showToast("Failed to upload image. Please try again.");
+                submitButton.setEnabled(true);
+                Log.e(TAG, "Image upload failed", exception);
             }
         });
     }
 
-    /**
-     * Validates that all required fields are filled
-     */
     private boolean areRequiredFieldsFilled(String eventName, String location,
                                             String startDate, String startTime,
                                             String endDate, String endTime) {
@@ -336,32 +315,43 @@ public class OrganizerCreateEvent extends AppCompatActivity {
                 !endDate.isEmpty() && !endTime.isEmpty();
     }
 
-    /**
-     * Parses a date-time string into a Date object
-     */
+    private boolean areDatesValid(Date startDateTime, Date endDateTime) {
+        if (startDateTime == null || endDateTime == null) {
+            showToast("Invalid date/time format");
+            return false;
+        }
+
+        if (!endDateTime.after(startDateTime)) {
+            showToast("End date/time must be after start date/time");
+            return false;
+        }
+
+        if (new Date().after(startDateTime)) {
+            showToast("Start date/time cannot be in the past");
+            return false;
+        }
+
+        return true;
+    }
+
     private Date parseDateTime(String dateTimeStr) {
         try {
             return new SimpleDateFormat(DATETIME_FORMAT, Locale.getDefault()).parse(dateTimeStr);
         } catch (ParseException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Date parsing error", e);
             return null;
         }
     }
 
-    /**
-     * Parses the attendee limit string into an integer
-     */
     private int parseAttendeeLimit(String attendeeLimit) {
         try {
             return attendeeLimit.isEmpty() ? -1 : Integer.parseInt(attendeeLimit);
         } catch (NumberFormatException e) {
+            Log.e(TAG, "Number parsing error", e);
             return -1;
         }
     }
 
-    /**
-     * Shows a toast message
-     */
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
