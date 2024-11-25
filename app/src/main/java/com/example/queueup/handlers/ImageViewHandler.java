@@ -24,9 +24,6 @@ public class ImageViewHandler {
     private ImageViewHandler() {
     }
 
-    /**
-     * Singleton instance getter for ImageViewHandler
-     */
     public static ImageViewHandler getInstance() {
         if (instance == null) {
             synchronized (ImageViewHandler.class) {
@@ -41,9 +38,9 @@ public class ImageViewHandler {
     /**
      * Set the event image for the event
      *
-     * @param event           The event for which the image is to be set
-     * @param eventImageView  The ImageView where the event image will be displayed
-     * @param activity        The activity context for resource access
+     * @param event
+     * @param eventImageView
+     * @param activity
      */
     public void setEventImage(Event event, ImageView eventImageView, AppCompatActivity activity) {
         // Fetch the event banner URL from the event object
@@ -52,7 +49,7 @@ public class ImageViewHandler {
         // Initially hide the ImageView until we successfully load the image
         eventImageView.setVisibility(View.INVISIBLE);
 
-        // If the event banner URL is not null, proceed to fetch it from Firebase Storage
+
         if (uriEventBanner != null && !uriEventBanner.isEmpty()) {
             StorageReference storageRef;
             try {
@@ -66,22 +63,19 @@ public class ImageViewHandler {
 
             final long ONE_MEGABYTE = 1024 * 1024;
 
-            // Attempt to fetch the image bytes from Firebase
             storageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(bytes -> {
                 // Decode the bytes into a Bitmap
                 Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
                 // Create a rounded drawable from the Bitmap
                 RoundedBitmapDrawable roundedDrawable = RoundedBitmapDrawableFactory.create(activity.getResources(), bmp);
-                roundedDrawable.setCornerRadius(20.0f); // Set corner radius for rounded effect (adjust as needed)
+                roundedDrawable.setCornerRadius(20.0f);
 
                 // Set the image drawable and adjust ImageView settings
                 eventImageView.setImageDrawable(roundedDrawable);
                 eventImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 eventImageView.setVisibility(View.VISIBLE);
             }).addOnFailureListener(exception -> {
-                // Log the error if fetching image fails
-                Log.w("Event Image", "Error getting event image, removing reference", exception);
 
                 // Remove the event image reference if the fetch fails
                 eventController.setEventBannerImage(event.getEventId(), null)
@@ -93,7 +87,6 @@ public class ImageViewHandler {
                 eventImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             });
         } else {
-            // If there is no image URL, keep the ImageView visible but with default settings
             eventImageView.setVisibility(View.VISIBLE);
             eventImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
         }

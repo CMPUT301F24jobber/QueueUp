@@ -20,9 +20,6 @@ public class CurrentUserHandler {
     private static UserController userController = UserController.getInstance();
     private String cachedUserId = null;
 
-    /**
-     * Initializes the singleton instance of CurrentUserHandler.
-     */
     private static void setSingleton() {
         if (ownerActivity == null) {
             throw new RuntimeException("Owner activity must be set in MainActivity.");
@@ -30,7 +27,6 @@ public class CurrentUserHandler {
         singleInstance = new CurrentUserHandler();
         userViewModel = new ViewModelProvider(ownerActivity).get(UserViewModel.class);
 
-        // cache current user Id
         userViewModel.getCurrentUser().observe(ownerActivity, User -> {
             if (User != null) {
                 singleInstance.cachedUserId = User.getUuid();
@@ -39,11 +35,6 @@ public class CurrentUserHandler {
     }
 
 
-    /**
-     * Retrieves the singleton instance of CurrentUserHandler.
-     *
-     * @return The singleton instance.
-     */
     public static CurrentUserHandler getSingleton() {
         if (singleInstance == null) {
             setSingleton();
@@ -56,7 +47,7 @@ public class CurrentUserHandler {
     /**
      * Sets the owner activity for the handler.
      *
-     * @param activity The owner AppCompatActivity.
+     * @param activity
      */
     public static void setOwnerActivity(AppCompatActivity activity) {
         ownerActivity = activity;
@@ -65,7 +56,7 @@ public class CurrentUserHandler {
     /**
      * Retrieves the current user's ID.
      *
-     * @return The current user's UUID, or null if not available.
+     * @return The current user's UUID
      */
     public String getCurrentUserId() {
         return cachedUserId;
@@ -74,11 +65,10 @@ public class CurrentUserHandler {
     /**
      * Retrieves the current User object.
      *
-     * @return The current User, or null if not available.
+     * @return The current User
      */
     public LiveData<User> getCurrentUser() {
         return userViewModel.getCurrentUser();
-
     }
 
     /**
@@ -86,7 +76,7 @@ public class CurrentUserHandler {
      */
     public void loginWithDeviceId(Runnable loginCallback) {
         String deviceId = userViewModel.getDeviceId();
-        userViewModel.loadUserByDeviceId(deviceId); // Triggers the user data load
+        userViewModel.loadUserByDeviceId(deviceId);
 
         // Observe for the loaded user data
         userViewModel.getCurrentUser().observe(ownerActivity, user -> {
@@ -121,7 +111,7 @@ public class CurrentUserHandler {
     /**
      * Retrieves error messages from the ViewModel.
      *
-     * @return LiveData containing error messages.
+     * @return error message
      */
     public LiveData<String> getErrorMessage() {
         return userViewModel.getErrorMessage();
@@ -130,7 +120,7 @@ public class CurrentUserHandler {
     /**
      * Retrieves LiveData for the current user.
      *
-     * @return LiveData containing the current User.
+     * @return user
      */
     public LiveData<User> getCurrentUserLiveData() {
         return userViewModel.getCurrentUser();

@@ -7,20 +7,16 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
-/**
- * QRCodeImage is a utility class that provides functionality for generating
- * QR code images based on a given text input.
- */
+
 public class QRCodeImage {
 
-    // Default dimensions for the QR code
     private final static int QR_CODE_DIMENSION = 500;
 
     /**
-     * Generates a QR code image as a Bitmap from a given text input.
+     * Generates a QR code image from the input text.
      *
-     * @param qrCodeText The text to encode into the QR code.
-     * @return A Bitmap representation of the generated QR code, or null if an error occurs.
+     * @param qrCodeText
+     * @return
      */
     public static Bitmap generateQrCodeImage(String qrCodeText) {
         try {
@@ -31,7 +27,7 @@ public class QRCodeImage {
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
             return barcodeEncoder.createBitmap(bitMatrix);
         } catch (WriterException e) {
-            e.printStackTrace();  // Log the exception if an error occurs
+            e.printStackTrace();
             return null;
         }
     }

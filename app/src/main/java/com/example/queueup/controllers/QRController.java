@@ -8,10 +8,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
-/**
- * QRController is responsible for managing QR code operations within the application.
- * It provides functionalities to create, delete, and retrieve QR codes from Firebase Firestore.
- */
 public class QRController {
     private static QRController instance = null;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -30,7 +26,7 @@ public class QRController {
     /**
      * Create a QR code for an event
      *
-     * @param qrCode The QR code to create
+     * @param qrCode
      */
     public void createQR(QRCode qrCode) {
         qrCollection.document(qrCode.getId()).set(qrCode);
@@ -39,7 +35,7 @@ public class QRController {
     /**
      * Delete a QR code
      *
-     * @param qrCode The QR code to delete
+     * @param qrCode
      */
     public void deleteQR(QRCode qrCode) {
         qrCollection.document(qrCode.getId()).delete();
@@ -48,7 +44,7 @@ public class QRController {
     /**
      * Get all QR codes
      *
-     * @return A task that resolves to a query snapshot of all QR codes
+     * @return A qr code
      */
     public Task<QuerySnapshot> getQRs() {
         return qrCollection.get();
@@ -57,8 +53,8 @@ public class QRController {
     /**
      * Get a QR code by ID
      *
-     * @param qrId The ID of the QR code to get
-     * @return A task that resolves to a document snapshot of the QR code
+     * @param qrId
+     * @return A qr code
      */
     public Task<DocumentSnapshot> getQR(String qrId) {
         return qrCollection.document(qrId).get();

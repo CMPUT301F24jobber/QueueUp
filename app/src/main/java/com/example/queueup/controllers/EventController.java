@@ -27,10 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Controller class for handling events in the Event Lottery System.
- * Manages event creation, registration, announcements, and other event-related operations.
- */
+
 public class EventController {
     private static EventController singleInstance = null;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -38,19 +35,10 @@ public class EventController {
     private final CollectionReference attendanceCollectionReference = db.collection("attendees");
     private final CurrentUserHandler currentUserHandler = CurrentUserHandler.getSingleton();
     private final AttendeeController attendeeController = AttendeeController.getInstance();
-
     private final PushNotificationHandler pushNotificationHandler = PushNotificationHandler.getSingleton();
 
-    /**
-     * Private constructor to enforce Singleton pattern.
-     */
     private EventController() {}
 
-    /**
-     * Retrieves the single instance of EventController.
-     *
-     * @return the singleton instance of EventController
-     */
     public static synchronized EventController getInstance() {
         if (singleInstance == null) {
             singleInstance = new EventController();
@@ -70,7 +58,7 @@ public class EventController {
      * Retrieves an event by its ID.
      *
      * @param eventId The ID of the event
-     * @return Task<DocumentSnapshot> containing the event details
+     * @return Task<DocumentSnapshot>
      */
     public Task<DocumentSnapshot> getEventById(String eventId) {
         return eventCollectionReference.document(eventId).get();
@@ -80,7 +68,7 @@ public class EventController {
      * Retrieves all events created by a specific organizer.
      *
      * @param organizerId The ID of the organizer
-     * @return Task<QuerySnapshot> containing the list of events
+     * @return Task<QuerySnapshot>
      */
     public Task<QuerySnapshot> getAllEventsByOrganizer(String organizerId) {
         return eventCollectionReference
@@ -90,7 +78,7 @@ public class EventController {
      * Retrieves all events that a specific attendee is registered for.
      *
      * @param attendeeId The ID of the attendee
-     * @return Task<List<DocumentSnapshot>> containing the list of events
+     * @return Task<List<DocumentSnapshot>>
      */
     public Task<List<DocumentSnapshot>> getEventsByAttendeeId(String attendeeId) {
         return attendanceCollectionReference
@@ -130,7 +118,7 @@ public class EventController {
      * Creates a new event.
      *
      * @param newEvent The event object to be added
-     * @return Task<Void> indicating the completion of the operation
+     * @return Task<Void>
      */
     public Task<Void> addEvent(Event newEvent) {
         return eventCollectionReference.document(newEvent.getEventId()).set(newEvent)
@@ -145,8 +133,8 @@ public class EventController {
     /**
      * Updates an existing event.
      *
-     * @param event The event object with updated information
-     * @return Task<Void> indicating the completion of the operation
+     * @param event
+     * @return Task<Void>
      */
     public Task<Void> updateEvent(Event event) {
         return eventCollectionReference.document(event.getEventId()).set(event)
@@ -161,8 +149,8 @@ public class EventController {
     /**
      * Deletes an event and unregisters all attendees.
      *
-     * @param eventId The ID of the event to delete
-     * @return Task<Void> indicating the completion of the operation
+     * @param eventId
+     * @return Task<Void>
      */
     public Task<Void> deleteEvent(String eventId) {
         DocumentReference eventRef = eventCollectionReference.document(eventId);
@@ -192,10 +180,10 @@ public class EventController {
     }
 
     /**
-     * Registers the current user to an event (joins the waiting list).
+     * Registers the current user to an event
      *
-     * @param eventId The ID of the event
-     * @return Task<Void> indicating the completion of the operation
+     * @param eventId
+     * @return Task<Void>
      */
     public Task<Void> registerToEvent(String eventId) {
         String userId = currentUserHandler.getCurrentUserId();
@@ -204,8 +192,8 @@ public class EventController {
 
     /**
      * Get the FCM tokens of all attendees of an event.
-     * @param eventId The event id
-     * @return Task<List<String>> The list of FCM tokens
+     * @param eventId
+     * @return Task<List<String>>
      */
 
     public Task<List<String>> getAttendeesFCMTokens(String eventId) {
@@ -250,12 +238,12 @@ public class EventController {
     }
 
     /**
-     * Registers a user to an event (joins the waiting list) with optional geolocation.
+     * Registers a user to an event
      *
-     * @param userId   The ID of the user
-     * @param eventId  The ID of the event
-     * @param location The location of the user (optional)
-     * @return Task<Void> indicating the completion of the operation
+     * @param userId
+     * @param eventId
+     * @param location
+     * @return Task<Void>
      */
     public Task<Void> registerToEvent(String userId, String eventId, @Nullable Location location) {
         DocumentReference eventRef = eventCollectionReference.document(eventId);
@@ -303,11 +291,11 @@ public class EventController {
     }
 
     /**
-     * Unregisters a user from an event (leaves the waiting list).
+     * Unregisters a user from an event
      *
-     * @param eventId The ID of the event
-     * @param userId  The ID of the user
-     * @return Task<Void> indicating the completion of the operation
+     * @param eventId
+     * @param userId
+     * @return Task<Void>
      */
     public Task<Void> unregisterFromEvent(String eventId, String userId) {
         DocumentReference eventRef = eventCollectionReference.document(eventId);
@@ -344,9 +332,9 @@ public class EventController {
     /**
      * Draws the lottery to select a specified number of attendees from the waiting list.
      *
-     * @param eventId        The ID of the event
-     * @param numberToSelect The number of attendees to select
-     * @return Task<List<String>> containing the selected attendee IDs
+     * @param eventId
+     * @param numberToSelect
+     * @return Task<List<String>>
      */
     public Task<List<String>> drawLottery(String eventId, int numberToSelect) {
         DocumentReference eventRef = eventCollectionReference.document(eventId);
@@ -381,9 +369,9 @@ public class EventController {
      * Sends notifications to selected attendees to confirm their participation.
      * If an attendee declines, selects a replacement.
      *
-     * @param eventId           The ID of the event
-     * @param selectedAttendees The list of selected attendee IDs
-     * @return Task<Void> indicating the completion of the operation
+     * @param eventId
+     * @param selectedAttendees
+     * @return Task<Void>
      */
     public Task<Void> notifySelectedAttendees(String eventId, List<String> selectedAttendees) {
         Log.d(TAG, "notifySelectedAttendees called with eventId: " + eventId +
@@ -414,9 +402,9 @@ public class EventController {
     /**
      * Adds an announcement to an event.
      *
-     * @param eventId      The ID of the event
-     * @param announcement The announcement to add as a HashMap
-     * @return Task<Void> indicating the completion of the operation
+     * @param eventId
+     * @param announcement
+     * @return Task<Void>
      */
     public Task<Void> addAnnouncement(String eventId, HashMap<String, String> announcement) {
         return eventCollectionReference.document(eventId)
@@ -433,7 +421,7 @@ public class EventController {
      * Retrieves all announcements for a specific event.
      *
      * @param eventId The ID of the event
-     * @return Task<List<HashMap<String, String>>> containing the list of announcements
+     * @return Task<List<HashMap<String, String>>>
      */
     public Task<List<HashMap<String, String>>> getAnnouncements(String eventId) {
         return eventCollectionReference.document(eventId).get().continueWith(task -> {
@@ -449,8 +437,8 @@ public class EventController {
     /**
      * Checks in a user to an event by updating their attendance status.
      *
-     * @param eventId The ID of the event
-     * @return Task<Void> indicating the completion of the operation
+     * @param eventId
+     * @return Task<Void>
      */
     public Task<Void> checkInUser(String eventId) {
         String userId = currentUserHandler.getCurrentUserId();
@@ -460,10 +448,10 @@ public class EventController {
     /**
      * Checks in a user to an event with optional geolocation.
      *
-     * @param userId   The ID of the user
-     * @param eventId  The ID of the event
-     * @param location The location of the user during check-in (optional)
-     * @return Task<Void> indicating the completion of the operation
+     * @param userId
+     * @param eventId
+     * @param location
+     * @return Task<Void>
      */
     public Task<Void> checkInUser(String userId, String eventId, @Nullable Location location) {
         String attendanceId = Attendee.generateId(userId, eventId);
@@ -479,8 +467,8 @@ public class EventController {
     /**
      * Reactivates an event that was previously deactivated.
      *
-     * @param eventId The ID of the event
-     * @return Task<Void> indicating the completion of the operation
+     * @param eventId
+     * @return Task<Void>
      */
     public Task<Void> reactivateEvent(String eventId) {
         DocumentReference eventRef = eventCollectionReference.document(eventId);
@@ -498,8 +486,8 @@ public class EventController {
     /**
      * Ends an event by setting its active status to false.
      *
-     * @param eventId The ID of the event
-     * @return Task<Void> indicating the completion of the operation
+     * @param eventId
+     * @return Task<Void>
      */
     public Task<Void> endEvent(String eventId) {
         DocumentReference eventRef = eventCollectionReference.document(eventId);
@@ -517,8 +505,8 @@ public class EventController {
     /**
      * Removes the banner image URL from an event.
      *
-     * @param eventId The ID of the event
-     * @return Task<Void> indicating the completion of the operation
+     * @param eventId
+     * @return Task<Void>
      */
     public Task<Void> removeEventImage(String eventId) {
         DocumentReference eventRef = eventCollectionReference.document(eventId);
@@ -534,8 +522,8 @@ public class EventController {
     /**
      * Deletes all events created by a specific user.
      *
-     * @param userId The ID of the user
-     * @return Task<Void> indicating the completion of the operation
+     * @param userId
+     * @return Task<Void>
      */
     public Task<Void> deleteEventsByUser(String userId) {
         return getAllEventsByOrganizer(userId).continueWithTask(task -> {
@@ -557,8 +545,8 @@ public class EventController {
     /**
      * Retrieves user announcements for a specific event.
      *
-     * @param eventId The ID of the event
-     * @return Task<List<HashMap<String, String>>> containing the list of announcements
+     * @param eventId
+     * @return Task<List<HashMap<String, String>>>
      */
     public Task<List<HashMap<String, String>>> getUserAnnouncements(String eventId) {
         return getAnnouncements(eventId).continueWith(task -> {
@@ -573,14 +561,12 @@ public class EventController {
     /**
      * Handles the replacement of an attendee if they decline the invitation.
      *
-     * @param eventId The ID of the event
-     * @return Task<Void> indicating the completion of the operation
+     * @param eventId
+     * @return Task<Void>
      */
     public Task<Void> handleReplacement(String eventId) {
         Log.d(TAG, "handleReplacement called for eventId: " + eventId);
 
-
-        // Fetch the list of attendees with status "pending"
         return attendanceCollectionReference
                 .whereEqualTo("eventId", eventId)
                 .whereEqualTo("status", "pending")
@@ -608,8 +594,8 @@ public class EventController {
     /**
      * Retrieves the name of the event by its ID.
      *
-     * @param eventId The ID of the event.
-     * @return Task<String> containing the event name.
+     * @param eventId
+     * @return Task<String>
      */
     public Task<String> getEventName(String eventId) {
         return getEventById(eventId).continueWith(task -> {
@@ -625,8 +611,8 @@ public class EventController {
     /**
      * Retrieves the user IDs of attendees on the waiting list for a specific event.
      *
-     * @param eventId The ID of the event.
-     * @return Task<List<String>> containing the user IDs.
+     * @param eventId
+     * @return Task<List<String>>
      */
     public Task<List<String>> getWaitingListUserIds(String eventId) {
         return attendanceCollectionReference
@@ -649,8 +635,8 @@ public class EventController {
     /**
      * Retrieves the user IDs of selected attendees for a specific event.
      *
-     * @param eventId The ID of the event.
-     * @return Task<List<String>> containing the user IDs.
+     * @param eventId
+     * @return Task<List<String>>
      */
     public Task<List<String>> getSelectedUserIds(String eventId) {
         return attendanceCollectionReference
@@ -673,8 +659,8 @@ public class EventController {
     /**
      * Retrieves the user IDs of cancelled attendees for a specific event.
      *
-     * @param eventId The ID of the event.
-     * @return Task<List<String>> containing the user IDs.
+     * @param eventId
+     * @return Task<List<String>>
      */
     public Task<List<String>> getCancelledUserIds(String eventId) {
         return attendanceCollectionReference
@@ -698,9 +684,9 @@ public class EventController {
     /**
      * Adds or updates the event banner image URL.
      *
-     * @param eventId  The ID of the event
-     * @param imageUrl The URL of the banner image
-     * @return Task<Void> indicating the completion of the operation
+     * @param eventId
+     * @param imageUrl
+     * @return Task<Void>
      */
     public Task<Void> setEventBannerImage(String eventId, String imageUrl) {
         return eventCollectionReference.document(eventId)
@@ -715,9 +701,7 @@ public class EventController {
 
     /**
      * Generates a unique event ID.
-     * This method generates a unique identifier for each event using Firestore's auto-generated IDs.
-     *
-     * @return A unique event ID as a String
+     * @return id
      */
     public String generateUniqueEventId() {
         return eventCollectionReference.document().getId();
