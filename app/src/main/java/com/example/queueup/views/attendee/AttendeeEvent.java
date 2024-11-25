@@ -23,24 +23,15 @@ import com.google.firebase.firestore.Transaction;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-/**
- * AttendeeEvent is an activity that displays the details of a specific event for an attendee.
- * It shows event information such as the date, location, time, description, and an image of the event poster.
- * Depending on whether the attendee has already joined the event, the activity will either show a
- * "join waitlist" fragment or a "waitlist joined" fragment.
- */
+
 public class AttendeeEvent extends AppCompatActivity {
     private ImageButton backButton;
     AttendeeController attendeeController;
     private Event event;
 
     /**
-     * Called when the activity is created. This method initializes the view elements,
-     * formats the event date and time, loads the event data, and displays it on the UI.
-     * Additionally, it checks whether the current user is already on the event's attendee list
-     * and displays the appropriate fragment.
-     *
-	 */
+     * The current user handler.
+     */
     CurrentUserHandler currentUserHandler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
