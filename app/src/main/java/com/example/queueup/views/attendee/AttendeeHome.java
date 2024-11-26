@@ -65,7 +65,7 @@ public class AttendeeHome extends AppCompatActivity {
                 case "Camera":
                     getSupportFragmentManager().beginTransaction()
                             .setReorderingAllowed(true)
-                            .replace(R.id.attendee_activity_fragment, AttendeeQRscanFragment2.class, null)
+                            .replace(R.id.attendee_activity_fragment, AttendeeQRscanFragment.class, null)
                             .addToBackStack("QR")
                             .commit();
                     break;

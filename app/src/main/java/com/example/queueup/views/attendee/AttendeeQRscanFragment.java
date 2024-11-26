@@ -13,6 +13,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.camera.view.PreviewView;
 import androidx.fragment.app.Fragment;
 
 import com.example.queueup.R;
@@ -28,6 +29,7 @@ public class AttendeeQRscanFragment extends Fragment {
     }
     MaterialButton scanButton;
     EventController eventController;
+    PreviewView previewView;
     AttendeeController attendeeController;
 
     /**
@@ -41,6 +43,8 @@ public class AttendeeQRscanFragment extends Fragment {
         scanButton = view.findViewById(R.id.scan_button);
         attendeeController = AttendeeController.getInstance();
         eventController = EventController.getInstance();
+        previewView = view.findViewById(R.id.cameraView);
+        previewView.setVisibility(View.INVISIBLE);
         ActivityResultLauncher<Intent> mStartForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
