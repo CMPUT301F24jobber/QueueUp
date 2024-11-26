@@ -70,6 +70,7 @@ public class OrganizerDraw extends Fragment {
         eventDate.setText(date_text);
         locationText.setText(event.getEventLocation());
         ImageView posterImage = view.findViewById(R.id.poster_image);
+        eventController = EventController.getInstance();
         eventViewModel = new ViewModelProvider(this).get(EventViewModel.class);
         drawWinners = view.findViewById(R.id.draw_winners);
         numDraw = view.findViewById(R.id.draw_num_attendee);
