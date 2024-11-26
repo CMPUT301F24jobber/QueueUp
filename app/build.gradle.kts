@@ -61,6 +61,8 @@ dependencies {
     implementation("com.google.firebase:firebase-messaging:23.1.2")
     implementation ("com.squareup.okhttp3:okhttp:4.9.1")
     implementation("org.osmdroid:osmdroid-android:6.1.10")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.3.5")
+    implementation("androidx.navigation:navigation-ui-ktx:2.3.5")
 }
 
 
