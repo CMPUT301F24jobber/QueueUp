@@ -1,22 +1,23 @@
 package com.example.queueup;
 import static org.junit.Assert.assertEquals;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import com.example.queueup.controllers.UserController;
 import com.example.queueup.models.User;
-import com.example.queueup.viewmodels.UserViewModel;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.util.UUID;
 
-public class UserUnitTest {
+@RunWith(AndroidJUnit4.class)
+public class UserInstrumatedTest {
         private User mockUser() {
-            User mockUser = new User("John", "Doe", "johndoe", "johnDoe@gmail.com", "1234567890", "UniqueID", false);
-            return mockUser;
+            return new User("John", "Doe", "johndoe", "johnDoe@gmail.com", "1234567890", "UniqueID", false);
         }
         public User generateRandomMockUser() {
-            User mockUser = new User("hi", "Doe", "johndoe", "johnDoe@gmail.com", "1234567890", UUID.randomUUID().toString(), false);
-            return mockUser;
+            return new User("hi", "Doe", "johndoe", "johnDoe@gmail.com", "1234567890", UUID.randomUUID().toString(), false);
         }
 
     public UserController getMockUserController() {

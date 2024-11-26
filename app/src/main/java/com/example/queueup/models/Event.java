@@ -21,6 +21,7 @@ public class Event implements Serializable {
     private String checkInQrCodeId;
     private Boolean isActive;
     private Boolean isDrawn;
+    private Boolean redrawEnabled;
     private Boolean isGeoLocationRequried;
 
     private int maxCapacity;
@@ -47,6 +48,7 @@ public class Event implements Serializable {
         this.creationDate = new Date();
         this.isDrawn = isDrawn;
         this.isGeoLocationRequried = isGeoLocationRequried;
+        this.redrawEnabled = false;
     }
 
     public Boolean getIsGeoLocationRequried() {
@@ -326,6 +328,7 @@ public class Event implements Serializable {
     public void setIsActive(Boolean isActive) {
         this.isActive = isActive;
     }
+
     /**
      * Checks whether the event has been drawn.
      *
@@ -342,5 +345,22 @@ public class Event implements Serializable {
      */
     public void setIsDrawn(Boolean isDrawn) {
         this.isDrawn = isDrawn;
+    }
+    /**
+     * Checks if attendees are being redrawn when one cancels.
+     *
+     * @return bool
+     */
+    public Boolean getRedrawEnabled() {
+        return redrawEnabled;
+    }
+
+    /**
+     * Sets if attendees are being redrawn when one cancels.
+     *
+     * @param redrawEnabled
+     */
+    public void setRedrawEnabled(Boolean redrawEnabled) {
+        this.redrawEnabled = redrawEnabled;
     }
 }

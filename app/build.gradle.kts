@@ -14,6 +14,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -35,9 +36,10 @@ android {
 }
 
 dependencies {
+    implementation("com.google.guava:guava:32.1.3-android")
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
     implementation("com.google.android.gms:play-services-base:18.3.0")
-    implementation("com.google.android.gms:play-services-vision:20.0.0")
+    implementation(libs.play.services.vision)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -47,6 +49,7 @@ dependencies {
     implementation(libs.places)
     implementation(libs.firebase.storage)
     implementation(libs.navigation.fragment)
+    implementation(libs.camera.mlkit.vision)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -59,10 +62,20 @@ dependencies {
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("androidx.fragment:fragment:1.8.5")
     implementation("com.google.firebase:firebase-messaging:23.1.2")
+    implementation("com.google.mlkit:barcode-scanning:17.3.0")
+    implementation("com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1 ")
+    implementation("androidx.concurrent:concurrent-futures:1.2.0")
     implementation ("com.squareup.okhttp3:okhttp:4.9.1")
     implementation("org.osmdroid:osmdroid-android:6.1.10")
     implementation("androidx.navigation:navigation-fragment-ktx:2.3.5")
     implementation("androidx.navigation:navigation-ui-ktx:2.3.5")
+    implementation(libs.camera.core)
+    implementation(libs.camera.camera2)
+    implementation(libs.camera.lifecycle)
+    implementation(libs.camera.video)
+    implementation(libs.camera.view)
+    implementation(libs.camera.extensions)
+
 }
 
 

@@ -22,6 +22,8 @@ import com.example.queueup.controllers.EventController;
 import com.example.queueup.models.Event;
 import com.example.queueup.services.ImageUploader;
 import com.example.queueup.viewmodels.EventViewModel;
+import com.google.android.material.materialswitch.MaterialSwitch;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.time.format.DateTimeFormatter;
@@ -42,8 +44,8 @@ public class OrganizerDraw extends Fragment {
     private ToggleButton everyoneNotification;
     private TextInputLayout numDraw;
 
-    private Button redrawWinners;
     private Button cancelWinners;
+    private SwitchMaterial redrawSwitch;
     private ConstraintLayout drawLayout;
     private ConstraintLayout redrawLayout;
 
@@ -70,16 +72,17 @@ public class OrganizerDraw extends Fragment {
         eventDate.setText(date_text);
         locationText.setText(event.getEventLocation());
         ImageView posterImage = view.findViewById(R.id.poster_image);
-        eventController = EventController.getInstance();
         eventViewModel = new ViewModelProvider(this).get(EventViewModel.class);
         drawWinners = view.findViewById(R.id.draw_winners);
         numDraw = view.findViewById(R.id.draw_num_attendee);
+
         winnerNotification = view.findViewById(R.id.notification_winner);
         loserNotification = view.findViewById(R.id.notification_loser);
         everyoneNotification =  view.findViewById(R.id.notification_everyone);
-        redrawWinners = view.findViewById(R.id.redraw_winners);
-        cancelWinners = view.findViewById(R.id.cancel_winners);
+
+        redrawSwitch = view.findViewById(R.id.redraw_switch);
         rewinnerNotification = view.findViewById(R.id.notification_redraw_winner);
+        cancelWinners = view.findViewById(R.id.cancel_winners);
         cancelNotification = view.findViewById(R.id.notification_cancelled);
         drawLayout = view.findViewById(R.id.draw_layout);
         redrawLayout = view.findViewById(R.id.redraw_layout);
@@ -155,12 +158,10 @@ public class OrganizerDraw extends Fragment {
         if (event.getIsDrawn()) {
             redrawLayout.setVisibility(View.VISIBLE);
             drawLayout.setVisibility(View.INVISIBLE);
-            redrawWinners.setOnClickListener(v -> {
+            redrawSwitch.setOnCheckedChangeListener((v, toggled) -> {
                 if (rewinnerNotification.isChecked()) {
-
                 }
                 if (cancelNotification.isChecked()) {
-
                 }
             });
         } else {

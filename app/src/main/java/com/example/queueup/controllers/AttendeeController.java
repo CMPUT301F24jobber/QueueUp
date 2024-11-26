@@ -133,7 +133,6 @@ public class AttendeeController {
         String attendeeId = Attendee.generateId(userId, eventId);
 
         return attendeeCollectionReference.document(attendeeId).update("status", "cancelled");
-
     }
 
     /**

@@ -111,10 +111,11 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/draw_num_attendee"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:hint="Number of winners"
+            android:paddingHorizontal="100dp"
             app:boxBackgroundColor="@color/light_beige"
             app:boxCornerRadiusBottomEnd="16dp"
             app:boxCornerRadiusBottomStart="16dp"
@@ -128,7 +129,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number"
-                android:maxLength="50"/>
+                android:maxLength="7"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -250,16 +251,15 @@
             app:layout_constraintBottom_toBottomOf="parent"
             >
 
-            <ToggleButton
-                android:id="@+id/redraw_winners"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/hollow_button"
-                android:padding="5dp"
-                android:paddingVertical="5dp"
-                android:textOff=""
-                android:textOn=""
-                app:backgroundTint="@null" />
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/redraw_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:trackTint="@color/grey_beige"
+                app:thumbTint="@color/beige"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:layout_width="wrap_content"

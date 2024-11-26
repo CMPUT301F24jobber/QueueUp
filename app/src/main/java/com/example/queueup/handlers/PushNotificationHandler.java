@@ -35,7 +35,6 @@ public class PushNotificationHandler {
     private static final EventController eventController = EventController.getInstance();
     private static final UserController userController = UserController.getInstance();
     private static final String TAG = "PushNotificationHandler";
-
     private static final String SERVER_KEY = "BGTY0lomG3aOxQPurYXfrYS0-f2m5nhv3OPVLdC-HMloI2Xku2R3wJY8cpawX20NALq6ILxes5Ks_GxETzdeljg";
     private final OkHttpClient client = new OkHttpClient();
 
