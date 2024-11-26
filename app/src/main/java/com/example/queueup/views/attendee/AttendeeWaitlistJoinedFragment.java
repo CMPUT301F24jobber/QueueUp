@@ -35,13 +35,6 @@ public class AttendeeWaitlistJoinedFragment extends Fragment {
         eventController = EventController.getInstance();
         currentUserHandler = CurrentUserHandler.getSingleton();
         leaveWaitlistButton.setOnClickListener((v) -> {
-            pushNotificationHandler.sendNotificationToUser(
-                    currentUserHandler.getCurrentUser().getValue().getFCMToken()
-                    ,
-                    "Notification Title",
-                    "You have left the waitlist for " + event.getEventName(),
-                    PushNotificationHandler.NotificationType.GENERAL
-            );
             attendeeController.setAttendeeStatus(currentUserHandler.getCurrentUserId(), "cancelled");
             eventController.unregisterFromEvent( event.getEventId(), currentUserHandler.getCurrentUserId());
             leaveWaitlistButton.setVisibility(View.INVISIBLE);
