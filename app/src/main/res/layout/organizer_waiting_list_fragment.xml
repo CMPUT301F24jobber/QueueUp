@@ -6,8 +6,6 @@
     android:layout_height="match_parent"
     android:background="@color/backgroundColor"
     android:clickable="true">
-
-
     <TextView
         android:id="@+id/waiting_list_title"
 
@@ -24,16 +22,57 @@
         >
     </TextView>
 
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/filter_chip_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/waiting_list_title"
+        app:singleSelection="true">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_invited"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="selected"
+            android:textColor="@color/black"
+            app:chipBackgroundColor="@color/beige"
+            android:checkable="true" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_cancelled"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="cancelled"
+            android:textColor="@color/black"
+            app:chipBackgroundColor="@color/beige"
+            android:checkable="true" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_enrolled"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="waiting"
+            android:textColor="@color/black"
+            app:chipBackgroundColor="@color/beige"
+            android:checkable="true" />
+
+    </com.google.android.material.chip.ChipGroup>
+
 
     <ListView
         android:id="@+id/event_waiting_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/waiting_list_title"
+        app:layout_constraintBottom_toBottomOf="parent"
 
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@+id/filter_chip_group"
+        app:layout_constraintVertical_bias="0.0" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
