@@ -42,10 +42,12 @@
             android:backgroundTint="@color/beige"
             android:textSize="16dp"
             android:textColor="@color/black"
+            android:paddingHorizontal="5dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+
             />
         <Button
             android:id="@+id/cancelled_button"
@@ -55,6 +57,8 @@
             android:fontFamily="@font/poppins_extralight"
             android:backgroundTint="@color/beige"
             android:textSize="16dp"
+            android:paddingHorizontal="5dp"
+
             android:textColor="@color/black"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -69,6 +73,8 @@
             android:fontFamily="@font/poppins_extralight"
             android:backgroundTint="@color/beige"
             android:textSize="16dp"
+            android:paddingHorizontal="5dp"
+
             android:textColor="@color/black"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -307,15 +307,20 @@ public class AttendeeController {
             return userList;
         });
     }
+
     public Task<ArrayList<ArrayList<User>>> fetchUserListsForAttendees(ArrayList<Attendee> attendees) {
         List<Task<DocumentSnapshot>> userTasks = new ArrayList<>();
         for (Attendee attendee : attendees) {
             Task<DocumentSnapshot> userTask = userCollectionReference.document(attendee.getUserId()).get();
             userTasks.add(userTask);
         }
-
         return Tasks.whenAllSuccess(userTasks).continueWith(task -> {
-            ArrayList<ArrayList<User>> userMap = new ArrayList<ArrayList<User>>(3);
+            ArrayList<ArrayList<User>> userMap = new ArrayList<ArrayList<User>>();
+
+            userMap.add(new ArrayList<>());
+            userMap.add(new ArrayList<>());
+            userMap.add(new ArrayList<>());
+
             List<Object> results = task.getResult();
             for (int i = 0; i < results.size(); i++) {
                 Object obj = results.get(i);

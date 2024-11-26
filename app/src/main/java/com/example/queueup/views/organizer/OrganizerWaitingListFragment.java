@@ -1,8 +1,10 @@
 package com.example.queueup.views.organizer;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -11,10 +13,14 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.queueup.R;
 import com.example.queueup.controllers.AttendeeController;
+import com.example.queueup.models.Attendee;
 import com.example.queueup.models.Event;
 import com.example.queueup.models.User;
 import com.example.queueup.viewmodels.AttendeeViewModel;
 import com.example.queueup.viewmodels.UsersArrayAdapter;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -30,6 +36,7 @@ public class OrganizerWaitingListFragment extends Fragment {
     private ListView userList;
     private UsersArrayAdapter usersWaitingListAdapter, usersInvitedAdapter, usersCancelledAdapter, usersEnrolledAdapter;
     private Event event;
+    private LinearLayout toggleButtons;
     private AttendeeViewModel attendeeViewModel;
     private AttendeeController attendeeController;
 
@@ -47,23 +54,27 @@ public class OrganizerWaitingListFragment extends Fragment {
 
         attendeeViewModel = new ViewModelProvider(this).get(AttendeeViewModel.class);
         waitingList = new ArrayList<User>();
+        invitedList = new ArrayList<User>();
+        cancelledList = new ArrayList<User>();
+        enrolledList = new ArrayList<User>();
         attendeeController = AttendeeController.getInstance();
 
-        userList = getView().findViewById(R.id.event_waiting_list);
+        userList = view.findViewById(R.id.event_waiting_list);
         usersWaitingListAdapter = new UsersArrayAdapter(view.getContext(), waitingList);
         usersInvitedAdapter = new UsersArrayAdapter(view.getContext(), invitedList);
         usersCancelledAdapter = new UsersArrayAdapter(view.getContext(), cancelledList);
         usersEnrolledAdapter = new UsersArrayAdapter(view.getContext(), enrolledList);
-
-        if (event.getIsDrawn()) {
-            userList.setAdapter(usersWaitingListAdapter);
-        } else {
-            userList.setAdapter(usersInvitedAdapter);
-        }
-
+        toggleButtons = view.findViewById(R.id.toggle_buttons);
         invitedButton = view.findViewById(R.id.invited_button);
         cancelledButton = view.findViewById(R.id.cancelled_button);
         enrolledButton = view.findViewById(R.id.enrolled_button);
+
+        if (event.getIsDrawn()) {
+            userList.setAdapter(usersWaitingListAdapter);
+            toggleButtons.setVisibility(View.VISIBLE);
+        } else {
+            userList.setAdapter(usersInvitedAdapter);
+        }
 
         invitedButton.setOnClickListener(v -> {
             userList.setAdapter(usersInvitedAdapter);
@@ -78,7 +89,8 @@ public class OrganizerWaitingListFragment extends Fragment {
         attendeeViewModel.fetchAttendeesWithUserInfo(event.getEventId());
 
         observeViewModel();
-        attendeeController.fetchUserListsForAttendees(event.getAttendeeIds());
+
+
 
     }
     
@@ -89,6 +101,26 @@ public class OrganizerWaitingListFragment extends Fragment {
     
     private void observeViewModel() {
         if (event.getIsDrawn()) {
+            attendeeController.getAttendanceByEventId(event.getEventId())
+                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            ArrayList<Attendee> attendees = new ArrayList<>();
+                            for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                                Attendee attendee = doc.toObject(Attendee.class);
+                                if (attendee != null) {
+                                    attendee.setId(doc.getId());
+                                    attendees.add(attendee);
+                                }
+                            }
+                            attendeeController.fetchUserListsForAttendees(attendees).addOnSuccessListener(arrayOfLists -> {
+                                Log.d("jwewfo", Integer.toString(arrayOfLists.size()));
+                                invitedList = arrayOfLists.get(0);
+                                cancelledList = arrayOfLists.get(1);
+                                enrolledList = arrayOfLists.get(2);
+                            });
+                        }
+                    });
         } else {
             attendeeViewModel.getAttendeesWithUserLiveData().observe(getViewLifecycleOwner(), attendees -> {
                 waitingList.clear();

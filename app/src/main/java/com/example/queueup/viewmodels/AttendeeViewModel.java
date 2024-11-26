@@ -567,7 +567,7 @@ public class AttendeeViewModel extends ViewModel {
                             return;
                         }
 
-                        attendeeController.fetchAllUsersForAttendees(attendees)
+                        attendeeController.fetchUsersForAttendees(attendees)
                                 .addOnSuccessListener(new OnSuccessListener<Map<String, User>>() {
                                     @Override
                                     public void onSuccess(Map<String, User> userMap) {

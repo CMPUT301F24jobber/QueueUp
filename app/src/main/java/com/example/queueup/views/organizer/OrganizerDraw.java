@@ -173,6 +173,8 @@ public class OrganizerDraw extends Fragment {
                 }
                 redrawLayout.setVisibility(View.VISIBLE);
                 drawLayout.setVisibility(View.INVISIBLE);
+                event.setIsDrawn(true);
+                eventViewModel.updateEvent(event);
             });
         }
 
