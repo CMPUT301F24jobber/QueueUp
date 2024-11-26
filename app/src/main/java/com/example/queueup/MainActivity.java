@@ -58,8 +58,7 @@ public class MainActivity extends AppCompatActivity {
         CurrentUserHandler.setOwnerActivity(this);
         CurrentUserHandler.getSingleton();
 
-        Intent notificationService = new Intent(getApplicationContext(), NotificationService.class);
-        startService(notificationService);
+
 
         // Set up role selection buttons
         setupRoleSelection();
@@ -81,7 +80,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialize LocationService
         LocationServices.getFusedLocationProviderClient(this);
-
+        Intent notificationService = new Intent(getApplicationContext(), NotificationService.class);
+        startService(notificationService);
     }
 
     private void checkExistingUser() {

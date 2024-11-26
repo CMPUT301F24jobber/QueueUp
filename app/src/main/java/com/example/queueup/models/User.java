@@ -358,6 +358,7 @@ public class User implements Parcelable {
         parcel.writeString(deviceId);
         parcel.writeByte((byte) (receiveNotifications ? 1 : 0));
         parcel.writeStringList(waitingListEvents);
+        parcel.writeStringList(notifications);
         parcel.writeString(FCMToken);
     }
 }

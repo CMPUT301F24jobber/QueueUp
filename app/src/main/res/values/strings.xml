@@ -2,4 +2,8 @@
     <string name="app_name">QueueUp</string>
     <string name="welcome_attendee">Welcome Attendee!</string>
     <string name="event_name">EVENT_TITLE</string>
+    <string name="channel_name">QueueUp Notification</string>
+    <string name="channel_description">Notifications for QueueUp App</string>
+
+
 </resources>
