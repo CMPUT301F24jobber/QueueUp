@@ -8,6 +8,7 @@ import static androidx.core.content.ContextCompat.getMainExecutor;
 import android.Manifest;
 import android.Manifest.permission;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -67,6 +68,7 @@ public class AttendeeQRscanFragment2 extends Fragment {
     private PreviewView previewView;
     private Executor executor;
     private BarcodeScanner barcodeScanner;
+    private LifecycleCameraController cameraController;
     private BarcodeScannerOptions options;
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
     /**
@@ -81,31 +83,44 @@ public class AttendeeQRscanFragment2 extends Fragment {
         attendeeController = AttendeeController.getInstance();
         eventController = EventController.getInstance();
         previewView = view.findViewById(R.id.cameraView);
+        executor = Executors.newSingleThreadExecutor();
 
         if (checkSelfPermission(getActivity(), permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{permission.CAMERA}, 1);
         }
-
         options = new BarcodeScannerOptions.Builder()
                 .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
                 .build();
         barcodeScanner = BarcodeScanning.getClient(options);
-        executor = Executors.newSingleThreadExecutor();
-
-        cameraProviderFuture = ProcessCameraProvider.getInstance(getContext());
-        cameraProviderFuture.addListener(() -> {
-            try {
-                ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
-                bindPreview(cameraProvider);
-            } catch (ExecutionException | InterruptedException e) {
-                // No errors need to be handled for this Future.
-                // This should never be reached.
-            }
-        }, ContextCompat.getMainExecutor(getContext()));
-
-
+//
+//        cameraProviderFuture = ProcessCameraProvider.getInstance(getContext());
+//        cameraProviderFuture.addListener(() -> {
+//            try {
+//                ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
+//                bindPreview(cameraProvider);
+//                } catch (ExecutionException | InterruptedException e) {
+//                    // No errors need to be handled for this Future.
+//                // This should never be reached.
+//            }
+//        }, ContextCompat.getMainExecutor(getContext()));
+        camcontrolstuf();
     }
-    void bindPreview(@NonNull ProcessCameraProvider cameraProvider) {
+    private void camcontrolstuf() {
+        cameraController = new LifecycleCameraController(getContext());
+        cameraController.bindToLifecycle(getActivity());
+        cameraController.setImageAnalysisAnalyzer(executor,
+                new MlKitAnalyzer(List.of(barcodeScanner),
+                        COORDINATE_SYSTEM_VIEW_REFERENCED,
+                        ContextCompat.getMainExecutor(getContext())
+                        ,
+                        result -> {
+                        fetchEvent(result.toString());
+                }));
+        previewView.setController(cameraController);
+    }
+
+    private void bindPreview(@NonNull ProcessCameraProvider cameraProvider) {
+
         Preview preview = new Preview.Builder()
                 .build();
 
@@ -119,8 +134,11 @@ public class AttendeeQRscanFragment2 extends Fragment {
                 .build();
 
         imageAnalysis.setAnalyzer(executor,
-                new MlKitAnalyzer(List.of(barcodeScanner), COORDINATE_SYSTEM_VIEW_REFERENCED,
-                        executor, result -> {
+                new MlKitAnalyzer(
+                        List.of(barcodeScanner),
+                        COORDINATE_SYSTEM_VIEW_REFERENCED,
+                        executor,
+                        result -> {
                     Toast.makeText(getContext(), "found", Toast.LENGTH_SHORT).show();
 
                     eventController.getEventById(result.toString())
@@ -157,5 +175,28 @@ public class AttendeeQRscanFragment2 extends Fragment {
 
     }
 
-
+    private void fetchEvent(String result) {
+        eventController.getEventById(result)
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()) {
+                            Event event = documentSnapshot.toObject(Event.class);
+                            if (event != null) {
+                                Intent intent;
+                                intent = new Intent(getActivity(), AttendeeEvent.class);
+                                intent.putExtra("event", event);
+                                startActivity(intent);
+                            }
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Intent intent = new Intent(getActivity(), AttendeeHome.class);
+                        startActivity(intent);
+                    }
+                });
+    }
 }
