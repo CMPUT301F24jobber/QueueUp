@@ -24,7 +24,9 @@ public class User implements Parcelable {
     private String profileImageUrl;
     private ArrayList<String> notifications;
     private String deviceId;
-    private boolean receiveNotifications;
+    private boolean receiveChosenNotifications = true;
+    private boolean receiveNotChosenNotifications = true;
+    private boolean receiveAllNotifications = true;
     private List<String> waitingListEvents;
     private String FCMToken;
 
@@ -32,7 +34,9 @@ public class User implements Parcelable {
     public User() {
         this.notifications = new ArrayList<String>();
         this.waitingListEvents = new ArrayList<>();
-        this.receiveNotifications = true;
+        receiveChosenNotifications = true;
+        receiveNotChosenNotifications = true;
+        receiveAllNotifications = true;
     }
 
 
@@ -46,6 +50,9 @@ public class User implements Parcelable {
         this.phoneNumber = phoneNumber;
         this.deviceId = deviceId;
         this.isadmin = isadmin;
+        receiveChosenNotifications = true;
+        receiveNotChosenNotifications = true;
+        receiveAllNotifications = true;
     }
 
     protected User(Parcel in) {
@@ -58,7 +65,9 @@ public class User implements Parcelable {
         isadmin = in.readByte() != 0;
         profileImageUrl = in.readString();
         deviceId = in.readString();
-        receiveNotifications = in.readByte() != 0;
+        receiveChosenNotifications = in.readByte() != 0;
+        receiveNotChosenNotifications = in.readByte() != 0;
+        receiveAllNotifications = in.readByte() != 0;
         waitingListEvents = in.createStringArrayList();
         FCMToken = in.readString();
     }
@@ -247,18 +256,46 @@ public class User implements Parcelable {
     }
 
     /**
+     * Returns whether the user receives notifications when chosen.
+     */
+    public boolean isReceiveChosenNotifications() {
+        return receiveChosenNotifications;
+    }
+
+    /**
+     * Sets whether the user receives notifications when chosen.
+     * @param receiveChosenNotifications
+     */
+    public void setReceiveChosenNotifications(boolean receiveChosenNotifications) {
+        this.receiveChosenNotifications = receiveChosenNotifications;
+    }
+    /**
      * Returns whether the user receives notifications.
      */
-    public boolean isReceiveNotifications() {
-        return receiveNotifications;
+    public boolean isReceiveNotChosenNotifications() {
+        return receiveNotChosenNotifications;
     }
 
     /**
      * Sets whether the user receives notifications.
-     * @param receiveNotifications
+     * @param receiveNotChosenNotifications
      */
-    public void setReceiveNotifications(boolean receiveNotifications) {
-        this.receiveNotifications = receiveNotifications;
+    public void setReceiveNotChosenNotifications(boolean receiveNotChosenNotifications) {
+        this.receiveNotChosenNotifications = receiveNotChosenNotifications;
+    }
+    /**
+     * Returns whether the user receives notifications.
+     */
+    public boolean isReceiveAllNotifications() {
+        return receiveAllNotifications;
+    }
+
+    /**
+     * Sets whether the user receives notifications.
+     * @param receiveAllNotifications
+     */
+    public void setReceiveAllNotifications(boolean receiveAllNotifications) {
+        this.receiveAllNotifications = receiveAllNotifications;
     }
 
     /**
@@ -356,7 +393,9 @@ public class User implements Parcelable {
         parcel.writeByte((byte) (isadmin ? 1 : 0));
         parcel.writeString(profileImageUrl);
         parcel.writeString(deviceId);
-        parcel.writeByte((byte) (receiveNotifications ? 1 : 0));
+        parcel.writeByte((byte) (receiveChosenNotifications ? 1 : 0));
+        parcel.writeByte((byte) (receiveNotChosenNotifications ? 1 : 0));
+        parcel.writeByte((byte) (receiveAllNotifications ? 1 : 0));
         parcel.writeStringList(waitingListEvents);
         parcel.writeStringList(notifications);
         parcel.writeString(FCMToken);

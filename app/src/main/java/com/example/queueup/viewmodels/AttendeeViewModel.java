@@ -35,6 +35,9 @@ public class AttendeeViewModel extends ViewModel {
     private final MutableLiveData<Boolean> isLoadingLiveData = new MutableLiveData<>(false);
 
     private final MutableLiveData<List<AttendeeWithUser>> attendeesWithUserLiveData = new MutableLiveData<>();
+    private final MutableLiveData<List<AttendeeWithUser>> attendeesWithUserInvitedLiveData = new MutableLiveData<>();
+    private final MutableLiveData<List<AttendeeWithUser>> attendeesWithUserCancelLiveData = new MutableLiveData<>();
+    private final MutableLiveData<List<AttendeeWithUser>> attendeesWithUserEnrolledLiveData = new MutableLiveData<>();
 
     private final MutableLiveData<Boolean> isOnWaitingListLiveData = new MutableLiveData<>(false);
     private final AttendeeController attendeeController;
@@ -541,6 +544,61 @@ public class AttendeeViewModel extends ViewModel {
                 });
     }
 
+
+    public void fetchAttendeeListsWithUserInfo(String eventId) {
+        isLoadingLiveData.setValue(true);
+
+        attendeeController.getAttendanceByEventId(eventId)
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        List<Attendee> attendees = new ArrayList<>();
+                        for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                            Attendee attendee = doc.toObject(Attendee.class);
+                            if (attendee != null) {
+                                attendee.setId(doc.getId());
+                                attendees.add(attendee);
+                            }
+                        }
+
+                        if (attendees.isEmpty()) {
+                            attendeesWithUserLiveData.setValue(new ArrayList<>());
+                            isLoadingLiveData.setValue(false);
+                            return;
+                        }
+
+                        attendeeController.fetchAllUsersForAttendees(attendees)
+                                .addOnSuccessListener(new OnSuccessListener<Map<String, User>>() {
+                                    @Override
+                                    public void onSuccess(Map<String, User> userMap) {
+                                        List<AttendeeWithUser> combinedList = new ArrayList<>();
+                                        for (Attendee attendee : attendees) {
+                                            User user = userMap.get(attendee.getUserId());
+                                            if (user != null) {
+                                                combinedList.add(new AttendeeWithUser(attendee, user));
+                                            }
+                                        }
+                                        attendeesWithUserLiveData.setValue(combinedList);
+                                        isLoadingLiveData.setValue(false);
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        errorMessageLiveData.setValue("Failed to fetch user information: " + e.getMessage());
+                                        isLoadingLiveData.setValue(false);
+                                    }
+                                });
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        errorMessageLiveData.setValue("Failed to fetch attendees: " + e.getMessage());
+                        isLoadingLiveData.setValue(false);
+                    }
+                });
+    }
     /**
      * Checks if a user is on the waiting list for an event.
      * @param userId

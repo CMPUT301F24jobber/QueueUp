@@ -51,7 +51,7 @@ public class NotificationService extends Service {
                 .setAutoCancel(true)
                 .setSmallIcon(R.drawable.circle_shape);
 
-        notificationManager.notify(0, notificationBuilder.build());
+        notificationManager.notify(title.hashCode(), notificationBuilder.build());
         Toast.makeText(this, "show notification reached", Toast.LENGTH_SHORT).show();
 
     }

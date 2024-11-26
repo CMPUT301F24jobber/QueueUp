@@ -11,7 +11,6 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.queueup.controllers.NotificationApplication;
 import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.handlers.PushNotificationHandler;
 import com.example.queueup.models.User;
@@ -37,8 +36,9 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private User user;
     private Boolean isAdmin = false;
+    private static Boolean notificationServiceStarted = false;
+
     private PushNotificationHandler pushNotificationHandler;
-    private NotificationApplication notificationApplication;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,8 +80,15 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialize LocationService
         LocationServices.getFusedLocationProviderClient(this);
-        Intent notificationService = new Intent(getApplicationContext(), NotificationService.class);
-        startService(notificationService);
+        startNotificationService();
+    }
+
+    private void startNotificationService() {
+        if (!notificationServiceStarted) {
+            Intent notificationService = new Intent(getApplicationContext(), NotificationService.class);
+            startService(notificationService);
+            notificationServiceStarted = true;
+        }
     }
 
     private void checkExistingUser() {

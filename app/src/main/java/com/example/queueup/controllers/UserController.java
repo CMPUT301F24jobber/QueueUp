@@ -213,7 +213,7 @@ public class UserController {
             if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
                 User user = task.getResult().toObject(User.class);
                 if (user != null) {
-                    return user.isReceiveNotifications();
+                    return user.isReceiveAllNotifications();
                 }
                 return false;
             } else {

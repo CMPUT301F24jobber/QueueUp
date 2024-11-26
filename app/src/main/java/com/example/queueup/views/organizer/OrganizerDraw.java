@@ -21,7 +21,6 @@ import com.example.queueup.R;
 import com.example.queueup.models.Event;
 import com.example.queueup.services.ImageUploader;
 import com.example.queueup.viewmodels.EventViewModel;
-import com.example.queueup.views.attendee.AttendeeWaitlistJoinedFragment;
 
 import java.time.format.DateTimeFormatter;
 
@@ -137,7 +136,6 @@ public class OrganizerDraw extends Fragment {
             } else {
                 rewinnerNotification.setBackgroundResource(R.drawable.hollow_button);
             }
-
         });
         cancelNotification.setOnCheckedChangeListener((v, isChecked) -> {
             if (isChecked) {
@@ -145,8 +143,8 @@ public class OrganizerDraw extends Fragment {
             } else {
                 cancelNotification.setBackgroundResource(R.drawable.hollow_button);
             }
-
         });
+
         if (event.getIsDrawn()) {
             redrawLayout.setVisibility(View.VISIBLE);
             drawLayout.setVisibility(View.INVISIBLE);

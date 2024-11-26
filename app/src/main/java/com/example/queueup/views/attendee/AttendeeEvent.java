@@ -1,7 +1,5 @@
 package com.example.queueup.views.attendee;
 
-import static java.time.format.DateTimeFormatter.ISO_LOCAL_TIME;
-
 import android.os.Bundle;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -12,22 +10,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.example.queueup.R;
 import com.example.queueup.controllers.AttendeeController;
-import com.example.queueup.controllers.EventController;
-import com.example.queueup.controllers.UserController;
 import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.models.Event;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.Transaction;
 
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 
 public class AttendeeEvent extends AppCompatActivity {
     private ImageButton backButton;
     AttendeeController attendeeController;
     private Event event;
+    TextView titleText;
 
     /**
      * The current user handler.
@@ -38,6 +31,7 @@ public class AttendeeEvent extends AppCompatActivity {
         event = getIntent().getSerializableExtra("event", Event.class);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.attendee_event_activity);
+        titleText = findViewById(R.id.win_lose_text);
         TextView eventDate = findViewById(R.id.event_date);
         TextView locationText = findViewById(R.id.event_location);
         TextView timeText = findViewById(R.id.event_time);
@@ -48,6 +42,7 @@ public class AttendeeEvent extends AppCompatActivity {
         String time_text = event.getEventStartDate().toInstant().atZone(java.time.ZoneId.systemDefault()).format(timeFormatter);
         currentUserHandler = CurrentUserHandler.getSingleton();
         attendeeController = AttendeeController.getInstance();
+        titleText.setText(event.getEventName());
         eventDate.setText(date_text);
         locationText.setText(event.getEventLocation());
 

@@ -156,7 +156,7 @@ public class EventController {
         DocumentReference eventRef = eventCollectionReference.document(eventId);
         return eventRef.get().continueWithTask(task -> {
             if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
-                List<String> attendeeIds = (List<String>) task.getResult().get("attendeeIds");
+                List<String> attendeeIds = (List<String>)task.getResult().get("attendeeIds");
                 if (attendeeIds != null && !attendeeIds.isEmpty()) {
                     List<Task<Void>> unregisterTasks = new ArrayList<>();
                     for (String userId : attendeeIds) {

@@ -10,7 +10,6 @@
 
     <TextView
         android:id="@+id/waiting_list_title"
-
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="30sp"
@@ -24,16 +23,69 @@
         >
     </TextView>
 
+    <LinearLayout
+        android:id="@+id/toggle_buttons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/waiting_list_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        >
+        <Button
+            android:id="@+id/invited_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Invited"
+            android:fontFamily="@font/poppins_extralight"
+            android:backgroundTint="@color/beige"
+            android:textSize="16dp"
+            android:textColor="@color/black"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+        <Button
+            android:id="@+id/cancelled_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancelled"
+            android:fontFamily="@font/poppins_extralight"
+            android:backgroundTint="@color/beige"
+            android:textSize="16dp"
+            android:textColor="@color/black"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+        <Button
+            android:id="@+id/enrolled_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enrolled"
+            android:fontFamily="@font/poppins_extralight"
+            android:backgroundTint="@color/beige"
+            android:textSize="16dp"
+            android:textColor="@color/black"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+    </LinearLayout>
 
     <ListView
         android:id="@+id/event_waiting_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/waiting_list_title"
+        app:layout_constraintTop_toBottomOf="@id/toggle_buttons"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

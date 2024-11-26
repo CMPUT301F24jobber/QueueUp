@@ -275,6 +275,71 @@ public class AttendeeController {
             return userMap;
         });
     }
+    /**
+     * Fetches user information for a list of attendees.
+     *
+     * @param attendees
+     * @return Task<Map<String, User>> mapping user IDs to User objects
+     */
+    public Task<ArrayList<User>> fetchAllUsersForAttendees(List<Attendee> attendees) {
+        List<Task<DocumentSnapshot>> userTasks = new ArrayList<>();
+        for (Attendee attendee : attendees) {
+            Task<DocumentSnapshot> userTask = userCollectionReference.document(attendee.getUserId()).get();
+            userTasks.add(userTask);
+        }
+
+        return Tasks.whenAllSuccess(userTasks).continueWith(task -> {
+            ArrayList<User> userList = new ArrayList<>();
+            List<Object> results = task.getResult();
+            for (int i = 0; i < results.size(); i++) {
+                Object obj = results.get(i);
+                if (obj instanceof DocumentSnapshot) {
+                    DocumentSnapshot doc = (DocumentSnapshot) obj;
+                    if (doc.exists()) {
+                        User user = doc.toObject(User.class);
+                        if (user != null) {
+                            // Map userId to User object
+                            userList.add(user);
+                        }
+                    }
+                }
+            }
+            return userList;
+        });
+    }
+    public Task<ArrayList<ArrayList<User>>> fetchUserListsForAttendees(ArrayList<Attendee> attendees) {
+        List<Task<DocumentSnapshot>> userTasks = new ArrayList<>();
+        for (Attendee attendee : attendees) {
+            Task<DocumentSnapshot> userTask = userCollectionReference.document(attendee.getUserId()).get();
+            userTasks.add(userTask);
+        }
+
+        return Tasks.whenAllSuccess(userTasks).continueWith(task -> {
+            ArrayList<ArrayList<User>> userMap = new ArrayList<ArrayList<User>>(3);
+            List<Object> results = task.getResult();
+            for (int i = 0; i < results.size(); i++) {
+                Object obj = results.get(i);
+                if (obj instanceof DocumentSnapshot) {
+                    DocumentSnapshot doc = (DocumentSnapshot) obj;
+                    if (doc.exists()) {
+                        User user = doc.toObject(User.class);
+                        if (user != null) {
+                            // Map userId to User object
+                            switch (attendees.get(i).getStatus()){
+                                case "selected":
+                                userMap.get(0).add(user);
+                                case "cancelled":
+                                    userMap.get(1).add(user);
+                                case "enrolled":
+                                    userMap.get(2).add(user);
+                            }
+                        }
+                    }
+                }
+            }
+            return userMap;
+        });
+    }
 
     /**
      * Sets the status of an attendee.
