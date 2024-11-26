@@ -18,9 +18,11 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.example.queueup.R;
+import com.example.queueup.controllers.EventController;
 import com.example.queueup.models.Event;
 import com.example.queueup.services.ImageUploader;
 import com.example.queueup.viewmodels.EventViewModel;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.time.format.DateTimeFormatter;
 
@@ -32,11 +34,14 @@ public class OrganizerDraw extends Fragment {
 
     private Event event;
     private ImageUploader imageUploader;
+    private EventController eventController;
     private EventViewModel eventViewModel;
     private Button drawWinners;
     private ToggleButton winnerNotification;
     private ToggleButton loserNotification;
     private ToggleButton everyoneNotification;
+    private TextInputLayout numDraw;
+
     private Button redrawWinners;
     private Button cancelWinners;
     private ConstraintLayout drawLayout;
@@ -67,6 +72,7 @@ public class OrganizerDraw extends Fragment {
         ImageView posterImage = view.findViewById(R.id.poster_image);
         eventViewModel = new ViewModelProvider(this).get(EventViewModel.class);
         drawWinners = view.findViewById(R.id.draw_winners);
+        numDraw = view.findViewById(R.id.draw_num_attendee);
         winnerNotification = view.findViewById(R.id.notification_winner);
         loserNotification = view.findViewById(R.id.notification_loser);
         everyoneNotification =  view.findViewById(R.id.notification_everyone);
@@ -159,7 +165,6 @@ public class OrganizerDraw extends Fragment {
         } else {
             redrawLayout.setVisibility(View.INVISIBLE);
             drawLayout.setVisibility(View.VISIBLE);
-
             drawWinners.setOnClickListener(v -> {
                 if (everyoneNotification.isChecked()) {
 
@@ -173,6 +178,7 @@ public class OrganizerDraw extends Fragment {
                 }
                 redrawLayout.setVisibility(View.VISIBLE);
                 drawLayout.setVisibility(View.INVISIBLE);
+                eventController.drawLottery(event.getEventId(), Integer.valueOf(numDraw.getEditText().getText().toString().trim()));
                 event.setIsDrawn(true);
                 eventViewModel.updateEvent(event);
             });
