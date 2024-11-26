@@ -36,6 +36,8 @@ public class AdminEventImagesAdapter extends ArrayAdapter<Event> {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
 
+        Event event = getItem(position);
+
         if (convertView == null) {
 
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.admin_event_image, parent, false); // Change to your layout file name if different
@@ -47,7 +49,6 @@ public class AdminEventImagesAdapter extends ArrayAdapter<Event> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        Event event = getItem(position);
 
         if (event != null) {
             viewHolder.eventName.setText(event.getEventName());
@@ -65,5 +66,15 @@ public class AdminEventImagesAdapter extends ArrayAdapter<Event> {
     private static class ViewHolder {
         ImageView eventImage;
         TextView eventName;
+    }
+
+    private static ArrayList<Event> filterEventImages(ArrayList<Event> events) {
+        ArrayList<Event> filteredEvents = new ArrayList<>();
+        for (Event event : events) {
+            if (event != null && event.getEventBannerImageUrl() != null && !event.getEventBannerImageUrl().isEmpty()) {
+                filteredEvents.add(event);
+            }
+        }
+        return filteredEvents;
     }
 }
