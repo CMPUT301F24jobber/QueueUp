@@ -2,15 +2,19 @@ package com.example.queueup.views.organizer;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.AdapterView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.queueup.R;
 import com.example.queueup.controllers.AttendeeController;
 import com.example.queueup.models.Event;
+import com.example.queueup.models.GeoLocation;
 import com.example.queueup.models.User;
 import com.example.queueup.viewmodels.AttendeeViewModel;
 import com.example.queueup.viewmodels.UsersArrayAdapter;
@@ -44,14 +48,27 @@ public class OrganizerWaitingListFragment extends Fragment {
         userList.setAdapter(usersAdapter);
 
         // Setup ListView click listener
+
         userList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 User selectedUser = dataList.get(position);
-                if (selectedUser != null && selectedUser.getGeoLocation() != null) {
-                    Intent intent = new Intent(getActivity(), OrganizerMap.class);
-                    intent.putExtra("selected_user", selectedUser);
-                    startActivity(intent);
+                Log.d("WaitingList", "Selected user: " + selectedUser.getFullName());
+
+                // Debug user data
+                if (selectedUser != null) {
+                    GeoLocation location = selectedUser.getGeoLocation();
+                    Log.d("WaitingList", "User location object: " + location);
+                    if (location != null) {
+                        Log.d("WaitingList", String.format("Coordinates: lat=%f, lon=%f",
+                                location.getLatitude(), location.getLongitude()));
+                        Intent intent = new Intent(getActivity(), OrganizerMap.class);
+                        intent.putExtra("selected_user", selectedUser);
+                        startActivity(intent);
+                    } else {
+                        Log.d("WaitingList", "Location is null for user: " + selectedUser.getFullName());
+                        Toast.makeText(getActivity(), "No location data available", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
