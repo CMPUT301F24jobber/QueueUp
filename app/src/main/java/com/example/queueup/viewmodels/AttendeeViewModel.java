@@ -414,7 +414,7 @@ public class AttendeeViewModel extends ViewModel {
                                             @Override
                                             public void onSuccess(Void aVoid) {
                                                 // Notify the new attendee about their selection
-                                                attendeeController.notifyAttendee(newAttendee.getId(), true);
+                                                attendeeController.notifyAttendeebyId(newAttendee.getId());
                                                 fetchAttendancesByEvent(eventId);
                                                 isLoadingLiveData.setValue(false);
                                             }

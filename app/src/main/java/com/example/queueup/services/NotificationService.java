@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
+import android.util.Pair;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -24,7 +25,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
-// wanna migrate to JobIntentService
+// wanna migrate to JobIntentService POSSIBLY LAGGY
 public class NotificationService extends Service {
     private static final String TAG = "Notification Service";
     private static final String CHANNEL_ID = "default_channel";
@@ -52,11 +53,27 @@ public class NotificationService extends Service {
                 .setSmallIcon(R.drawable.circle_shape);
 
         notificationManager.notify(title.hashCode(), notificationBuilder.build());
-        Toast.makeText(this, "show notification reached", Toast.LENGTH_SHORT).show();
+    }
+    private void showNotificationDesc(String title, String description) {
+        // this chunk should be in the bind I think, not sure completely, it's fine here but eh
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence channelName = "Default Channel";
+            NotificationChannel channel = new NotificationChannel(
+                    CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_DEFAULT);
+            notificationManager.createNotificationChannel(channel);
+        }
+        // end chunk
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle(title)
+                .setContentText(description)
+                .setAutoCancel(true)
+                .setSmallIcon(R.drawable.circle_shape);
 
+        notificationManager.notify(title.hashCode(), notificationBuilder.build());
     }
     private void showAllNotifications() {
-        Toast.makeText(this, "all notification reached", Toast.LENGTH_SHORT).show();
         userController.getUserByDeviceId(deviceId).addOnSuccessListener(querySnapshot -> {
             if (querySnapshot != null && !querySnapshot.isEmpty()) {
                 DocumentSnapshot document = querySnapshot.getDocuments().get(0);
@@ -65,22 +82,39 @@ public class NotificationService extends Service {
                 return;
             }
             if (user == null) {
-                Toast.makeText(this, "USER NULL!", Toast.LENGTH_SHORT).show();
                 return;
             }
             ArrayList<String> notifications = user.getNotifications();
-            Toast.makeText(this, Integer.toString(notifications.size()), Toast.LENGTH_SHORT).show();
 
             if (notifications.isEmpty()) return;
-            for (String notification : notifications) {
-                showNotification(notification);
+            for (int i = 0, n = notifications.size(); i < n; i +=2 ) {
+                if (notificationPerm(notifications.get(i))) {
+                    showNotification(notifications.get(i+1));
+                }
             }
+
             user.clearNotifications();
             userController.updateUser(user);
         });
 
 
     }
+
+    private Boolean notificationPerm(String status) {
+        return (notificationAll() || notificationChosen(status) || notificationNotChosen(status));
+    }
+
+    private Boolean notificationAll() {
+        return user.isReceiveAllNotifications();
+    }
+    private Boolean notificationChosen(String status) {
+        return (user.isReceiveChosenNotifications() && (status == "selected"));
+    }
+
+    private Boolean notificationNotChosen(String status) {
+        return (user.isReceiveNotChosenNotifications() && (status == "not_selected"));
+    }
+
 
     private void observeNotification() {
         db.collection("users").whereEqualTo("deviceId", deviceId)
@@ -119,6 +153,7 @@ public class NotificationService extends Service {
         deviceId = userController.getDeviceId(getApplicationContext());
 
         observeNotification();
+
 
         Toast.makeText(this, "notification service started", Toast.LENGTH_SHORT).show();
         return Service.START_STICKY;

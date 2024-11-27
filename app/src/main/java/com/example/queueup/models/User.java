@@ -3,6 +3,7 @@ package com.example.queueup.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import android.util.Pair;
 
 import androidx.annotation.NonNull;
 
@@ -398,6 +399,6 @@ public class User implements Parcelable {
         parcel.writeByte((byte) (receiveAllNotifications ? 1 : 0));
         parcel.writeStringList(waitingListEvents);
         parcel.writeStringList(notifications);
-        parcel.writeString(FCMToken);
     }
 }
+

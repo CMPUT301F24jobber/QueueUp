@@ -251,7 +251,7 @@ public class EventViewModel extends ViewModel {
     /**
      * Creates a new event.
      *
-     * @param .
+     * @param newEvent
      */
     public void createEvent(Event newEvent) {
         if (newEvent == null) {
@@ -565,36 +565,7 @@ public class EventViewModel extends ViewModel {
         }
 
         isLoadingLiveData.setValue(true);
-        eventController.drawLottery(eventId, numberToSelect)
-                .addOnSuccessListener(new OnSuccessListener<List<String>>() {
-                    @Override
-                    public void onSuccess(List<String> selectedAttendees) {
-                        if (selectedAttendees != null && !selectedAttendees.isEmpty()) {
-                            // Notify selected attendees
-                            eventController.notifySelectedAttendees(eventId, selectedAttendees)
-                                    .addOnSuccessListener(aVoid -> {
-                                        fetchEventById(eventId);
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            errorMessageLiveData.setValue("Failed to notify selected attendees: " + e.getMessage());
-                                            isLoadingLiveData.setValue(false);
-                                        }
-                                    });
-                        } else {
-                            errorMessageLiveData.setValue("No attendees were selected.");
-                            isLoadingLiveData.setValue(false);
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        errorMessageLiveData.setValue("Failed to draw lottery: " + e.getMessage());
-                        isLoadingLiveData.setValue(false);
-                    }
-                });
+        eventController.drawLottery(eventId, numberToSelect);
     }
 
     /**

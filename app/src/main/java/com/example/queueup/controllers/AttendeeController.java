@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.handlers.PushNotificationHandler;
 import com.example.queueup.models.Attendee;
+import com.example.queueup.models.Event;
 import com.example.queueup.models.GeoLocation;
 import com.example.queueup.models.User;
 import com.google.android.gms.tasks.Task;
@@ -25,10 +26,12 @@ import java.util.Map;
 public class AttendeeController {
     private static AttendeeController singleInstance = null;
     private static final String TAG = "AttendeeController";
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
     private final CollectionReference attendeeCollectionReference = FirebaseFirestore.getInstance().collection("attendees");
     private final CollectionReference userCollectionReference = FirebaseFirestore.getInstance().collection("users");
     private final CurrentUserHandler currentUserHandler = CurrentUserHandler.getSingleton();
-    private final PushNotificationHandler pushNotificationHandler = PushNotificationHandler.getSingleton();
+    private UserController userController = UserController.getInstance();
 
     private AttendeeController() {}
 
@@ -192,38 +195,39 @@ public class AttendeeController {
      * Notifies an attendee about their selection status.
      *
      * @param attendeeId
-     * @param isSelected
      */
-    public void notifyAttendee(String attendeeId, boolean isSelected) {
+    public void notifyAttendeebyId(String attendeeId) {
         attendeeCollectionReference.document(attendeeId).get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
                 Attendee attendee = task.getResult().toObject(Attendee.class);
                 if (attendee != null) {
                     String eventId = attendee.getEventId();
                     String userId = attendee.getUserId();
-                    String newStatus = isSelected ? "selected" : "not_selected";
-                    attendee.setStatus(newStatus);
+                    String status = attendee.getStatus();
                     // Update the attendee's status in Firestore
-                    attendeeCollectionReference.document(attendeeId).set(attendee).addOnSuccessListener(aVoid -> {
-                        Log.d(TAG, "Attendee status updated to " + newStatus + ".");
-                        // Send notification based on selection status
-                        if (isSelected) {
-                            pushNotificationHandler.sendLotteryWinNotification(eventId, userId)
-                                    .addOnSuccessListener(a -> Log.d(TAG, "Lottery win notification sent to user " + userId + "."))
-                                    .addOnFailureListener(e -> Log.e(TAG, "Failed to send lottery win notification.", e));
-                        } else {
-                            pushNotificationHandler.sendLotteryLoseNotification(eventId, userId)
-                                    .addOnSuccessListener(a -> Log.d(TAG, "Lottery lose notification sent to user " + userId + "."))
-                                    .addOnFailureListener(e -> Log.e(TAG, "Failed to send lottery lose notification.", e));
+                    db.collection("events").document(eventId).get().addOnSuccessListener(document -> {
+                        if (document != null) {
+                            Event event = document.toObject(Event.class);
+                            userController.notifyUserById(userId, makeNotificationMessage(status, event.getEventName()));
                         }
-                    }).addOnFailureListener(e -> {
-                        Log.e(TAG, "Failed to update attendee status.", e);
                     });
                 }
             } else {
                 Log.e(TAG, "Failed to retrieve attendee with ID: " + attendeeId);
             }
         });
+    }
+
+    public static String makeNotificationMessage(String status, String eventName) {
+        switch (status) {
+            case "cancelled":
+                return "Your spot in " + eventName + "has been revolked.";
+            case "selected":
+                return "You were selected for " + eventName + "!";
+            case "not selected":
+                return "You were not selected for " + eventName + ".";
+        }
+        return "error";
     }
 
     /**
@@ -331,11 +335,16 @@ public class AttendeeController {
                             // Map userId to User object
                             switch (attendees.get(i).getStatus()){
                                 case "selected":
-                                userMap.get(0).add(user);
+                                    userMap.get(0).add(user);
+                                    break;
                                 case "cancelled":
                                     userMap.get(1).add(user);
+                                    break;
                                 case "enrolled":
                                     userMap.get(2).add(user);
+                                    break;
+                                default:
+                                    break;
                             }
                         }
                     }

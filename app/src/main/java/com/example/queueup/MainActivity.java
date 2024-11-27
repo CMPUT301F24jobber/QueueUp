@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     private Boolean isAdmin = false;
     private static Boolean notificationServiceStarted = false;
 
-    private PushNotificationHandler pushNotificationHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,8 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Initialize PushNotificationHandler Singleton
-        pushNotificationHandler = PushNotificationHandler.getSingleton();
-        pushNotificationHandler.handleNotificationPermissions(this, this);
+
 
         // Initialize LocationService
         LocationServices.getFusedLocationProviderClient(this);
