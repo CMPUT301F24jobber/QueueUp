@@ -28,7 +28,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 
 
+/**
+ * Activity class for editing user profile information.
 
+ * Allows the user to update their profile details, including first name, last name,
+ * username, email, phone number, and profile picture. Provides options to save changes,
+ * select a new profile picture, or remove the current picture.
+
+ */
 public class EditProfileActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private User currentUser;
@@ -43,6 +50,12 @@ public class EditProfileActivity extends AppCompatActivity {
     private UserViewModel userViewModel;
     private boolean isImageRemoved = false;
 
+
+    /**
+     * Initializes the activity, setting up UI components and loading user data.
+     *
+     * @param savedInstanceState the saved state of the activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +91,9 @@ public class EditProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Fetches the current user's data using the ViewModel.
+     */
     private void fetchUserData() {
         userViewModel = new UserViewModel(getApplication());
         userViewModel.loadUserByDeviceId(deviceId);
@@ -89,12 +105,23 @@ public class EditProfileActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Opens the gallery for selecting a profile picture.
+     *
+     */
     private void selectImage() {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         startActivityForResult(intent, PICK_IMAGE_REQUEST);
     }
 
+    /**
+     * Handles the result of an image selection.
+     *
+     * @param requestCode the request code
+     * @param resultCode  the result code
+     * @param data        the returned data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -108,6 +135,9 @@ public class EditProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Removes the current profile picture and displays initials instead.
+     */
     private void removeProfilePicture() {
         imageUri = null;
         isImageRemoved = true;
@@ -118,6 +148,9 @@ public class EditProfileActivity extends AppCompatActivity {
         profileInitialsTextView.setText(initials);
     }
 
+    /**
+     * Loads the current user's data into the UI components.
+     */
     private void loadUserData() {
         if (currentUser != null) {
             editFirstName.setText(currentUser.getFirstName());
@@ -129,6 +162,9 @@ public class EditProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Displays either the user's profile image or their initials if no image is set.
+     */
     private void displayProfileImageOrInitials() {
         if (currentUser.getProfileImageUrl() != null && !isImageRemoved) {
             profileInitialsTextView.setVisibility(View.GONE);
@@ -146,6 +182,10 @@ public class EditProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Saves the changes made to the user's profile.
+     *
+     */
     private void saveProfileChanges() {
         String firstName = editFirstName.getText().toString().trim();
         String lastName = editLastName.getText().toString().trim();
@@ -206,6 +246,9 @@ public class EditProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Updates the user's information in the data source and finishes the activity.
+     */
     private void updateUserAndFinish() {
         currentUserHandler.updateUser(currentUser);
         finish();

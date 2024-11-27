@@ -33,12 +33,23 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-// IMPORTANT: Run test on empty database for correct results
+/**
+ * Instrumented test class for testing the functionality of the MainActivity in the QueueUp application.
+ * This class includes tests for:
+ *     UI visibility and navigation</li>
+ *     Sign-up functionality for Admin, Organizer, and Attendee roles</li>
+ *
+ * Note: These tests should be run on an empty database for accurate results.
+ *
+ */
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class MainActivityTest {
 
+    /**
+     * Rule to launch the MainActivity for testing.
+     */
     @Rule
     public ActivityScenarioRule<MainActivity> scenario = new
             ActivityScenarioRule<MainActivity>(MainActivity.class);
@@ -52,21 +63,35 @@ public class MainActivityTest {
 //    public void cleanUp() {
 //        Intents.release();
 //    }
+
+    /**
+     * Verifies that the Admin button is displayed in the MainActivity.
+     */
     @Test
     public void testAdminButtonExists() {
         onView(withId(R.id.adminButton)).check(matches(isDisplayed()));
     }
 
+    /**
+     * Verifies that the Organizer button is displayed in the MainActivity.
+     */
     @Test
     public void testOrganizerButtonExists() {
         onView(withId(R.id.organizerButton)).check(matches(isDisplayed()));
     }
 
+    /**
+     * Verifies that the Attendee button is displayed in the MainActivity.
+     */
     @Test
     public void testAttendeeButtonExists() {
         onView(withId(R.id.attendeeButton)).check(matches(isDisplayed()));
     }
 
+    /**
+     * Tests the navigation when the Admin button is clicked.
+     * Ensures that the password input layout is displayed in the next screen.
+     */
     @Test
     public void testAdminButtonNavigation() {
         onView(withId(R.id.adminButton)).perform(click());
@@ -74,6 +99,10 @@ public class MainActivityTest {
         onView(withId(R.id.passwordInputLayout)).check(matches(isDisplayed()));
     }
 
+    /**
+     * Tests the navigation when the Organizer button is clicked.
+     * Ensures that the first name input layout is displayed in the next screen.
+     */
     @Test
     public void testOrganizerButtonNavigation() {
         onView(withId(R.id.organizerButton)).perform(click());
@@ -81,6 +110,10 @@ public class MainActivityTest {
         onView(withId(R.id.firstNameInputLayout)).check(matches(isDisplayed()));
     }
 
+    /**
+     * Tests the navigation when the Attendee button is clicked.
+     * Ensures that the last name input layout is displayed in the next screen.
+     */
     @Test
     public void testAttendeeButtonNavigation() {
         onView(withId(R.id.attendeeButton)).perform(click());
@@ -88,6 +121,10 @@ public class MainActivityTest {
         onView(withId(R.id.lastNameInputLayout)).check(matches(isDisplayed()));
     }
 
+    /**
+     * Tests the sign-up process for an Admin role.
+     * Ensures that the Admin can successfully navigate through the sign-up process.
+     */
     @Test
     public void testSignUpForAdmin() {
         onView(withId(R.id.adminButton)).perform(click());
@@ -115,6 +152,10 @@ public class MainActivityTest {
         onView(withId(R.id.passwordInputLayout)).check(doesNotExist());
     }
 
+    /**
+     * Tests the sign-up process for an Organizer role.
+     * Ensures that the Organizer can successfully navigate through the sign-up process.
+     */
     @Test
     public void testSignUpForOrganizer() {
         onView(withId(R.id.organizerButton)).perform(click());
@@ -138,6 +179,10 @@ public class MainActivityTest {
         onView(withId(R.id.queueup_title)).check(matches(isDisplayed()));
     }
 
+    /**
+     * Tests the sign-up process for an Attendee role.
+     * Ensures that the Attendee can successfully navigate through the sign-up process.
+     */
     @Test
     public void testSignUpForAttendee() {
         onView(withId(R.id.attendeeButton)).perform(click());
