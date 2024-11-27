@@ -105,8 +105,7 @@
         android:layout_marginHorizontal="16dp"
         android:backgroundTint="#8C7466"
         android:layout_below="@id/profilePhoneTextView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp" />
+        android:layout_centerHorizontal="true" />
 
     <!-- Switch Role Button -->
     <com.google.android.material.button.MaterialButton
