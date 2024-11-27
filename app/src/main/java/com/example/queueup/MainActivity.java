@@ -57,8 +57,6 @@ public class MainActivity extends AppCompatActivity {
         CurrentUserHandler.setOwnerActivity(this);
         CurrentUserHandler.getSingleton();
 
-
-
         // Set up role selection buttons
         setupRoleSelection();
 
