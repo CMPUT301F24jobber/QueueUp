@@ -5,6 +5,7 @@ import static android.content.ContentValues.TAG;
 
 import android.location.Location;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -330,10 +331,9 @@ public class EventController {
                             if (attendee != null) {
                                 attendees.add(attendee);
                             }
-
                         }
                         for (Attendee attendee : attendees) {
-                            if (attendee.getStatus() == "selected") {
+                            if (attendee.getStatus().equals("selected")) {
                                 attendeeController.setAttendeeStatus(attendee.getId(), "cancelled");
                             }
                         }
