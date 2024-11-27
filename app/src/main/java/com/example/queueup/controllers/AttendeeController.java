@@ -27,8 +27,7 @@ public class AttendeeController {
     private static final String TAG = "AttendeeController";
     private final CollectionReference attendeeCollectionReference = FirebaseFirestore.getInstance().collection("attendees");
     private final CollectionReference userCollectionReference = FirebaseFirestore.getInstance().collection("users");
-    private final CurrentUserHandler currentUserHandler = CurrentUserHandler.getSingleton();
-    private final PushNotificationHandler pushNotificationHandler = PushNotificationHandler.getSingleton();
+    private CurrentUserHandler currentUserHandler = CurrentUserHandler.getSingleton();
 
     private AttendeeController() {}
 
@@ -113,6 +112,7 @@ public class AttendeeController {
         newAttendee.setStatus("waiting");
         if (location != null) {
             GeoLocation newLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
+            userCollectionReference.document(userId).update("geoLocation", newLocation);
             newAttendee.setLocation(newLocation);
         }
         return attendeeCollectionReference.document(newAttendee.getId()).set(newAttendee);
@@ -146,7 +146,7 @@ public class AttendeeController {
      */
     public Task<Void> leaveWaitingList(String eventId, String userId) {
         String attendeeId = Attendee.generateId(userId, eventId);
-        return attendeeCollectionReference.document(attendeeId).delete();
+        return attendeeCollectionReference.document(attendeeId).update("status", "cancelled");
     }
 
     /**
@@ -208,15 +208,7 @@ public class AttendeeController {
                     attendeeCollectionReference.document(attendeeId).set(attendee).addOnSuccessListener(aVoid -> {
                         Log.d(TAG, "Attendee status updated to " + newStatus + ".");
                         // Send notification based on selection status
-                        if (isSelected) {
-                            pushNotificationHandler.sendLotteryWinNotification(eventId, userId)
-                                    .addOnSuccessListener(a -> Log.d(TAG, "Lottery win notification sent to user " + userId + "."))
-                                    .addOnFailureListener(e -> Log.e(TAG, "Failed to send lottery win notification.", e));
-                        } else {
-                            pushNotificationHandler.sendLotteryLoseNotification(eventId, userId)
-                                    .addOnSuccessListener(a -> Log.d(TAG, "Lottery lose notification sent to user " + userId + "."))
-                                    .addOnFailureListener(e -> Log.e(TAG, "Failed to send lottery lose notification.", e));
-                        }
+
                     }).addOnFailureListener(e -> {
                         Log.e(TAG, "Failed to update attendee status.", e);
                     });

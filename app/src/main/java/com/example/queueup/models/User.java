@@ -25,6 +25,7 @@ public class User implements Parcelable {
     private boolean receiveNotifications;
     private List<String> waitingListEvents;
     private String FCMToken;
+    private GeoLocation geoLocation;
 
 
     public User() {
@@ -59,6 +60,7 @@ public class User implements Parcelable {
         receiveNotifications = in.readByte() != 0;
         waitingListEvents = in.createStringArrayList();
         FCMToken = in.readString();
+        geoLocation = in.readParcelable(GeoLocation.class.getClassLoader());
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -72,6 +74,14 @@ public class User implements Parcelable {
             return new User[size];
         }
     };
+
+    public GeoLocation getGeoLocation() {
+        return geoLocation;
+    }
+
+    public void setGeoLocation(GeoLocation geoLocation) {
+        this.geoLocation = geoLocation;
+    }
 
 
     /**
@@ -358,5 +368,9 @@ public class User implements Parcelable {
         parcel.writeByte((byte) (receiveNotifications ? 1 : 0));
         parcel.writeStringList(waitingListEvents);
         parcel.writeString(FCMToken);
+        parcel.writeParcelable(geoLocation, i);
+
     }
+
+
 }
