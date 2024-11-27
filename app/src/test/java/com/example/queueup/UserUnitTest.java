@@ -24,20 +24,18 @@ public class UserUnitTest {
         return userController;
     }
 
-    @Test
-        public void testUserCreation() {
-            User user = mockUser();
-            assertEquals("John", user.getFirstName());
-            assertEquals("Doe", user.getLastName());
-            assertEquals("johndoe", user.getUsername());
-            assertEquals("johnDoe@gmail.com", user.getEmailAddress());
-            assertEquals("1234567890", user.getPhoneNumber());
-        }
-        @Test
-        public void testUploadUser() {
-            User mockUser = generateRandomMockUser();
-            getMockUserController().createUser(mockUser);
-        }
+    public void testUserCreation() {
+        User user = mockUser();
+        assertEquals("John", user.getFirstName());
+        assertEquals("Doe", user.getLastName());
+        assertEquals("johndoe", user.getUsername());
+        assertEquals("johnDoe@gmail.com", user.getEmailAddress());
+        assertEquals("1234567890", user.getPhoneNumber());
+    }
+    public void testUploadUser() {
+        User mockUser = generateRandomMockUser();
+        getMockUserController().createUser(mockUser);
+    }
 
 
 
