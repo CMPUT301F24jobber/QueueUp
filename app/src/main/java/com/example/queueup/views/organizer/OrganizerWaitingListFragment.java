@@ -1,8 +1,10 @@
 package com.example.queueup.views.organizer;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.AdapterView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -40,6 +42,19 @@ public class OrganizerWaitingListFragment extends Fragment {
         userList = getView().findViewById(R.id.event_waiting_list);
         usersAdapter = new UsersArrayAdapter(view.getContext(), dataList);
         userList.setAdapter(usersAdapter);
+
+        // Setup ListView click listener
+        userList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                User selectedUser = dataList.get(position);
+                if (selectedUser != null && selectedUser.getGeoLocation() != null) {
+                    Intent intent = new Intent(getActivity(), OrganizerMap.class);
+                    intent.putExtra("selected_user", selectedUser);
+                    startActivity(intent);
+                }
+            }
+        });
 
         // Setup ChipGroup
         ChipGroup chipGroup = view.findViewById(R.id.filter_chip_group);

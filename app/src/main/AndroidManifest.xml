@@ -69,6 +69,9 @@
         <activity
             android:name=".views.organizer.OrganizerQr" >
         </activity>
+        <activity
+            android:name=".views.organizer.OrganizerMap"
+            android:exported="false" />
         <service android:name=".services.NotificationService" android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
