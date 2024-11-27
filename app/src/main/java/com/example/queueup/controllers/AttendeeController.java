@@ -113,6 +113,7 @@ public class AttendeeController {
         newAttendee.setStatus("waiting");
         if (location != null) {
             GeoLocation newLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
+            userCollectionReference.document(userId).update("geoLocation", newLocation);
             newAttendee.setLocation(newLocation);
         }
         return attendeeCollectionReference.document(newAttendee.getId()).set(newAttendee);
