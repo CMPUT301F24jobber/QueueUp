@@ -1,17 +1,13 @@
 {
   "project_info": {
-
-    "project_number": "150612477007",
-    "project_id": "empty-9afbb",
-    "storage_bucket": "empty-9afbb.firebasestorage.app"
-
+    "project_number": "175402334631",
+    "project_id": "queueup-b3c43",
+    "storage_bucket": "queueup-b3c43.appspot.com"
   },
   "client": [
     {
       "client_info": {
-
-        "mobilesdk_app_id": "1:150612477007:android:31dacb3e4170b70e53563a",
-
+        "mobilesdk_app_id": "1:175402334631:android:15659711867940ff325e82",
         "android_client_info": {
           "package_name": "com.example.queueup"
         }
@@ -19,9 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-
-          "current_key": "AIzaSyCxPsUA9Nl8LhfJY5926vvH-ho6JCVTHio"
-
+          "current_key": "AIzaSyCiVoAUf51nm40esjhQR_tlOY745ddU3So"
         }
       ],
       "services": {

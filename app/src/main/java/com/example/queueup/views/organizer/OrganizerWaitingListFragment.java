@@ -94,35 +94,33 @@ public class OrganizerWaitingListFragment extends Fragment {
         enrolledButton.setOnClickListener(v -> {
             userList.setAdapter(usersEnrolledAdapter);
 
-        userList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                User selectedUser = dataList.get(position);
-                Log.d("WaitingList", "Selected user: " + selectedUser.getFullName());
+            userList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    User selectedUser = enrolledList.get(position);
+                    Log.d("WaitingList", "Selected user: " + selectedUser.getFullName());
 
-                // Debug user data
-                if (selectedUser != null) {
-                    GeoLocation location = selectedUser.getGeoLocation();
-                    Log.d("WaitingList", "User location object: " + location);
-                    if (location != null) {
-                        Log.d("WaitingList", String.format("Coordinates: lat=%f, lon=%f",
-                                location.getLatitude(), location.getLongitude()));
-                        Intent intent = new Intent(getActivity(), OrganizerMap.class);
-                        intent.putExtra("selected_user", selectedUser);
-                        startActivity(intent);
-                    } else {
-                        Log.d("WaitingList", "Location is null for user: " + selectedUser.getFullName());
-                        Toast.makeText(getActivity(), "No location data available", Toast.LENGTH_SHORT).show();
+                    // Debug user data
+                    if (selectedUser != null) {
+                        GeoLocation location = selectedUser.getGeoLocation();
+                        Log.d("WaitingList", "User location object: " + location);
+                        if (location != null) {
+                            Log.d("WaitingList", String.format("Coordinates: lat=%f, lon=%f",
+                                    location.getLatitude(), location.getLongitude()));
+                            Intent intent = new Intent(getActivity(), OrganizerMap.class);
+                            intent.putExtra("selected_user", selectedUser);
+                            startActivity(intent);
+                        } else {
+                            Log.d("WaitingList", "Location is null for user: " + selectedUser.getFullName());
+                            Toast.makeText(getActivity(), "No location data available", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
-            }
+            });
+
+
+            observeViewModel();
         });
-
-
-        observeViewModel();
-
-
-
     }
 
     public void onResume() {
