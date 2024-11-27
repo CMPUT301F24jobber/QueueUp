@@ -78,6 +78,8 @@ public class OrganizerWaitingListFragment extends Fragment {
         }
 
         invitedButton.setOnClickListener(v -> {
+            Log.d("jwewfo", Integer.toString(invitedList.size()));
+
             userList.setAdapter(usersInvitedAdapter);
         });
         cancelledButton.setOnClickListener(v -> {
@@ -87,9 +89,7 @@ public class OrganizerWaitingListFragment extends Fragment {
             userList.setAdapter(usersEnrolledAdapter);
         });
 
-        userList.setAdapter(usersWaitingListAdapter);
-        waitingList.add(CurrentUserHandler.getSingleton().getCurrentUser().getValue());
-        usersWaitingListAdapter.notifyDataSetChanged();
+
         observeViewModel();
 
 
@@ -115,20 +115,19 @@ public class OrganizerWaitingListFragment extends Fragment {
                                 }
                             }
                             attendeeController.fetchUserListsForAttendees(attendees).addOnSuccessListener(arrayOfLists -> {
-                                Log.d("jwewfo", Integer.toString(arrayOfLists.size()));
-                                ArrayList<User> l1 = arrayOfLists.get(0), l2 = arrayOfLists.get(1), l3 = arrayOfLists.get(2);
-                                for (User user : l1) {
-                                    invitedList.add(user);
-                                }
-                                for (User user : l2) {
-                                    cancelledList.add(user);
-                                }
-                                for (User user : l1) {
-                                    enrolledList.add(user);
-                                }
+                                invitedList.clear();
+                                cancelledList.clear();
+                                enrolledList.clear();
+                                invitedList.addAll(arrayOfLists.get(0));
+
+                                cancelledList.addAll(arrayOfLists.get(1));
+                                enrolledList.addAll(arrayOfLists.get(2));
+                                Log.d("jwewfo", Integer.toString(arrayOfLists.get(0).size()));
+
                                 usersInvitedAdapter.notifyDataSetChanged();
                                 usersCancelledAdapter.notifyDataSetChanged();
                                 usersEnrolledAdapter.notifyDataSetChanged();
+                                Log.d("jwewfo", Integer.toString(invitedList.size()));
 
                             });
                         }

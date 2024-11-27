@@ -208,7 +208,7 @@ public class AttendeeController {
                     db.collection("events").document(eventId).get().addOnSuccessListener(document -> {
                         if (document != null) {
                             Event event = document.toObject(Event.class);
-                            userController.notifyUserById(userId, makeNotificationMessage(status, event.getEventName()));
+                            userController.notifyUserById(userId, status, makeNotificationMessage(status, event.getEventName()));
                         }
                     });
                 }

@@ -96,7 +96,7 @@ public class AttendeeWaitlistFragment extends Fragment {
                     .addOnSuccessListener(task -> {
                         // Then join waitlist with AttendeeController
                         attendeeController.joinWaitingList(
-                                        currentUserHandler.getCurrentUserId(),
+                                        currentUserHandler.getCurrentUserId()+event.getEventId(),
                                         event.getEventId(),
                                         location
                                 )

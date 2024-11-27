@@ -61,7 +61,6 @@ public class UsersArrayAdapter extends ArrayAdapter<User> {
         } else {
             userName.setText("");
         }
-        assert user != null;
         userPhone.setText(user.getPhoneNumber());
         userEmail.setText(user.getEmailAddress());
         TextView userInitials = view.findViewById(R.id.user_initials);

@@ -174,8 +174,8 @@ public class UserController {
             }
         });
     }
-    public Task<Void> notifyUserById(String userId, String notification) {
-        return userCollectionReference.document(userId).update("notifications", FieldValue.arrayUnion(notification));
+    public Task<Void> notifyUserById(String userId, String status, String notification) {
+        return userCollectionReference.document(userId).update("notifications", FieldValue.arrayUnion(status, notification));
     }
 
 }

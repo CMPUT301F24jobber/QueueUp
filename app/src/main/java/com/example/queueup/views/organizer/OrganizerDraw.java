@@ -63,6 +63,7 @@ public class OrganizerDraw extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         event = this.getArguments().getSerializable("event", Event.class);
         TextView eventDate = view.findViewById(R.id.event_date);
+        eventController = EventController.getInstance();
         TextView locationText = view.findViewById(R.id.event_location);
         TextView timeText = view.findViewById(R.id.event_time);
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("EEEE MMM dd");
@@ -182,7 +183,7 @@ public class OrganizerDraw extends Fragment {
                 drawLayout.setVisibility(View.INVISIBLE);
                 eventController.drawLottery(event.getEventId(), Integer.valueOf(numDraw.getEditText().getText().toString().trim()));
                 event.setIsDrawn(true);
-                eventViewModel.updateEvent(event);
+                eventController.updateEvent(event);
             });
         }
 

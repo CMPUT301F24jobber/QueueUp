@@ -34,7 +34,6 @@ public class EventController {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final CollectionReference eventCollectionReference = db.collection("events");
     private final CollectionReference attendanceCollectionReference = db.collection("attendees");
-    private final CurrentUserHandler currentUserHandler = CurrentUserHandler.getSingleton();
     private final UserController userController = UserController.getInstance();
     private final AttendeeController attendeeController = AttendeeController.getInstance();
     private EventController() {}
@@ -160,7 +159,7 @@ public class EventController {
                 if (attendeeIds != null && !attendeeIds.isEmpty()) {
                     List<Task<Void>> unregisterTasks = new ArrayList<>();
                     for (String userId : attendeeIds) {
-                        unregisterTasks.add(attendeeController.leaveWaitingList(eventId));
+                        unregisterTasks.add(AttendeeController.getInstance().leaveWaitingList(eventId));
                     }
                     return Tasks.whenAll(unregisterTasks);
                 }
@@ -186,7 +185,7 @@ public class EventController {
      * @return Task<Void>
      */
     public Task<Void> registerToEvent(String eventId) {
-        String userId = currentUserHandler.getCurrentUserId();
+        String userId = CurrentUserHandler.getSingleton().getCurrentUserId();
         return registerToEvent(userId, eventId, null);
     }
 
@@ -230,7 +229,7 @@ public class EventController {
             return null;
         }).continueWithTask(task -> {
             if (task.isSuccessful()) {
-                return attendeeController.joinWaitingList(userId, eventId, location);
+                return AttendeeController.getInstance().joinWaitingList(userId, eventId, location);
             } else {
                 Exception e = task.getException();
                 String errorMessage = e != null ? e.getMessage() : "Unknown error";
@@ -291,9 +290,11 @@ public class EventController {
      */
     public void drawLottery(String eventId, int numberToSelect) {
 
-        getEventById(eventId).addOnSuccessListener(snapshot -> {
-        String eventName = (String)snapshot.get("eventName");
-        List<String> attendeeIds = (List<String>)snapshot.get("attendeeIds");
+        getEventById(eventId).continueWith(task -> {
+            if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
+            Event event = task.getResult().toObject(Event.class);
+        String eventName = event.getEventName();
+        ArrayList<String> attendeeIds = event.getAttendeeIds();
 
         if (attendeeIds == null || attendeeIds.isEmpty()) {
             throw new RuntimeException("No attendees to select from.");
@@ -308,11 +309,15 @@ public class EventController {
 
         for (int i = 0, n = shuffledAttendees.size(); i < n; ++i) {
             String attendeeId = shuffledAttendees.get(i), selection = (i < correctedNum ? "selected" : "not selected");
-            userController.notifyUserById(attendeeId.substring(0, 37), AttendeeController.makeNotificationMessage(selection, eventName));
+            Log.d("jwew", attendeeId.substring(0, 36));
+            userController.notifyUserById(attendeeId.substring(0, 36), selection, AttendeeController.makeNotificationMessage(selection, eventName));
             attendeeController.setAttendeeStatus(attendeeId, selection);
-        }});
-    }
+        }
+            }
+            return null;
+        });
 
+    }
     /**
      * Adds an announcement to an event.
      *
@@ -355,7 +360,7 @@ public class EventController {
      * @return Task<Void>
      */
     public Task<Void> checkInUser(String eventId) {
-        String userId = currentUserHandler.getCurrentUserId();
+        String userId = CurrentUserHandler.getSingleton().getCurrentUserId();
         return checkInUser(userId, eventId, null);
     }
 
