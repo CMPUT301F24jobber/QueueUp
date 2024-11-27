@@ -12,7 +12,6 @@ import com.example.queueup.R;
 import com.example.queueup.controllers.AttendeeController;
 import com.example.queueup.controllers.EventController;
 import com.example.queueup.handlers.CurrentUserHandler;
-import com.example.queueup.handlers.PushNotificationHandler;
 import com.example.queueup.models.Event;
 
 public class AttendeeWaitlistJoinedFragment extends Fragment {
@@ -25,7 +24,6 @@ public class AttendeeWaitlistJoinedFragment extends Fragment {
     EventController eventController;
     AttendeeController attendeeController;
     CurrentUserHandler currentUserHandler;
-    PushNotificationHandler pushNotificationHandler = PushNotificationHandler.getSingleton();
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
