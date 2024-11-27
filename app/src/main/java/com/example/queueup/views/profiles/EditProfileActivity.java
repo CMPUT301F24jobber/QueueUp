@@ -1,5 +1,6 @@
 package com.example.queueup.views.profiles;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,9 +60,9 @@ public class EditProfileActivity extends AppCompatActivity {
         editEmail = findViewById(R.id.editEmail);
         editPhone = findViewById(R.id.editPhone);
 
-        Button saveButton = findViewById(R.id.saveButton);
-        Button editPicButton = findViewById(R.id.editPicButton);
-        Button removePicButton = findViewById(R.id.removePicButton);
+        ImageButton saveButton = findViewById(R.id.saveButton);
+        ImageButton editPicButton = findViewById(R.id.editPicButton);
+        ImageButton removePicButton = findViewById(R.id.removePicButton);
 
         // Set up click listeners
         saveButton.setOnClickListener(v -> saveProfileChanges());
