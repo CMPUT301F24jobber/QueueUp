@@ -180,7 +180,7 @@ public class OrganizerDraw extends Fragment {
 
                     }
                 }
-                if (numDraw.getEditText().getText().toString().isEmpty()) {
+                if (!numDraw.getEditText().getText().toString().isEmpty()) {
                     redrawLayout.setVisibility(View.VISIBLE);
                     drawLayout.setVisibility(View.INVISIBLE);
                     eventController.drawLottery(event.getEventId(), Integer.valueOf(numDraw.getEditText().getText().toString().trim()));
