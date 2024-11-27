@@ -65,7 +65,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
-        android:text="Show this QR code at the event check-in"
+        android:text="This QR code can be used to join the waiting list"
         android:textColor="#757575"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
