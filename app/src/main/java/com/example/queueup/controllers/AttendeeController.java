@@ -297,6 +297,8 @@ public class AttendeeController {
             userMap.add(new ArrayList<>());
             userMap.add(new ArrayList<>());
             userMap.add(new ArrayList<>());
+            userMap.add(new ArrayList<>());
+
 
             List<Object> results = task.getResult();
             for (int i = 0; i < results.size(); i++) {
@@ -305,6 +307,8 @@ public class AttendeeController {
                     DocumentSnapshot doc = (DocumentSnapshot) obj;
                     if (doc.exists()) {
                         User user = doc.toObject(User.class);
+                        userMap.get(3).add(user);
+
                         if (user != null) {
                             // Map userId to User object
                             switch (attendees.get(i).getStatus()){

@@ -47,7 +47,7 @@ public class OrganizerWaitingListFragment extends Fragment {
     private AttendeeViewModel attendeeViewModel;
     private AttendeeController attendeeController;
 
-    private Button invitedButton, cancelledButton, enrolledButton;
+    private Button invitedButton, cancelledButton, enrolledButton, everyoneButton;
 
     /**
      * Called when the fragment's view has been created.
@@ -75,6 +75,7 @@ public class OrganizerWaitingListFragment extends Fragment {
         invitedButton = view.findViewById(R.id.invited_button);
         cancelledButton = view.findViewById(R.id.cancelled_button);
         enrolledButton = view.findViewById(R.id.enrolled_button);
+        everyoneButton = view.findViewById(R.id.everyone_button);
 
         if (event.getIsDrawn()) {
             userList.setAdapter(usersInvitedAdapter);
@@ -93,6 +94,9 @@ public class OrganizerWaitingListFragment extends Fragment {
         });
         enrolledButton.setOnClickListener(v -> {
             userList.setAdapter(usersEnrolledAdapter);
+        });
+        everyoneButton.setOnClickListener(v -> {
+            userList.setAdapter(usersWaitingListAdapter);
         });
         userList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -143,15 +147,19 @@ public class OrganizerWaitingListFragment extends Fragment {
                                 invitedList.clear();
                                 cancelledList.clear();
                                 enrolledList.clear();
+                                waitingList.clear();
 
                                 invitedList.addAll(arrayOfLists.get(0));
                                 cancelledList.addAll(arrayOfLists.get(1));
                                 enrolledList.addAll(arrayOfLists.get(2));
-                                Log.d("jwewfo", Integer.toString(arrayOfLists.get(0).size()));
+                                waitingList.addAll(arrayOfLists.get(3));
+                                Log.d("jwewfo", Integer.toString(arrayOfLists.get(3).size()));
 
                                 usersInvitedAdapter.notifyDataSetChanged();
                                 usersCancelledAdapter.notifyDataSetChanged();
                                 usersEnrolledAdapter.notifyDataSetChanged();
+                                usersWaitingListAdapter.notifyDataSetChanged();
+
                                 Log.d("jwewfo", Integer.toString(invitedList.size()));
 
                             });
