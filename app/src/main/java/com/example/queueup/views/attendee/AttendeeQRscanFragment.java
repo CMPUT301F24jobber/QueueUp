@@ -57,7 +57,7 @@ public class AttendeeQRscanFragment extends Fragment {
 
         scanButton.setOnClickListener((v) -> {
             Intent intent = new Intent(view.getContext(), AttendeeQRscanActivity.class);
-            mStartForResult.launch(intent);
+            startActivity(intent);
         });
     }
 

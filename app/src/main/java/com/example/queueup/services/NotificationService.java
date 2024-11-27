@@ -84,7 +84,7 @@ public class NotificationService extends Service {
             if (user == null) {
                 return;
             }
-            ArrayList<String> notifications = user.getNotifications();
+            ArrayList<String> notifications = (ArrayList<String>) user.getNotifications();
 
             if (notifications.isEmpty()) return;
             for (int i = 0, n = notifications.size(); i < n; i +=2 ) {

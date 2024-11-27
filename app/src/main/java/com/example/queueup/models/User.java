@@ -23,7 +23,7 @@ public class User implements Parcelable {
     private String phoneNumber;
     private Boolean isadmin;
     private String profileImageUrl;
-    private ArrayList<String> notifications;
+    private List<String> notifications;
     private String deviceId;
     private boolean receiveChosenNotifications = true;
     private boolean receiveNotChosenNotifications = true;
@@ -33,7 +33,7 @@ public class User implements Parcelable {
 
 
     public User() {
-        this.notifications = new ArrayList<String>();
+        this.notifications = new ArrayList<>();
         this.waitingListEvents = new ArrayList<>();
         receiveChosenNotifications = true;
         receiveNotChosenNotifications = true;
@@ -214,7 +214,7 @@ public class User implements Parcelable {
     /**
      * Returns the notifications of the user.
      */
-    public ArrayList<String> getNotifications() {
+    public List<String> getNotifications() {
         return notifications;
     }
 

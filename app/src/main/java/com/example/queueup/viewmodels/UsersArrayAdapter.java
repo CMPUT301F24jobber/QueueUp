@@ -89,8 +89,6 @@ public class UsersArrayAdapter extends ArrayAdapter<User> {
             }
             userInitials.setText(initials);
         }
-
-
         return view;
     }
 

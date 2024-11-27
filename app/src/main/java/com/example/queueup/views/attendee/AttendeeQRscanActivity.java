@@ -93,7 +93,7 @@ public class AttendeeQRscanActivity extends AppCompatActivity {
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
-        eventController.getEventById(result.getContents() )
+        eventController.getEventById(result.getContents())
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -113,7 +113,6 @@ public class AttendeeQRscanActivity extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(AttendeeQRscanActivity.this, "Event not found", Toast.LENGTH_LONG).show();
                         Intent intent = new Intent(AttendeeQRscanActivity.this, AttendeeHome.class);
                         startActivity(intent);
                         finish();

@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.queueup.R;
 import com.example.queueup.controllers.AttendeeController;
+import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.models.Attendee;
 import com.example.queueup.models.Event;
 import com.example.queueup.models.User;
@@ -53,10 +54,10 @@ public class OrganizerWaitingListFragment extends Fragment {
         event = this.getArguments().getSerializable("event", Event.class);
 
         attendeeViewModel = new ViewModelProvider(this).get(AttendeeViewModel.class);
-        waitingList = new ArrayList<User>();
-        invitedList = new ArrayList<User>();
-        cancelledList = new ArrayList<User>();
-        enrolledList = new ArrayList<User>();
+        waitingList = new ArrayList<>();
+        invitedList = new ArrayList<>();
+        cancelledList = new ArrayList<>();
+        enrolledList = new ArrayList<>();
         attendeeController = AttendeeController.getInstance();
 
         userList = view.findViewById(R.id.event_waiting_list);
@@ -86,7 +87,9 @@ public class OrganizerWaitingListFragment extends Fragment {
             userList.setAdapter(usersEnrolledAdapter);
         });
 
-
+        userList.setAdapter(usersWaitingListAdapter);
+        waitingList.add(CurrentUserHandler.getSingleton().getCurrentUser().getValue());
+        usersWaitingListAdapter.notifyDataSetChanged();
         observeViewModel();
 
 
@@ -113,9 +116,16 @@ public class OrganizerWaitingListFragment extends Fragment {
                             }
                             attendeeController.fetchUserListsForAttendees(attendees).addOnSuccessListener(arrayOfLists -> {
                                 Log.d("jwewfo", Integer.toString(arrayOfLists.size()));
-                                invitedList = arrayOfLists.get(0);
-                                cancelledList = arrayOfLists.get(1);
-                                enrolledList = arrayOfLists.get(2);
+                                ArrayList<User> l1 = arrayOfLists.get(0), l2 = arrayOfLists.get(1), l3 = arrayOfLists.get(2);
+                                for (User user : l1) {
+                                    invitedList.add(user);
+                                }
+                                for (User user : l2) {
+                                    cancelledList.add(user);
+                                }
+                                for (User user : l1) {
+                                    enrolledList.add(user);
+                                }
                                 usersInvitedAdapter.notifyDataSetChanged();
                                 usersCancelledAdapter.notifyDataSetChanged();
                                 usersEnrolledAdapter.notifyDataSetChanged();
@@ -136,10 +146,13 @@ public class OrganizerWaitingListFragment extends Fragment {
                                 }
                             }
                             attendeeController.fetchUsersForAttendees(attendees).addOnSuccessListener(listUsers -> {
-                                waitingList = listUsers;
+                                waitingList.clear();
+                                for (User user : listUsers) {
+                                    waitingList.add(user);
+                                }
                                 userList.setAdapter(usersWaitingListAdapter);
+
                                 usersWaitingListAdapter.notifyDataSetChanged();
-                                userList.setVisibility(View.VISIBLE);
                             });
                         }
                     });
