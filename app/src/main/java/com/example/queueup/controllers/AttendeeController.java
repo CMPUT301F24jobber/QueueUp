@@ -246,47 +246,18 @@ public class AttendeeController {
                 .get();
     }
 
-    /**
-     * Fetches user information for a list of attendees.
-     *
-     * @param attendees
-     * @return Task<Map<String, User>> mapping user IDs to User objects
-     */
-    public Task<Map<String, User>> fetchUsersForAttendees(List<Attendee> attendees) {
-        List<Task<DocumentSnapshot>> userTasks = new ArrayList<>();
-        for (Attendee attendee : attendees) {
-            Task<DocumentSnapshot> userTask = userCollectionReference.document(attendee.getUserId()).get();
-            userTasks.add(userTask);
-        }
 
-        return Tasks.whenAllSuccess(userTasks).continueWith(task -> {
-            Map<String, User> userMap = new HashMap<>();
-            List<Object> results = task.getResult();
-            for (int i = 0; i < results.size(); i++) {
-                Object obj = results.get(i);
-                if (obj instanceof DocumentSnapshot) {
-                    DocumentSnapshot doc = (DocumentSnapshot) obj;
-                    if (doc.exists()) {
-                        User user = doc.toObject(User.class);
-                        if (user != null) {
-                            // Map userId to User object
-                            userMap.put(attendees.get(i).getUserId(), user);
-                        }
-                    }
-                }
-            }
-            return userMap;
-        });
-    }
+
     /**
      * Fetches user information for a list of attendees.
      *
      * @param attendees
      * @return Task<Map<String, User>> mapping user IDs to User objects
      */
-    public Task<ArrayList<User>> fetchAllUsersForAttendees(List<Attendee> attendees) {
+    public Task<ArrayList<User>> fetchUsersForAttendees(List<Attendee> attendees) {
         List<Task<DocumentSnapshot>> userTasks = new ArrayList<>();
         for (Attendee attendee : attendees) {
+            Log.d("attendee", attendee.getUserId());
             Task<DocumentSnapshot> userTask = userCollectionReference.document(attendee.getUserId()).get();
             userTasks.add(userTask);
         }

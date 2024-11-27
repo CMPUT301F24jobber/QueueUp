@@ -70,10 +70,10 @@ public class OrganizerWaitingListFragment extends Fragment {
         enrolledButton = view.findViewById(R.id.enrolled_button);
 
         if (event.getIsDrawn()) {
-            userList.setAdapter(usersWaitingListAdapter);
+            userList.setAdapter(usersInvitedAdapter);
             toggleButtons.setVisibility(View.VISIBLE);
         } else {
-            userList.setAdapter(usersInvitedAdapter);
+            userList.setAdapter(usersWaitingListAdapter);
         }
 
         invitedButton.setOnClickListener(v -> {
@@ -86,7 +86,6 @@ public class OrganizerWaitingListFragment extends Fragment {
             userList.setAdapter(usersEnrolledAdapter);
         });
 
-        attendeeViewModel.fetchAttendeesWithUserInfo(event.getEventId());
 
         observeViewModel();
 
@@ -96,7 +95,6 @@ public class OrganizerWaitingListFragment extends Fragment {
 
     public void onResume() {
         super.onResume();
-        attendeeViewModel.fetchAttendeesWithUserInfo(event.getEventId());
     }
 
     private void observeViewModel() {
@@ -118,19 +116,33 @@ public class OrganizerWaitingListFragment extends Fragment {
                                 invitedList = arrayOfLists.get(0);
                                 cancelledList = arrayOfLists.get(1);
                                 enrolledList = arrayOfLists.get(2);
+                                usersInvitedAdapter.notifyDataSetChanged();
+                                usersCancelledAdapter.notifyDataSetChanged();
+                                usersEnrolledAdapter.notifyDataSetChanged();
+
                             });
                         }
                     });
         } else {
-            attendeeViewModel.getAttendeesWithUserLiveData().observe(getViewLifecycleOwner(), attendees -> {
-                waitingList.clear();
-                if (attendees != null && !attendees.isEmpty()) {
-                    for (AttendeeViewModel.AttendeeWithUser attendeeWithUser : attendees) {
-                        waitingList.add(attendeeWithUser.getUser());
-                    }
-                }
-                usersWaitingListAdapter.notifyDataSetChanged();
-            });
+            attendeeController.getAttendanceByEventId(event.getEventId())
+                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                            ArrayList<Attendee> attendees = new ArrayList<>();
+                            for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                                Attendee attendee = doc.toObject(Attendee.class);
+                                if (attendee != null) {
+                                    attendees.add(attendee);
+                                }
+                            }
+                            attendeeController.fetchUsersForAttendees(attendees).addOnSuccessListener(listUsers -> {
+                                waitingList = listUsers;
+                                userList.setAdapter(usersWaitingListAdapter);
+                                usersWaitingListAdapter.notifyDataSetChanged();
+                                userList.setVisibility(View.VISIBLE);
+                            });
+                        }
+                    });
         }
 
 

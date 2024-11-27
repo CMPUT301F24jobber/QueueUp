@@ -59,11 +59,17 @@ public class AttendeeHomeFragment extends Fragment {
         eventList.setAdapter(eventAdapter);  // Set the adapter to the ListView
         String attendeeId = CurrentUserHandler.getSingleton().getCurrentUserId();
         if (attendeeId != null && !attendeeId.isEmpty()) {
-            eventViewModel.fetchEventsByAttendee(attendeeId);
+            //eventViewModel.fetchEventsByAttendee(attendeeId);
         }
-        observeViewModel();
-
-
+        // observeViewModel();
+        eventViewModel.getAllEventsLiveData().observe(getViewLifecycleOwner(), events -> {
+            if (events != null) {
+                dataList.clear();
+                dataList.addAll(events);
+                eventAdapter.notifyDataSetChanged();
+            }
+        });
+        eventViewModel.fetchAllEvents();
     }
     private void observeViewModel() {
         eventViewModel.getEventsByAttendeeLiveData().observe(getViewLifecycleOwner(), events -> {
