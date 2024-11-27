@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -179,11 +180,15 @@ public class OrganizerDraw extends Fragment {
 
                     }
                 }
-                redrawLayout.setVisibility(View.VISIBLE);
-                drawLayout.setVisibility(View.INVISIBLE);
-                eventController.drawLottery(event.getEventId(), Integer.valueOf(numDraw.getEditText().getText().toString().trim()));
-                event.setIsDrawn(true);
-                eventController.updateEvent(event);
+                if (numDraw.getEditText().getText() != null) {
+                    redrawLayout.setVisibility(View.VISIBLE);
+                    drawLayout.setVisibility(View.INVISIBLE);
+                    eventController.drawLottery(event.getEventId(), Integer.valueOf(numDraw.getEditText().getText().toString().trim()));
+                    eventController.setIsDrawn(event.getEventId());
+                } else {
+                    Toast.makeText(getContext(), "The number of winners is invalid", Toast.LENGTH_SHORT).show();
+
+                }
             });
         }
 
