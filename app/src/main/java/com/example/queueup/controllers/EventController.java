@@ -616,6 +616,11 @@ public class EventController {
                     Log.e("EventController", "Failed to set event banner image.", e);
                 });
     }
+    public Task<Void> setIsDrawn(String eventId) {
+        return eventCollectionReference.document(eventId)
+                .update("isDrawn",true);
+    }
+
 
 
     /**
