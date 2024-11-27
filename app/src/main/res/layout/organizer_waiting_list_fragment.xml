@@ -83,6 +83,23 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             />
+        <Button
+            android:id="@+id/everyone_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="All"
+            android:layout_marginHorizontal="5dp"
+            android:fontFamily="@font/poppins_extralight"
+            android:backgroundTint="@color/beige"
+            android:textSize="16dp"
+            android:paddingHorizontal="5dp"
+
+            android:textColor="@color/black"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
     </LinearLayout>
 
     <ListView
