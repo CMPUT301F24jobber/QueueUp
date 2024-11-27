@@ -27,6 +27,8 @@ import com.example.queueup.viewmodels.UserViewModel;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 
+
+
 public class EditProfileActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private User currentUser;
