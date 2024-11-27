@@ -99,7 +99,6 @@ public class OrganizerWaitingListFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 User selectedUser = (User)userList.getAdapter().getItem(position);
                 Log.d("WaitingList", "Selected user: " + selectedUser.getFullName());
-
                 // Debug user data
                 if (selectedUser != null) {
                     GeoLocation location = selectedUser.getGeoLocation();
@@ -117,6 +116,7 @@ public class OrganizerWaitingListFragment extends Fragment {
                 }
             }
         });
+        // this is not actually an observer, probably shouldn't be either
         observeViewModel();
 
     }
@@ -143,8 +143,8 @@ public class OrganizerWaitingListFragment extends Fragment {
                                 invitedList.clear();
                                 cancelledList.clear();
                                 enrolledList.clear();
-                                invitedList.addAll(arrayOfLists.get(0));
 
+                                invitedList.addAll(arrayOfLists.get(0));
                                 cancelledList.addAll(arrayOfLists.get(1));
                                 enrolledList.addAll(arrayOfLists.get(2));
                                 Log.d("jwewfo", Integer.toString(arrayOfLists.get(0).size()));
@@ -171,11 +171,8 @@ public class OrganizerWaitingListFragment extends Fragment {
                             }
                             attendeeController.fetchUsersForAttendees(attendees).addOnSuccessListener(listUsers -> {
                                 waitingList.clear();
-                                for (User user : listUsers) {
-                                    waitingList.add(user);
-                                }
+                                waitingList.addAll(listUsers);
                                 userList.setAdapter(usersWaitingListAdapter);
-
                                 usersWaitingListAdapter.notifyDataSetChanged();
                             });
                         }

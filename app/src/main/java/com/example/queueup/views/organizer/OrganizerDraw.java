@@ -157,39 +157,44 @@ public class OrganizerDraw extends Fragment {
             }
         });
 
+        drawWinners.setOnClickListener(v -> {
+            if (everyoneNotification.isChecked()) {
+
+            } else {
+                if (loserNotification.isChecked()) {
+
+                }
+                if (winnerNotification.isChecked()) {
+
+                }
+            }
+            if (!numDraw.getEditText().getText().toString().isEmpty()) {
+                redrawLayout.setVisibility(View.VISIBLE);
+                drawLayout.setVisibility(View.INVISIBLE);
+                eventController.drawLottery(event.getEventId(), Integer.valueOf(numDraw.getEditText().getText().toString().trim()));
+                eventController.setIsDrawn(event.getEventId());
+            } else {
+                Toast.makeText(getContext(), "The number of winners is invalid", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+        redrawSwitch.setOnCheckedChangeListener((v, toggled) -> {
+            if (rewinnerNotification.isChecked()) {
+            }
+            if (cancelNotification.isChecked()) {
+            }
+        });
+        cancelWinners.setOnClickListener(v -> {
+            eventController.cancelWinners(event.getEventId());
+        });
         if (event.getIsDrawn()) {
             redrawLayout.setVisibility(View.VISIBLE);
             drawLayout.setVisibility(View.INVISIBLE);
-            redrawSwitch.setOnCheckedChangeListener((v, toggled) -> {
-                if (rewinnerNotification.isChecked()) {
-                }
-                if (cancelNotification.isChecked()) {
-                }
-            });
+
         } else {
             redrawLayout.setVisibility(View.INVISIBLE);
             drawLayout.setVisibility(View.VISIBLE);
-            drawWinners.setOnClickListener(v -> {
-                if (everyoneNotification.isChecked()) {
 
-                } else {
-                    if (loserNotification.isChecked()) {
-
-                    }
-                    if (winnerNotification.isChecked()) {
-
-                    }
-                }
-                if (!numDraw.getEditText().getText().toString().isEmpty()) {
-                    redrawLayout.setVisibility(View.VISIBLE);
-                    drawLayout.setVisibility(View.INVISIBLE);
-                    eventController.drawLottery(event.getEventId(), Integer.valueOf(numDraw.getEditText().getText().toString().trim()));
-                    eventController.setIsDrawn(event.getEventId());
-                } else {
-                    Toast.makeText(getContext(), "The number of winners is invalid", Toast.LENGTH_SHORT).show();
-
-                }
-            });
         }
 
     }

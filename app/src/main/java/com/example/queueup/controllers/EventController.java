@@ -12,6 +12,7 @@ import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.handlers.PushNotificationHandler;
 import com.example.queueup.models.Attendee;
 import com.example.queueup.models.Event;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
@@ -318,6 +319,29 @@ public class EventController {
         });
 
     }
+    public void cancelWinners(String eventId) {
+        attendeeController.getAttendanceByEventId(eventId)
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        ArrayList<Attendee> attendees = new ArrayList<>();
+                        for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                            Attendee attendee = doc.toObject(Attendee.class);
+                            if (attendee != null) {
+                                attendees.add(attendee);
+                            }
+
+                        }
+                        for (Attendee attendee : attendees) {
+                            if (attendee.getStatus() == "selected") {
+                                attendeeController.setAttendeeStatus(attendee.getId(), "cancelled");
+                            }
+                        }
+
+                    }
+                });
+    }
+
     /**
      * Adds an announcement to an event.
      *
