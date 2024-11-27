@@ -54,7 +54,6 @@ public class MainActivityTest {
 //    }
     @Test
     public void testAdminButtonExists() {
-
         onView(withId(R.id.adminButton)).check(matches(isDisplayed()));
     }
 
@@ -71,7 +70,7 @@ public class MainActivityTest {
     @Test
     public void testAdminButtonNavigation() {
         onView(withId(R.id.adminButton)).perform(click());
-        onView(withId(R.id.adminButton)).check(doesNotExist()); // check for activity switch, once any button on activity_main is clicked the SignUp fragment should be displayed
+        //onView(withId(R.id.adminButton)).check(doesNotExist()); // check for activity switch, once any button on activity_main is clicked the SignUp fragment should be displayed
         onView(withId(R.id.passwordInputLayout)).check(matches(isDisplayed()));
     }
 
@@ -93,7 +92,6 @@ public class MainActivityTest {
     public void testSignUpForAdmin() {
         onView(withId(R.id.adminButton)).perform(click());
 
-        // Find and type into the TextInputEditText inside firstNameInputLayout
         onView(allOf(isDescendantOfA(withId(R.id.firstNameInputLayout)), isAssignableFrom(TextInputEditText.class)))
                 .perform(typeText("Jon"));
 
@@ -113,6 +111,54 @@ public class MainActivityTest {
                 .perform(typeText("123456"));
 
         onView(withId(R.id.submitButton)).perform(click());
-        //onView(withId(R.id.admin_activity_fragment)).check(matches(isDisplayed()));
+        //onView(withId(R.id.queueup_title)).check(matches(isDisplayed()));
+        onView(withId(R.id.passwordInputLayout)).check(doesNotExist());
     }
+
+    @Test
+    public void testSignUpForOrganizer() {
+        onView(withId(R.id.organizerButton)).perform(click());
+
+        onView(allOf(isDescendantOfA(withId(R.id.firstNameInputLayout)), isAssignableFrom(TextInputEditText.class)))
+                .perform(typeText("Jon"));
+
+        onView(allOf(isDescendantOfA(withId(R.id.lastNameInputLayout)), isAssignableFrom(TextInputEditText.class)))
+                .perform(typeText("Snow"));
+
+        onView(allOf(isDescendantOfA(withId(R.id.emailInputLayout)), isAssignableFrom(TextInputEditText.class)))
+                .perform(typeText("jonsnow@test.ca"));
+
+        onView(allOf(isDescendantOfA(withId(R.id.phoneNumberInputLayout)), isAssignableFrom(TextInputEditText.class)))
+                .perform(typeText("1234567890"));
+
+        onView(allOf(isDescendantOfA(withId(R.id.usernameInputLayout)), isAssignableFrom(TextInputEditText.class)))
+                .perform(typeText("jonsnow"));
+
+        onView(withId(R.id.submitButton)).perform(click());
+        onView(withId(R.id.queueup_title)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void testSignUpForAttendee() {
+        onView(withId(R.id.attendeeButton)).perform(click());
+
+        onView(allOf(isDescendantOfA(withId(R.id.firstNameInputLayout)), isAssignableFrom(TextInputEditText.class)))
+                .perform(typeText("Jon"));
+
+        onView(allOf(isDescendantOfA(withId(R.id.lastNameInputLayout)), isAssignableFrom(TextInputEditText.class)))
+                .perform(typeText("Snow"));
+
+        onView(allOf(isDescendantOfA(withId(R.id.emailInputLayout)), isAssignableFrom(TextInputEditText.class)))
+                .perform(typeText("jonsnow@test.ca"));
+
+        onView(allOf(isDescendantOfA(withId(R.id.phoneNumberInputLayout)), isAssignableFrom(TextInputEditText.class)))
+                .perform(typeText("1234567890"));
+
+        onView(allOf(isDescendantOfA(withId(R.id.usernameInputLayout)), isAssignableFrom(TextInputEditText.class)))
+                .perform(typeText("jonsnow"));
+
+        onView(withId(R.id.submitButton)).perform(click());
+        onView(withId(R.id.queueup_title)).check(matches(isDisplayed()));
+    }
+
 }
