@@ -2,10 +2,12 @@ package com.example.queueup.controllers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.provider.Settings;
 import android.util.Log;
 
 import com.example.queueup.handlers.PushNotificationHandler;
+import com.example.queueup.models.GeoLocation;
 import com.example.queueup.models.User;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
@@ -30,6 +32,10 @@ public class UserController {
             singleInstance = new UserController();
         }
         return singleInstance;
+    }
+
+    public Task<Void> updateUserGeoLocation(Location location) {
+        return userCollectionReference.document(userCollectionReference.getId()).update("geoLocation", new GeoLocation(location.getLatitude(), location.getLongitude()));
     }
 
     /**
