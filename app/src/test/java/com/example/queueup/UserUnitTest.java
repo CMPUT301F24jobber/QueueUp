@@ -38,13 +38,7 @@ public class UserUnitTest {
             User mockUser = generateRandomMockUser();
             getMockUserController().createUser(mockUser);
         }
-        @Test
-        public void testUploadMultipleUsers() {
-            for (int i = 0; i < 10; ++i) {
-                User mockUser = generateRandomMockUser();
-                getMockUserController().createUser(mockUser);
-            }
-        }
+
 
 
 }
