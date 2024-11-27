@@ -12,9 +12,12 @@ import androidx.fragment.app.Fragment;
 import com.example.queueup.R;
 import com.example.queueup.controllers.AttendeeController;
 import com.example.queueup.controllers.EventController;
+import com.example.queueup.controllers.UserController;
 import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.models.Event;
+import com.example.queueup.models.GeoLocation;
 import com.example.queueup.services.LocationService;
+import com.example.queueup.viewmodels.UserViewModel;
 
 public class AttendeeWaitlistFragment extends Fragment {
     private Button joinWaitlistButton;
@@ -92,6 +95,7 @@ public class AttendeeWaitlistFragment extends Fragment {
 
         try {
             // First register with EventController
+
             eventController.registerToEvent(event.getEventId())
                     .addOnSuccessListener(task -> {
                         // Then join waitlist with AttendeeController
@@ -107,6 +111,14 @@ public class AttendeeWaitlistFragment extends Fragment {
                                     }
                                 })
                                 .addOnFailureListener(this::handleJoinError);
+                        // update geolocation in user
+                        currentUserHandler.getCurrentUser().observe(getViewLifecycleOwner(), user -> {
+                            if (user != null) {
+                                GeoLocation GeoLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
+                                user.setGeoLocation(GeoLocation);
+                                UserController.getInstance().updateUserById(user.getUuid(), "geoLocation", GeoLocation);
+                            }
+                        });
                     })
                     .addOnFailureListener(this::handleJoinError);
         } catch (IllegalStateException e) {

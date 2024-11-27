@@ -1,150 +1,291 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="#FDF7F4"
     android:padding="16dp">
 
-    <FrameLayout
-        android:id="@+id/profileImageFrame"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/circle_shape">
+
+
+    <RelativeLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
 
         <TextView
-            android:id="@+id/profileInitialsTextView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="Initials"
-            android:textColor="@android:color/white"
-            android:textSize="32sp"
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="QueueUp"
+            android:textSize="34sp"
             android:textStyle="bold"
-            android:visibility="visible" />
+            android:textColor="#333333"
+            android:fontFamily="@font/poppins" />
 
-        <ImageView
-            android:id="@+id/profileImageView"
+        <ImageButton
+            android:id="@+id/saveButton"
+            android:layout_width="55dp"
+            android:layout_height="56dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="0dp"
+            android:background="#FFEFEA"
+            android:contentDescription="Checkmark"
+            android:scaleType="center"
+            android:src="@drawable/ic_check" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/profileSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/header">
+
+        <FrameLayout
+            android:id="@+id/profileImageFrame"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/circle_shape">
+
+            <TextView
+                android:id="@+id/profileInitialsTextView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Initials"
+                android:textColor="@android:color/white"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:visibility="visible" />
+
+            <ImageView
+                android:id="@+id/profileImageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                android:contentDescription="Profile Picture" />
+        </FrameLayout>
+
+        <ImageButton
+            android:id="@+id/editPicButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignEnd="@id/profileImageFrame"
+            android:layout_alignBottom="@id/profileImageFrame"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/circle_shape"
+            android:backgroundTint="#2196F3"
+            android:contentDescription="Edit Profile Icon"
+            android:src="@drawable/plus" />
+
+        <ImageButton
+            android:id="@+id/removePicButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignStart="@id/profileImageFrame"
+            android:layout_alignBottom="@id/profileImageFrame"
+            android:layout_marginStart="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/circle_shape"
+            android:backgroundTint="#F44336"
+            android:contentDescription="Remove Profile Icon"
+            android:src="@drawable/minus" />
+
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/userInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_below="@id/profileSection">
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:visibility="gone"
-            android:contentDescription="Profile Picture" />
-    </FrameLayout>
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp">
 
-    <EditText
-        android:id="@+id/editFirstName"
+            <EditText
+                android:id="@+id/editFirstName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="First Name"
+                android:gravity="center"
+                android:inputType="textPersonName"
+                android:fontFamily="@font/poppins" />
+
+            <ImageView
+                android:id="@+id/editFirstNameIcon"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/pen"
+                android:background="#FFEFEA"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp">
+
+            <EditText
+                android:id="@+id/editLastName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Last Name"
+                android:gravity="center"
+                android:inputType="textPersonName"
+                android:fontFamily="@font/poppins" />
+
+            <ImageView
+                android:id="@+id/editLastNameIcon"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/pen"
+                android:background="#FFEFEA"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp">
+
+            <EditText
+                android:id="@+id/editUsername"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Username"
+                android:gravity="center"
+                android:inputType="text"
+                android:fontFamily="@font/poppins" />
+
+            <ImageView
+                android:id="@+id/editUsernameIcon"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/pen"
+                android:background="#FFEFEA"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp">
+
+            <EditText
+                android:id="@+id/editEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Email"
+                android:gravity="center"
+                android:inputType="textEmailAddress"
+                android:fontFamily="@font/poppins" />
+
+            <ImageView
+                android:id="@+id/editEmailIcon"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/pen"
+                android:background="#FFEFEA"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp">
+
+            <EditText
+                android:id="@+id/editPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Phone Number"
+                android:gravity="center"
+                android:inputType="phone"
+                android:fontFamily="@font/poppins" />
+
+            <ImageView
+                android:id="@+id/editPhoneIcon"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/pen"
+                android:background="#FFEFEA"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/notificationSettings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:fontFamily="@font/poppins"
-        android:hint="First Name"
-        android:inputType="textPersonName"
-        android:maxLength="50" />
+        android:layout_below="@id/userInfo"
+        android:background="@drawable/outlined_round_box"
+        android:padding="16dp"
+        android:layout_marginTop="16dp">
 
-    <EditText
-        android:id="@+id/editLastName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:fontFamily="@font/poppins"
-        android:hint="Last Name"
-        android:inputType="textPersonName"
-        android:maxLength="50" />
+        <TextView
+            android:id="@+id/notifTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Notification Settings"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/poppins_bold"
+            android:textColor="#8C7466"
+            android:layout_centerHorizontal="true" />
 
-    <EditText
-        android:id="@+id/editUsername"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:fontFamily="@font/poppins"
-        android:hint="Username"
-        android:inputType="text"
-        android:maxLength="50" />
+        <Switch
+            android:id="@+id/notifSwitch1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/notifTitle"
+            android:layout_marginTop="12dp"
+            android:layout_alignParentStart="true"
+            android:text="I want to be notified when chosen from waiting list"
+            android:fontFamily="@font/poppins"
+            android:textColor="#333333"
+            android:thumbTint="#8C7466"
+            android:trackTint="#E0D4C9" />
 
-    <EditText
-        android:id="@+id/editEmail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:fontFamily="@font/poppins"
-        android:hint="Email"
-        android:inputType="textEmailAddress"
-        android:maxLength="50" />
+        <Switch
+            android:id="@+id/notifSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/notifSwitch1"
+            android:layout_marginTop="12dp"
+            android:layout_alignParentStart="true"
+            android:text="I want to be notified when not chosen from waiting list"
+            android:fontFamily="@font/poppins"
+            android:textColor="#333333"
+            android:thumbTint="#8C7466"
+            android:trackTint="#E0D4C9" />
 
-    <EditText
-        android:id="@+id/editPhone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:fontFamily="@font/poppins"
-        android:hint="Phone Number"
-        android:inputType="phone"
-        android:maxLength="10" />
+        <Switch
+            android:id="@+id/notifSwitch2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/notifSwitch"
+            android:layout_marginTop="12dp"
+            android:layout_alignParentStart="true"
+            android:text="I want to receive other notifications from QueueUp"
+            android:fontFamily="@font/poppins"
+            android:textColor="#333333"
+            android:thumbTint="#8C7466"
+            android:trackTint="#E0D4C9" />
+    </RelativeLayout>
 
-    <TextView
-        android:id="@+id/notifTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:fontFamily="@font/poppins_bold"
-        android:paddingVertical="16dp"
-        android:text="Notification Settings"
-        android:textSize="20sp"
-        android:textStyle="bold" />
-
-    <Switch
-        android:id="@+id/notifSwitch2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:fontFamily="@font/poppins"
-        android:paddingVertical="8dp"
-        android:text="Notification when chosen from the waiting list"
-        android:textSize="16sp"
-        android:thumbTint="#8C7466" />
-
-    <Switch
-        android:id="@+id/notifSwitch3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:fontFamily="@font/poppins"
-        android:paddingVertical="8dp"
-        android:text="Notification when not chosen from the waiting list"
-        android:textSize="16sp"
-        android:thumbTint="#8C7466" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <Button
-        android:id="@+id/editPicButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:backgroundTint="#8C7466"
-        android:fontFamily="@font/poppins_bold"
-        android:text="Edit Profile Picture" />
-
-    <Button
-        android:id="@+id/removePicButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:backgroundTint="#8C7466"
-        android:fontFamily="@font/poppins_bold"
-        android:text="Remove Profile Picture" />
-
-    <Button
-        android:id="@+id/saveButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#8C7466"
-        android:fontFamily="@font/poppins_bold"
-        android:text="Save" />
-
-</LinearLayout>
+</RelativeLayout>

@@ -33,6 +33,8 @@ public class AttendeeController {
     private final CurrentUserHandler currentUserHandler = CurrentUserHandler.getSingleton();
     private UserController userController = UserController.getInstance();
 
+
+
     private AttendeeController() {}
 
     public static synchronized AttendeeController getInstance() {
@@ -116,6 +118,7 @@ public class AttendeeController {
         newAttendee.setStatus("waiting");
         if (location != null) {
             GeoLocation newLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
+            userCollectionReference.document(userId).update("geoLocation", newLocation);
             newAttendee.setLocation(newLocation);
         }
         return attendeeCollectionReference.document(newAttendee.getId()).set(newAttendee);
@@ -148,7 +151,7 @@ public class AttendeeController {
      */
     public Task<Void> leaveWaitingList(String eventId, String userId) {
         String attendeeId = Attendee.generateId(userId, eventId);
-        return attendeeCollectionReference.document(attendeeId).delete();
+        return attendeeCollectionReference.document(attendeeId).update("status", "cancelled");
     }
 
     /**

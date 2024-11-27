@@ -101,6 +101,8 @@
         android:text="Edit"
         android:fontFamily="@font/poppins"
         android:textColor="@android:color/white"
+        android:layout_marginTop="15dp"
+        android:layout_marginHorizontal="16dp"
         android:backgroundTint="#8C7466"
         android:layout_below="@id/profilePhoneTextView"
         android:layout_centerHorizontal="true"
