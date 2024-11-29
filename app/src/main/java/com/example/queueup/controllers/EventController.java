@@ -256,8 +256,6 @@ public class EventController {
      * @return Task<Void>
      */
     public Task<Void> unregisterFromEvent(String eventId, String userId) {
-        DocumentReference eventRef = eventCollectionReference.document(eventId);
-
         return eventCollectionReference.document(eventId).update("attendeeIds", FieldValue.arrayRemove(eventId+userId));
     }
 
