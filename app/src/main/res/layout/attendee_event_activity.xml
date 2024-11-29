@@ -123,7 +123,7 @@
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
-        app:layout_constraintVertical_bias="0.260">
+        app:layout_constraintVertical_bias="0.210">
 
         <TextView
             android:id="@+id/title"

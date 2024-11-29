@@ -112,32 +112,34 @@ public class LocationService implements LocationListener {
         }
     }
 
-    public void getLocation() {
+    public Location getLocation() {
         if (!hasLocationPermissions()) {
             if (locationCallback != null) {
                 locationCallback.onLocationError("Location permissions not granted");
             }
-            return;
+            return null;
         }
 
         if (!isLocationEnabled()) {
             if (locationCallback != null) {
                 locationCallback.onLocationError("Location services disabled");
             }
-            return;
+            return null;
         }
 
         // First try to get and validate last known location
         Location lastLocation = getBestLastKnownLocation();
         if (isLocationValid(lastLocation)) {
+
             if (locationCallback != null) {
                 locationCallback.onLocationReceived(lastLocation);
             }
-            return;
+            return null;
+        } else {
+            requestLocationUpdates();
         }
+        return lastLocation;
 
-        // If last location is not valid, request updates
-        requestLocationUpdates();
     }
 
     private Location getBestLastKnownLocation() {

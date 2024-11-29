@@ -256,7 +256,8 @@ public class EventController {
      * @return Task<Void>
      */
     public Task<Void> unregisterFromEvent(String eventId, String userId) {
-        return eventCollectionReference.document(eventId).update("attendeeIds", FieldValue.arrayRemove(eventId+userId));
+        attendeeController.leaveWaitingList(eventId);
+        return eventCollectionReference.document(eventId).update("attendeeIds", FieldValue.arrayRemove(userId+eventId));
     }
 
     /**

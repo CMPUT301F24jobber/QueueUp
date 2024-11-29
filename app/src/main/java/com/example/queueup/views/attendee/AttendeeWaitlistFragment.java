@@ -14,6 +14,7 @@ import com.example.queueup.controllers.AttendeeController;
 import com.example.queueup.controllers.EventController;
 import com.example.queueup.controllers.UserController;
 import com.example.queueup.handlers.CurrentUserHandler;
+import com.example.queueup.models.Attendee;
 import com.example.queueup.models.Event;
 import com.example.queueup.models.GeoLocation;
 import com.example.queueup.services.LocationService;
@@ -33,7 +34,6 @@ public class AttendeeWaitlistFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        if (!isAdded()) return;
 
         joinWaitlistButton = view.findViewById(R.id.join_waitlist);
         event = this.getArguments().getSerializable("event", Event.class);
@@ -45,14 +45,14 @@ public class AttendeeWaitlistFragment extends Fragment {
             Toast.makeText(getContext(), "Geolocation is required for this event.", Toast.LENGTH_LONG).show();
         }
 
+        if (event.getIsGeoLocationRequried()) setupLocationService();
+
         joinWaitlistButton.setOnClickListener((v) -> handleJoinWaitlist());
     }
 
     private void handleJoinWaitlist() {
-        if (!isAdded()) return;
-
-        if (event != null && event.getIsGeoLocationRequried()) {
-            setupLocationService();
+        if (event.getIsGeoLocationRequried()) {
+            joinWithLocation(locationService.getLocation());
         } else {
             joinWithLocation(null);
         }
@@ -70,7 +70,6 @@ public class AttendeeWaitlistFragment extends Fragment {
                         joinWithLocation(location);
                     }
                 }
-
                 @Override
                 public void onLocationError(String error) {
                     if (isAdded() && getContext() != null) {
@@ -79,10 +78,7 @@ public class AttendeeWaitlistFragment extends Fragment {
                     }
                 }
             });
-
             locationService.handleLocationPermissions();
-            locationService.getLocation();
-
     }
 
     private void joinWithLocation(Location location) {
@@ -91,29 +87,17 @@ public class AttendeeWaitlistFragment extends Fragment {
         eventController.registerToEvent(event.getEventId())
                 .addOnSuccessListener(task -> {
                     // Then join waitlist with AttendeeController
-                    attendeeController.joinWaitingList(
-                                    currentUserHandler.getCurrentUserId()+event.getEventId(),
-                                    event.getEventId(),
-                                    location
-                            )
-                            .addOnSuccessListener(waitlistTask -> {
-                                if (isAdded()) {
-                                    joinWaitlistButton.setVisibility(View.INVISIBLE);
-                                    navigateToJoinedFragment();
-                                }
-                            })
-                            .addOnFailureListener(this::handleJoinError);
-                    if (location != null) {
-                    currentUserHandler.getCurrentUser().observe(getViewLifecycleOwner(), user -> {
-                        if (user != null) {
-                            GeoLocation GeoLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
-                            user.setGeoLocation(GeoLocation);
-                            UserController.getInstance().updateUserById(user.getUuid(), "geoLocation", GeoLocation);
-                        }});
-                    }
-
-                    })
-                    .addOnFailureListener(this::handleJoinError);
+                        Attendee attendee = new Attendee(currentUserHandler.getCurrentUserId(), event.getEventId());
+                        attendee.setStatus("waiting");
+                        if (location != null) {
+                            GeoLocation geoLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
+                            attendee.setLocation(geoLocation);
+                        }
+                        attendeeController.updateAttendance(attendee).addOnSuccessListener(waitlistTask -> {
+                            joinWaitlistButton.setVisibility(View.INVISIBLE);
+                            navigateToJoinedFragment();
+                        });
+                    });
 
     }
 

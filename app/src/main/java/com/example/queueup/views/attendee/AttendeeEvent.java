@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide;
 import com.example.queueup.R;
 import com.example.queueup.controllers.AttendeeController;
 import com.example.queueup.handlers.CurrentUserHandler;
+import com.example.queueup.models.Attendee;
 import com.example.queueup.models.Event;
 
 import java.time.format.DateTimeFormatter;
@@ -57,22 +58,43 @@ public class AttendeeEvent extends AppCompatActivity {
         backButton.setOnClickListener((view) -> {
             onBackPressed();
         });
+        navigateToFragment();
 
-        if (!event.getAttendeeIds().contains(currentUserHandler.getCurrentUserId())) {
+    }
+    private void navigateToFragment() {
+        if (!event.getAttendeeIds().contains(currentUserHandler.getCurrentUserId()+event.getEventId())) {
             Bundle bundle = new Bundle();
             bundle.putSerializable("event", event);
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
                     .replace(R.id.attendee_event_fragment, AttendeeWaitlistFragment.class, bundle)
                     .commit();
-        } else {
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("event", event);
-            getSupportFragmentManager().beginTransaction()
-                    .setReorderingAllowed(true)
-                    .replace(R.id.attendee_event_fragment, AttendeeWaitlistJoinedFragment.class, bundle)
-                    .commit();
+        } else if (event.getIsDrawn()) {
+            attendeeController.getAttendanceById(currentUserHandler.getCurrentUserId()+event.getEventId()).addOnSuccessListener( querySnapshot -> {
+                Attendee attendee = querySnapshot.toObject(Attendee.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("event", event);
+                bundle.putSerializable("attendee", attendee);
+
+                switch (attendee.getStatus()) {
+                    case "selected":
+                    case "not selected":
+                        getSupportFragmentManager().beginTransaction()
+                                .setReorderingAllowed(true)
+                                .replace(R.id.attendee_event_fragment, AttendeeWaitlistJoinedFragment.class, bundle)
+                                .commit();
+                        break;
+                    default:
+                        getSupportFragmentManager().beginTransaction()
+                                .setReorderingAllowed(true)
+                                .replace(R.id.attendee_event_fragment, AttendeeWaitlistJoinedFragment.class, bundle)
+                                .commit();
+                        break;
+                }
+
+            });
         }
+
     }
 
 }
