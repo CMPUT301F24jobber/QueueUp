@@ -3,7 +3,6 @@ package com.example.queueup.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
-import android.util.Pair;
 
 import androidx.annotation.NonNull;
 
@@ -12,7 +11,6 @@ import com.google.firebase.firestore.Exclude;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 
 public class User implements Parcelable {
     private String uuid;
@@ -64,16 +62,31 @@ public class User implements Parcelable {
         username = in.readString();
         emailAddress = in.readString();
         phoneNumber = in.readString();
-        isadmin = in.readByte() != 0;
+
+        // Read isadmin with null handling
+        byte isadminByte = in.readByte();
+        if (isadminByte == -1) {
+            isadmin = null;
+        } else {
+            isadmin = isadminByte != 0;
+        }
+
         profileImageUrl = in.readString();
         deviceId = in.readString();
         receiveChosenNotifications = in.readByte() != 0;
         receiveNotChosenNotifications = in.readByte() != 0;
         receiveAllNotifications = in.readByte() != 0;
         waitingListEvents = in.createStringArrayList();
+
+        // Read FCMToken before notifications
         FCMToken = in.readString();
+        notifications = in.createStringArrayList();
+
         geoLocation = in.readParcelable(GeoLocation.class.getClassLoader());
+
+        Log.d("User", "Reading from Parcel: " + this.toString());
     }
+
 
     public static final Creator<User> CREATOR = new Creator<User>() {
         @Override
@@ -280,29 +293,31 @@ public class User implements Parcelable {
     public void setReceiveChosenNotifications(boolean receiveChosenNotifications) {
         this.receiveChosenNotifications = receiveChosenNotifications;
     }
+
     /**
-     * Returns whether the user receives notifications.
+     * Returns whether the user receives notifications when not chosen.
      */
     public boolean isReceiveNotChosenNotifications() {
         return receiveNotChosenNotifications;
     }
 
     /**
-     * Sets whether the user receives notifications.
+     * Sets whether the user receives notifications when not chosen.
      * @param receiveNotChosenNotifications
      */
     public void setReceiveNotChosenNotifications(boolean receiveNotChosenNotifications) {
         this.receiveNotChosenNotifications = receiveNotChosenNotifications;
     }
+
     /**
-     * Returns whether the user receives notifications.
+     * Returns whether the user receives all notifications.
      */
     public boolean isReceiveAllNotifications() {
         return receiveAllNotifications;
     }
 
     /**
-     * Sets whether the user receives notifications.
+     * Sets whether the user receives all notifications.
      * @param receiveAllNotifications
      */
     public void setReceiveAllNotifications(boolean receiveAllNotifications) {
@@ -394,21 +409,55 @@ public class User implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(@NonNull Parcel parcel, int i) {
+    public void writeToParcel(@NonNull Parcel parcel, int flags) {
+        Log.d("User", "Writing to Parcel: " + this.toString());
         parcel.writeString(uuid);
         parcel.writeString(firstName);
         parcel.writeString(lastName);
         parcel.writeString(username);
         parcel.writeString(emailAddress);
         parcel.writeString(phoneNumber);
-        parcel.writeByte((byte) (isadmin ? 1 : 0));
+
+        // Handle possible null for isadmin
+        if (isadmin == null) {
+            parcel.writeByte((byte) -1); // Indicator for null
+        } else {
+            parcel.writeByte((byte) (isadmin ? 1 : 0));
+        }
+
         parcel.writeString(profileImageUrl);
         parcel.writeString(deviceId);
         parcel.writeByte((byte) (receiveChosenNotifications ? 1 : 0));
         parcel.writeByte((byte) (receiveNotChosenNotifications ? 1 : 0));
         parcel.writeByte((byte) (receiveAllNotifications ? 1 : 0));
         parcel.writeStringList(waitingListEvents);
+
+        // Write FCMToken before notifications
+        parcel.writeString(FCMToken);
         parcel.writeStringList(notifications);
-        parcel.writeParcelable(geoLocation, i);
+
+        parcel.writeParcelable(geoLocation, flags);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "uuid='" + uuid + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", username='" + username + '\'' +
+                ", emailAddress='" + emailAddress + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", isadmin=" + isadmin +
+                ", profileImageUrl='" + profileImageUrl + '\'' +
+                ", deviceId='" + deviceId + '\'' +
+                ", receiveChosenNotifications=" + receiveChosenNotifications +
+                ", receiveNotChosenNotifications=" + receiveNotChosenNotifications +
+                ", receiveAllNotifications=" + receiveAllNotifications +
+                ", waitingListEvents=" + waitingListEvents +
+                ", FCMToken='" + FCMToken + '\'' +
+                ", notifications=" + notifications +
+                ", geoLocation=" + geoLocation +
+                '}';
     }
 }
