@@ -83,11 +83,19 @@ public class AttendeeWaitlistFragment extends Fragment {
 
     private void joinWithLocation(Location location) {
         if (!isAdded() || event == null) return;
-        Attendee attendee = new Attendee(currentUserHandler.getCurrentUserId(), event.getEventId());
+        Attendee attendee = new Attendee(currentUserHandler.getCurrentUser().getValue().getUuid(), event.getEventId());
         attendee.setStatus("waiting");
         if (location != null) {
             GeoLocation geoLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
             attendee.setLocation(geoLocation);
+            // update geolocation in user
+            currentUserHandler.getCurrentUser().observe(getViewLifecycleOwner(), user -> {
+                if (user != null) {
+                    GeoLocation GeoLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
+                    user.setGeoLocation(GeoLocation);
+                    UserController.getInstance().updateUserById(user.getUuid(), "geoLocation", GeoLocation);
+                }
+            });
         }
         eventController.registerToEvent(event.getEventId())
                 .addOnSuccessListener(task -> {

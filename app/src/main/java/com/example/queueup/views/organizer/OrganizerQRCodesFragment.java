@@ -61,7 +61,7 @@ public class OrganizerQRCodesFragment extends Fragment {
         observeViewModel();
 
         // Fetch events for the current organizer
-        String organizerId = CurrentUserHandler.getSingleton().getCurrentUserId();
+        String organizerId = CurrentUserHandler.getSingleton().getDeviceId();
         eventViewModel.fetchEventsByOrganizer(organizerId);
     }
 
