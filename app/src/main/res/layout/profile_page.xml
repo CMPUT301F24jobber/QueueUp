@@ -49,6 +49,8 @@
         android:textSize="22sp"
         android:textStyle="bold"
         android:textColor="#8C7466"
+        android:maxLines="5"
+        android:singleLine="false"
         android:layout_below="@id/profileImageFrame"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"

@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="160dp"
+    android:layout_height="170dp"
     android:layout_marginHorizontal="20dp"
     android:layout_marginVertical="5dp"
     android:background="@drawable/home_event_bg"
@@ -18,7 +18,7 @@
         android:importantForAccessibility="no"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.103"
+        app:layout_constraintHorizontal_bias="0.100"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
@@ -28,16 +28,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
+        android:paddingRight="50dp"
         android:fontFamily="@font/poppins_extrabold"
+        android:maxWidth="230dp"
+        android:maxLines="2"
+        android:singleLine="false"
 
         android:text="@string/event_name"
         android:textAlignment="textStart"
         android:textColor="@color/white"
         android:textSize="24sp"
+        android:ellipsize="end"
 
-        app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.017"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toEndOf="@+id/event_image"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.055" />
@@ -47,6 +52,7 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
+        android:layout_marginTop="4dp"
         android:fontFamily="@font/poppins_extralight"
         android:maxLines="2"
         android:text="Date"
@@ -56,38 +62,40 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/event_image"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.403" />
+        app:layout_constraintTop_toBottomOf="@+id/event_name"
+        app:layout_constraintVertical_bias="0.15" />
 
     <TextView
         android:id="@+id/event_location"
         android:layout_width="160dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="9dp"
+        android:layout_marginTop="12dp"
         android:fontFamily="@font/poppins_bold"
         android:maxLines="2"
         android:text="Location"
         android:textAlignment="textStart"
-        android:textSize="12sp"
         android:textColor="@color/white"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.058"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toEndOf="@+id/location_icon"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.65" />
+        app:layout_constraintTop_toBottomOf="@+id/event_date"
+        app:layout_constraintVertical_bias="0.3" />
 
     <ImageView
         android:id="@+id/location_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
+        android:layout_marginTop="9dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.005"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toEndOf="@+id/event_image"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.642"
+        app:layout_constraintTop_toBottomOf="@+id/event_date"
+        app:layout_constraintVertical_bias="0.3"
         app:srcCompat="@drawable/map_pin" />
 
     <Button

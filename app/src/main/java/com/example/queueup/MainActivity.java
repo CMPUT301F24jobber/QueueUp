@@ -26,6 +26,8 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.security.Provider;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String CHANNEL_ID = "QueueUp Notifications";
@@ -77,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         // Initialize LocationService
         LocationServices.getFusedLocationProviderClient(this);
         startNotificationService();
+
     }
 
     private void startNotificationService() {

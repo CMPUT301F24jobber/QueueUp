@@ -5,5 +5,8 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
-    <style name="Theme.QueueUp" parent="Base.Theme.QueueUp" />
+    <style name="Theme.QueueUp" parent="Base.Theme.QueueUp">
+        <item name="android:buttonStyle">@style/ButtonStyle</item>
+        <item name="android:textViewStyle">@style/TextViewStyle</item>
+    </style>
 </resources>

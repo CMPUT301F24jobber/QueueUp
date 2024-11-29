@@ -1,9 +1,11 @@
 package com.example.queueup.services;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
+import android.content.pm.ServiceInfo;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
@@ -12,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.ServiceCompat;
 
 import com.example.queueup.R;
 import com.example.queueup.controllers.UserController;
@@ -31,22 +34,15 @@ public class NotificationService extends Service {
     private static final String CHANNEL_ID = "default_channel";
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private User user;
+    private NotificationManager notificationManager;
+    private NotificationChannel notificationChannel;
     private UserController userController = UserController.getInstance();
 
     private String deviceId;
-    private static UserViewModel userViewModel;
+    Thread thread;
 
     private void showNotification(String title) {
-        // this chunk should be in the bind I think, not sure completely, it's fine here but eh
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence channelName = "Default Channel";
-            NotificationChannel channel = new NotificationChannel(
-                    CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_DEFAULT);
-            notificationManager.createNotificationChannel(channel);
-        }
-        // end chunk
+
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle(title)
                 .setAutoCancel(true)
@@ -56,14 +52,7 @@ public class NotificationService extends Service {
     }
     private void showNotificationDesc(String title, String description) {
         // this chunk should be in the bind I think, not sure completely, it's fine here but eh
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence channelName = "Default Channel";
-            NotificationChannel channel = new NotificationChannel(
-                    CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_DEFAULT);
-            notificationManager.createNotificationChannel(channel);
-        }
+
         // end chunk
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle(title)
@@ -152,12 +141,32 @@ public class NotificationService extends Service {
                                int flags,
                                int startId) {
         super.onStartCommand(intent, flags, startId);
+        Notification notification =
+                new NotificationCompat.Builder(this, "CHANNEL_ID")
+                        // Create the notification to display while the service
+                        // is running
+                        .build();
+
+
         deviceId = userController.getDeviceId(getApplicationContext());
 
-        observeNotification();
 
+        notificationManager =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        CharSequence channelName = "Default Channel";
+        notificationChannel = new NotificationChannel(
+                CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_DEFAULT);
+        notificationManager.createNotificationChannel(notificationChannel);
+        thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                observeNotification();
+            }
+        });
+        thread.start();
 
         Toast.makeText(this, "notification service started", Toast.LENGTH_SHORT).show();
         return Service.START_STICKY;
     }
+
 }
