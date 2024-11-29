@@ -30,7 +30,7 @@
         android:layout_height="60dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/navigation_bar_bg"
         app:itemIconTint="@drawable/navigation_bar_selector"
         app:layout_constraintBottom_toBottomOf="parent"

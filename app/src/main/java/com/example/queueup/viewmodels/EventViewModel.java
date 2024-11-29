@@ -170,16 +170,13 @@ public class EventViewModel extends ViewModel {
     /**
      * Fetches events attended by a specific attendee.
      *
-     * @param attendeeId T
+     * @param userId
      */
-    public void fetchEventsByAttendee(String attendeeId) {
-        if (attendeeId == null || attendeeId.isEmpty()) {
-            errorMessageLiveData.setValue("Attendee ID is invalid.");
-            return;
-        }
+    public void fetchEventsByUserId(String userId) {
+
 
         isLoadingLiveData.setValue(true);
-        eventController.getEventsByAttendeeId(attendeeId)
+        eventController.getEventsByUserId(userId)
                 .addOnSuccessListener(new OnSuccessListener<List<DocumentSnapshot>>() {
                     @Override
                     public void onSuccess(List<DocumentSnapshot> documentSnapshots) {

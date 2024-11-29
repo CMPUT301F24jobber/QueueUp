@@ -1,6 +1,7 @@
 package com.example.queueup.views.attendee;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,6 +23,7 @@ public class AttendeeEvent extends AppCompatActivity {
     AttendeeController attendeeController;
     private Event event;
     TextView titleText;
+    private Attendee attendee;
 
     /**
      * The current user handler.
@@ -70,8 +72,9 @@ public class AttendeeEvent extends AppCompatActivity {
                     .replace(R.id.attendee_event_fragment, AttendeeWaitlistFragment.class, bundle)
                     .commit();
         } else if (event.getIsDrawn()) {
-            attendeeController.getAttendanceById(currentUserHandler.getCurrentUserId()+event.getEventId()).addOnSuccessListener( querySnapshot -> {
-                Attendee attendee = querySnapshot.toObject(Attendee.class);
+            attendeeController.getAttendanceById(currentUserHandler.getCurrentUserId()+event.getEventId())
+                    .addOnSuccessListener(querySnapshot -> {
+                        attendee = querySnapshot.toObject(Attendee.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("event", event);
                 bundle.putSerializable("attendee", attendee);
@@ -81,7 +84,7 @@ public class AttendeeEvent extends AppCompatActivity {
                     case "not selected":
                         getSupportFragmentManager().beginTransaction()
                                 .setReorderingAllowed(true)
-                                .replace(R.id.attendee_event_fragment, AttendeeWaitlistJoinedFragment.class, bundle)
+                                .replace(R.id.attendee_event_fragment, AttendeeWaitlistChoiceFragment.class, bundle)
                                 .commit();
                         break;
                     default:

@@ -173,7 +173,6 @@ public class OrganizerDraw extends Fragment {
                         Integer.valueOf(numDraw.getEditText().getText().toString().trim()),
                         winnerNotification.isChecked() || everyoneNotification.isChecked(),
                         loserNotification.isChecked() || everyoneNotification.isChecked());
-                eventController.setIsDrawn(event.getEventId());
             } else {
                 Toast.makeText(getContext(), "The number of winners is invalid", Toast.LENGTH_SHORT).show();
 

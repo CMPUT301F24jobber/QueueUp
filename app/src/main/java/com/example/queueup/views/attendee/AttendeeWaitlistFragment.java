@@ -83,43 +83,26 @@ public class AttendeeWaitlistFragment extends Fragment {
 
     private void joinWithLocation(Location location) {
         if (!isAdded() || event == null) return;
-
+        Attendee attendee = new Attendee(currentUserHandler.getCurrentUserId(), event.getEventId());
+        attendee.setStatus("waiting");
+        if (location != null) {
+            GeoLocation geoLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
+            attendee.setLocation(geoLocation);
+        }
         eventController.registerToEvent(event.getEventId())
                 .addOnSuccessListener(task -> {
                     // Then join waitlist with AttendeeController
-                        Attendee attendee = new Attendee(currentUserHandler.getCurrentUserId(), event.getEventId());
-                        attendee.setStatus("waiting");
-                        if (location != null) {
-                            GeoLocation geoLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
-                            attendee.setLocation(geoLocation);
-                        }
-                        attendeeController.updateAttendance(attendee).addOnSuccessListener(waitlistTask -> {
-                            joinWaitlistButton.setVisibility(View.INVISIBLE);
-                            navigateToJoinedFragment();
-                        });
+                        attendeeController.updateAttendance(attendee);
                     });
-
-    }
-
-    private void handleJoinError(Exception e) {
-        if (isAdded() && getContext() != null) {
-            Toast.makeText(getContext(),
-                    "Failed to join waitlist: " + e.getMessage(),
-                    Toast.LENGTH_LONG).show();
-        }
-    }
-
-    private void navigateToJoinedFragment() {
-        if (!isAdded()) return;
-
         Bundle bundle = new Bundle();
         bundle.putSerializable("event", event);
+        bundle.putSerializable("attendee", attendee);
         getActivity().getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
                 .replace(R.id.attendee_event_fragment, AttendeeWaitlistJoinedFragment.class, bundle)
                 .commit();
-
     }
+
 
     @Override
     public void onDestroyView() {

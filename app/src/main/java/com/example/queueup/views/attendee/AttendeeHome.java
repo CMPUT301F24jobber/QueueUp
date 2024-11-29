@@ -2,7 +2,9 @@ package com.example.queueup.views.attendee;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,12 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 
 public class AttendeeHome extends AppCompatActivity {
-    private FirebaseFirestore db;
-    private TextView titleTextView;
-    private TextView profileInitialsTextView;
-    private FrameLayout profileInitialsFrame;
     private String deviceId;
-    private ImageView profileImageView;
     private BottomNavigationView navigationView;
 
     /**
@@ -35,9 +32,11 @@ public class AttendeeHome extends AppCompatActivity {
         setContentView(R.layout.attendee_activity);
 
         // Initialize Firebase and TextView
-        db = FirebaseFirestore.getInstance();
         navigationView = findViewById(R.id.bottom_navigation);
-
+        ImageButton backButton = findViewById(R.id.back_button);
+        backButton.setOnClickListener((view) -> {
+            onBackPressed();
+        });
 
         // Get deviceId from intent or UserController
         deviceId = getIntent().getStringExtra("deviceId");
@@ -82,5 +81,6 @@ public class AttendeeHome extends AppCompatActivity {
             return true;
         });
     }
+
 
 }

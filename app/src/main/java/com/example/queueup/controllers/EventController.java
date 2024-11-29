@@ -82,12 +82,12 @@ public class EventController {
     /**
      * Retrieves all events that a specific attendee is registered for.
      *
-     * @param attendeeId The ID of the attendee
+     * @param userId The ID of the attendee
      * @return Task<List<DocumentSnapshot>>
      */
-    public Task<List<DocumentSnapshot>> getEventsByAttendeeId(String attendeeId) {
+    public Task<List<DocumentSnapshot>> getEventsByUserId(String userId) {
         return attendanceCollectionReference
-                .whereEqualTo("userId", attendeeId)
+                .whereEqualTo("userId", userId)
                 .get()
                 .continueWithTask(task -> {
                     if (task.isSuccessful()) {
@@ -268,6 +268,8 @@ public class EventController {
      * @return Task<List<String>>
      */
     public void drawLottery(String eventId, int numberToSelect, boolean notifyWinner, boolean nottifyLoser) {
+        setIsDrawn(eventId);
+
         getEventById(eventId).continueWith(task -> {
             if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
             Event event = task.getResult().toObject(Event.class);

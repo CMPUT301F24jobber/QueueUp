@@ -1,6 +1,7 @@
 package com.example.queueup.views.attendee;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -20,7 +21,7 @@ public class AttendeeWaitlistChoiceFragment extends Fragment {
     }
 
 
-    private Button buttonOne, buttonTwo;
+    private Button buttonOne, leaveButton;
     private EventController eventController;
     private AttendeeController attendeeController;
     private CurrentUserHandler currentUserHandler;
@@ -31,19 +32,24 @@ public class AttendeeWaitlistChoiceFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         event = this.getArguments().getSerializable("event", Event.class);
-        attendee = this.getArguments().getSerializable("event", Attendee.class);
-
+        attendee = this.getArguments().getSerializable("attendee", Attendee.class);
+        eventController = EventController.getInstance();
+        attendeeController = AttendeeController.getInstance();
         buttonOne = view.findViewById(R.id.button_one);
-        buttonTwo = view.findViewById(R.id.button_two);
+        leaveButton = view.findViewById(R.id.button_two);
 
-        if (attendee.getStatus() == "selected") {
+
+        if (attendee.getStatus().equals("selected")) {
             buttonOne.setText("Enroll in Event");
-            buttonTwo.setText("Cancel");
+            leaveButton.setText("Decline");
         } else {
             buttonOne.setText("Get a chance to be redrawn");
-            buttonTwo.setText("Cancel");
-
+            leaveButton.setText("Decline");
         }
+        leaveButton.setOnClickListener(v -> {
+            attendeeController.setAttendeeStatus(attendee.getId(), "cancelled");
+            getActivity().onBackPressed();
+        });
 
     }
 }
