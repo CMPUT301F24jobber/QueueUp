@@ -22,7 +22,10 @@ public class Event implements Serializable {
     private Boolean isActive;
     private Boolean isDrawn;
     private Boolean redrawEnabled;
+    private Boolean redrawNotificationEnabled;
+
     private Boolean isGeoLocationRequried;
+
 
     private int maxCapacity;
     private int currentCapacity;
@@ -49,6 +52,7 @@ public class Event implements Serializable {
         this.isDrawn = isDrawn;
         this.isGeoLocationRequried = isGeoLocationRequried;
         this.redrawEnabled = false;
+        this.redrawNotificationEnabled = false;
     }
 
     public Boolean getIsGeoLocationRequried() {
@@ -362,5 +366,22 @@ public class Event implements Serializable {
      */
     public void setRedrawEnabled(Boolean redrawEnabled) {
         this.redrawEnabled = redrawEnabled;
+    }
+    /**
+     * Checks if attendees are notified when winning though redraw.
+     *
+     * @return bool
+     */
+    public Boolean getRedrawNotificationEnabled() {
+        return redrawNotificationEnabled;
+    }
+
+    /**
+     * Sets if attendees are notified when winning through redraw.
+     *
+     * @param redrawNotificationEnabled
+     */
+    public void setRedrawNotificationEnabled(Boolean redrawNotificationEnabled) {
+        this.redrawNotificationEnabled = redrawNotificationEnabled;
     }
 }

@@ -3,8 +3,10 @@ package com.example.queueup.controllers;
 import static android.content.ContentValues.TAG;
 
 
+
 import android.location.Location;
 import android.util.Log;
+import java.util.Random;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -23,6 +25,8 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
+
+import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -226,7 +230,7 @@ public class EventController {
 
             // Update event's current capacity and attendee list
             transaction.update(eventRef, "currentCapacity", FieldValue.increment(1));
-            transaction.update(eventRef, "attendeeIds", FieldValue.arrayUnion(userId));
+            transaction.update(eventRef, "attendeeIds", FieldValue.arrayUnion(userId+eventId));
 
             return null;
         }).continueWithTask(task -> {
@@ -254,33 +258,7 @@ public class EventController {
     public Task<Void> unregisterFromEvent(String eventId, String userId) {
         DocumentReference eventRef = eventCollectionReference.document(eventId);
 
-        return db.runTransaction(transaction -> {
-            DocumentSnapshot eventSnapshot = transaction.get(eventRef);
-            String eventName = eventSnapshot.getString("eventName");
-            List<String> attendees = (List<String>) eventSnapshot.get("attendeeIds");
-
-            if (attendees != null && attendees.contains(userId)) {
-                transaction.update(eventRef, "attendeeIds", FieldValue.arrayRemove(userId));
-                transaction.update(eventRef, "currentCapacity", FieldValue.increment(-1));
-            } else {
-                throw new RuntimeException("You are not registered for this event.");
-            }
-
-            return null;
-        }).continueWithTask(task -> {
-            if (task.isSuccessful()) {
-                attendeeController.setAttendeeStatus(eventId, "cancelled");
-                return attendeeController.leaveWaitingList(eventId);
-            } else {
-                Exception e = task.getException();
-                String errorMessage = e != null ? e.getMessage() : "Unknown error";
-                throw new RuntimeException("(Failed to unregister from event) " + errorMessage);
-            }
-        }).addOnSuccessListener(aVoid -> {
-            Log.d("EventController", "Successfully unregistered from event.");
-        }).addOnFailureListener(e -> {
-            Log.e("EventController", "Failed to unregister from event.", e);
-        });
+        return eventCollectionReference.document(eventId).update("attendeeIds", FieldValue.arrayRemove(eventId+userId));
     }
 
     /**
@@ -290,8 +268,7 @@ public class EventController {
      * @param numberToSelect
      * @return Task<List<String>>
      */
-    public void drawLottery(String eventId, int numberToSelect) {
-
+    public void drawLottery(String eventId, int numberToSelect, boolean notifyWinner, boolean nottifyLoser) {
         getEventById(eventId).continueWith(task -> {
             if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
             Event event = task.getResult().toObject(Event.class);
@@ -311,7 +288,7 @@ public class EventController {
 
         for (int i = 0, n = shuffledAttendees.size(); i < n; ++i) {
             String attendeeId = shuffledAttendees.get(i), selection = (i < correctedNum ? "selected" : "not selected");
-            Log.d("jwew", attendeeId.substring(0, 36));
+            Log.d("UserId", attendeeId.substring(0, 36));
             userController.notifyUserById(attendeeId.substring(0, 36), selection, AttendeeController.makeNotificationMessage(selection, eventName));
             attendeeController.setAttendeeStatus(attendeeId, selection);
         }
@@ -320,7 +297,7 @@ public class EventController {
         });
 
     }
-    public void cancelWinners(String eventId) {
+    public void cancelWinners(String eventId, String eventName, boolean notify) {
         attendeeController.getAttendanceByEventId(eventId)
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
@@ -334,6 +311,10 @@ public class EventController {
                         }
                         for (Attendee attendee : attendees) {
                             if (attendee.getStatus().equals("selected")) {
+                                if (notify) {
+                                userController.notifyUserById(attendee.getUserId(), "cancelled",
+                                        AttendeeController.makeNotificationMessage("cancelled", eventName));
+                                }
                                 attendeeController.setAttendeeStatus(attendee.getId(), "cancelled");
                             }
                         }
@@ -507,22 +488,29 @@ public class EventController {
      * @param eventId
      * @return Task<Void>
      */
-    public Task<Void> handleReplacement(String eventId) {
+    public Task<Void> handleReplacement(String eventId, String eventName) {
         Log.d(TAG, "handleReplacement called for eventId: " + eventId);
 
         return attendanceCollectionReference
                 .whereEqualTo("eventId", eventId)
-                .whereEqualTo("status", "pending")
+                .whereEqualTo("status", "waiting")
                 .get()
                 .continueWithTask(task -> {
                     if (task.isSuccessful()) {
                         QuerySnapshot querySnapshot = task.getResult();
                         if (querySnapshot != null && !querySnapshot.isEmpty()) {
                             // Select the next attendee in line
-                            DocumentSnapshot nextAttendeeDoc = querySnapshot.getDocuments().get(0);
-                            Attendee nextAttendee = nextAttendeeDoc.toObject(Attendee.class);
-                            if (nextAttendee != null) {
-                                // Send invitation notification
+                            ArrayList<String> attendees = new ArrayList<>();
+                            for (DocumentSnapshot documentSnapshot : querySnapshot) {
+                                Attendee nextAttendee = documentSnapshot.toObject(Attendee.class);
+                                if (nextAttendee != null) {
+                                    attendees.add(nextAttendee.getUserId());
+                                }
+                            }
+                            if (!attendees.isEmpty()) {
+                                String attendeeId = attendees.get((new Random()).nextInt(attendees.size()));
+                                userController.notifyUserById(attendeeId.substring(0, 36), "selected", AttendeeController.makeNotificationMessage("selected", eventName));
+                                attendeeController.setAttendeeStatus(attendeeId, "selected");
                             }
                         }
                         return Tasks.forResult(null);
@@ -644,8 +632,14 @@ public class EventController {
         return eventCollectionReference.document(eventId)
                 .update("isDrawn",true);
     }
-
-
+    public Task<Void> setRedrawEnabled(String eventId, boolean notify) {
+        return eventCollectionReference.document(eventId)
+                .update("redrawEnabled",notify);
+    }
+    public Task<Void> setSendingNotificationOnRedraw(String eventId, boolean notify) {
+        return eventCollectionReference.document(eventId)
+                .update("redrawNotificationEnabled",notify);
+    }
 
     /**
      * Generates a unique event ID.

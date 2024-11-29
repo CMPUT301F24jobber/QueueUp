@@ -565,7 +565,7 @@ public class EventViewModel extends ViewModel {
         }
 
         isLoadingLiveData.setValue(true);
-        eventController.drawLottery(eventId, numberToSelect);
+        eventController.drawLottery(eventId, numberToSelect, true, true);
     }
 
     /**
@@ -573,14 +573,14 @@ public class EventViewModel extends ViewModel {
      *
      * @param eventId
      */
-    public void handleReplacement(String eventId) {
+    public void handleReplacement(String eventId, String eventName) {
         if (eventId == null || eventId.isEmpty()) {
             errorMessageLiveData.setValue("Invalid event ID for handling replacement.");
             return;
         }
 
         isLoadingLiveData.setValue(true);
-        eventController.handleReplacement(eventId)
+        eventController.handleReplacement(eventId, eventName)
                 .addOnSuccessListener(aVoid -> {
                     fetchEventById(eventId);
                 })

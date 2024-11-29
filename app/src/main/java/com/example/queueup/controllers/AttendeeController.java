@@ -138,7 +138,7 @@ public class AttendeeController {
         String userId = currentUser.getUuid();
         String attendeeId = Attendee.generateId(userId, eventId);
 
-        return attendeeCollectionReference.document(attendeeId).update("status", "cancelled");
+        return attendeeCollectionReference.document(attendeeId).delete();
     }
 
     /**

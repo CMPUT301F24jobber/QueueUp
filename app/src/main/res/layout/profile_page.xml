@@ -26,8 +26,8 @@
             android:textStyle="bold"
             android:textColor="@android:color/white"
             android:gravity="center"
-            android:padding="10dp"
-            android:visibility="visible" />
+            android:visibility="visible"
+            android:layout_gravity="center"/>
 
         <ImageView
             android:id="@+id/profileImageView"
@@ -35,6 +35,7 @@
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
             android:visibility="gone"
+            android:layout_gravity="center"
             />
 
     </FrameLayout>

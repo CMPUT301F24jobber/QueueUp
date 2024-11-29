@@ -87,6 +87,8 @@ public class NotificationService extends Service {
             ArrayList<String> notifications = (ArrayList<String>) user.getNotifications();
 
             if (notifications.isEmpty()) return;
+            if (notifications.size() % 2 == 1) return;
+
             for (int i = 0, n = notifications.size(); i < n; i +=2 ) {
                 if (notificationPerm(notifications.get(i))) {
                     showNotification(notifications.get(i+1));

@@ -4,6 +4,7 @@ package com.example.queueup.views.attendee;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,11 +25,12 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.journeyapps.barcodescanner.CaptureActivity;
+import com.journeyapps.barcodescanner.ScanContract;
 
-public class AttendeeQRscanActivity extends AppCompatActivity {
+public class AttendeeQRscanActivity extends CaptureActivity {
 
     private static final int PERMISSION_REQUEST_CAMERA = 1;
-    private EventViewModel eventViewModel;
     private EventController eventController;
 
     /**
@@ -39,86 +41,15 @@ public class AttendeeQRscanActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        eventViewModel = new ViewModelProvider(this).get(EventViewModel.class);
         eventController = EventController.getInstance();
-
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUEST_CAMERA);
-        } else {
-            initQRCodeScanner();
         }
     }
 
-    /**
-     * Called when the activity is resumed.
-     * @param requestCode
-     * @param permissions
-     * @param grantResults
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSION_REQUEST_CAMERA) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                initQRCodeScanner();
-            } else {
-                Toast.makeText(this, "Camera permission is required", Toast.LENGTH_LONG).show();
-                onBackPressed();
-            }
-        }
-    }
 
-    /**
-     * Initializes the QR code scanner.
-     */
-    private void initQRCodeScanner() {
-        IntentIntegrator integrator = new IntentIntegrator(this);
-        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
-        integrator.setOrientationLocked(false);
-        integrator.setPrompt("Scan a QR code");
-        integrator.initiateScan();
-    }
 
-    /**
-     * Called when the activity is resumed.
-     * @param requestCode
-     * @param resultCode
-     * @param data
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if (result != null) {
-
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-        eventController.getEventById(result.getContents())
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        if (documentSnapshot.exists()) {
-                            Event event = documentSnapshot.toObject(Event.class);
-                            if (event != null) {
-                                Intent intent;
-                                intent = new Intent(AttendeeQRscanActivity.this, AttendeeEvent.class);
-                                intent.putExtra("event", event);
-
-                                startActivity(intent);
-                                finish();
-                            }
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Intent intent = new Intent(AttendeeQRscanActivity.this, AttendeeHome.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                });
-    }
 
 
 }

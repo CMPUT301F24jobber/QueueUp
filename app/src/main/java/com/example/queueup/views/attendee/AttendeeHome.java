@@ -74,7 +74,6 @@ public class AttendeeHome extends AppCompatActivity {
                             .setReorderingAllowed(true)
                             .replace(R.id.attendee_activity_fragment, ProfileFragment.class, null)
                             .addToBackStack("Profile")
-
                             .commit();
                     break;
                 default:
@@ -83,5 +82,5 @@ public class AttendeeHome extends AppCompatActivity {
             return true;
         });
     }
-    
+
 }

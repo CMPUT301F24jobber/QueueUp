@@ -42,11 +42,16 @@
         </activity>
         <activity
             android:name="com.example.queueup.views.attendee.AttendeeHome"
+            android:screenOrientation="portrait"
+
             android:exported="true">
         </activity>
         <activity
             android:name="com.example.queueup.views.attendee.AttendeeQRscanActivity"
-            android:exported="true">
+            android:screenOrientation="sensorPortrait"
+            android:stateNotNeeded="true"
+            android:theme="@style/zxing_CaptureTheme"
+            android:windowSoftInputMode="stateAlwaysHidden">
         </activity>
         <activity
             android:name="com.example.queueup.views.attendee.AttendeeEvent"
