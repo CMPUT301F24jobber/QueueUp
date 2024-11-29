@@ -7,11 +7,10 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.queueup.models.User;
 import com.example.queueup.controllers.UserController;
+import com.example.queueup.models.User;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 
 public class UserViewModel extends AndroidViewModel {
@@ -118,7 +117,7 @@ public class UserViewModel extends AndroidViewModel {
                 .addOnSuccessListener(aVoid -> {
                     User user = currentUser.getValue();
                     if (user != null) {
-                        user.setReceiveNotifications(receiveNotifications);
+                        user.setReceiveAllNotifications(receiveNotifications);
                         currentUser.setValue(user);
                     }
                 })

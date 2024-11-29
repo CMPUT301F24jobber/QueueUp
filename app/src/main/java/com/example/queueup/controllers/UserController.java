@@ -14,6 +14,7 @@ import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -99,39 +100,6 @@ public class UserController {
         return userCollectionReference.document(user.getUuid()).set(user);
     }
 
-    /**
-     * get user fcm token
-     * @param userId
-     * @return Task<String>
-     */
-    public Task<String> getUserFcmToken(String userId) {
-        TaskCompletionSource<String> taskCompletionSource = new TaskCompletionSource<>();
-        userCollectionReference.document(userId).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
-                User user = task.getResult().toObject(User.class);
-                if (user != null) {
-                    taskCompletionSource.setResult(user.getFCMToken());
-                    return;
-                }
-            }
-            taskCompletionSource.setResult(null);
-        });
-        return taskCompletionSource.getTask();
-    }
-
-    /**
-     * Set user fcm token
-     * @param userId
-     * @param fcmToken
-     * @return Task<Void>
-     */
-    public Task<Void> setUserFcmToken(String userId, String fcmToken) {
-        DocumentReference userRef = userCollectionReference.document(userId);
-        return userRef.update("FCMToken", fcmToken)
-                .addOnSuccessListener(aVoid -> Log.d("UserController", "User FCM token successfully updated."))
-                .addOnFailureListener(e -> Log.e("UserController", "Failed to update user FCM token.", e));
-    }
-
 
     /**
      * Update a user's profile picture.
@@ -191,22 +159,7 @@ public class UserController {
         return userCollectionReference.whereEqualTo("deviceId", deviceId).get();
     }
 
-    /**
-     * Retrieves the FCM token for a specific user.
-     *
-     * @param userId
-     * @return Task<String>
-     */
-    public Task<String> getFCMToken(String userId) {
-        return getUserById(userId).continueWith(task -> {
-            if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
-                User user = task.getResult().toObject(User.class);
-                return user != null ? user.getFCMToken() : null;
-            } else {
-                throw new RuntimeException("User not found or failed to retrieve.");
-            }
-        });
-    }
+
 
     /**
      * Checks if a user has enabled a specific type of notification.
@@ -219,7 +172,7 @@ public class UserController {
             if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
                 User user = task.getResult().toObject(User.class);
                 if (user != null) {
-                    return user.isReceiveNotifications();
+                    return user.isReceiveAllNotifications();
                 }
                 return false;
             } else {
@@ -227,4 +180,8 @@ public class UserController {
             }
         });
     }
+    public Task<Void> notifyUserById(String userId, String status, String notification) {
+        return userCollectionReference.document(userId).update("notifications", FieldValue.arrayUnion(status, notification));
+    }
+
 }

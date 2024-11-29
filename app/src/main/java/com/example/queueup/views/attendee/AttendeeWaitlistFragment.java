@@ -14,6 +14,7 @@ import com.example.queueup.controllers.AttendeeController;
 import com.example.queueup.controllers.EventController;
 import com.example.queueup.controllers.UserController;
 import com.example.queueup.handlers.CurrentUserHandler;
+import com.example.queueup.models.Attendee;
 import com.example.queueup.models.Event;
 import com.example.queueup.models.GeoLocation;
 import com.example.queueup.services.LocationService;
@@ -33,7 +34,6 @@ public class AttendeeWaitlistFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        if (!isAdded()) return;
 
         joinWaitlistButton = view.findViewById(R.id.join_waitlist);
         event = this.getArguments().getSerializable("event", Event.class);
@@ -45,21 +45,20 @@ public class AttendeeWaitlistFragment extends Fragment {
             Toast.makeText(getContext(), "Geolocation is required for this event.", Toast.LENGTH_LONG).show();
         }
 
+        if (event.getIsGeoLocationRequried()) setupLocationService();
+
         joinWaitlistButton.setOnClickListener((v) -> handleJoinWaitlist());
     }
 
     private void handleJoinWaitlist() {
-        if (!isAdded()) return;
-
-        if (event != null && event.getIsGeoLocationRequried()) {
-            setupLocationService();
+        if (event.getIsGeoLocationRequried()) {
+            joinWithLocation(locationService.getLocation());
         } else {
             joinWithLocation(null);
         }
     }
 
     private void setupLocationService() {
-        try {
             LocationManager locationManager = (LocationManager) requireActivity()
                     .getSystemService(Context.LOCATION_SERVICE);
             locationService = new LocationService(requireContext(), requireActivity(), locationManager);
@@ -71,7 +70,6 @@ public class AttendeeWaitlistFragment extends Fragment {
                         joinWithLocation(location);
                     }
                 }
-
                 @Override
                 public void onLocationError(String error) {
                     if (isAdded() && getContext() != null) {
@@ -80,74 +78,39 @@ public class AttendeeWaitlistFragment extends Fragment {
                     }
                 }
             });
-
             locationService.handleLocationPermissions();
-            locationService.getLocation();
-        } catch (IllegalStateException e) {
-            if (isAdded() && getContext() != null) {
-                Toast.makeText(getContext(), "Failed to setup location service", Toast.LENGTH_LONG).show();
-            }
-        }
     }
 
     private void joinWithLocation(Location location) {
         if (!isAdded() || event == null) return;
-
-        try {
-            // First register with EventController
-
-            eventController.registerToEvent(event.getEventId())
-                    .addOnSuccessListener(task -> {
-                        // Then join waitlist with AttendeeController
-                        attendeeController.joinWaitingList(
-                                        currentUserHandler.getCurrentUserId(),
-                                        event.getEventId(),
-                                        location
-                                )
-                                .addOnSuccessListener(waitlistTask -> {
-                                    if (isAdded()) {
-                                        joinWaitlistButton.setVisibility(View.INVISIBLE);
-                                        navigateToJoinedFragment();
-                                    }
-                                })
-                                .addOnFailureListener(this::handleJoinError);
-                        // update geolocation in user
-                        currentUserHandler.getCurrentUser().observe(getViewLifecycleOwner(), user -> {
-                            if (user != null) {
-                                GeoLocation GeoLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
-                                user.setGeoLocation(GeoLocation);
-                                UserController.getInstance().updateUserById(user.getUuid(), "geoLocation", GeoLocation);
-                            }
-                        });
-                    })
-                    .addOnFailureListener(this::handleJoinError);
-        } catch (IllegalStateException e) {
-            handleJoinError(e);
+        Attendee attendee = new Attendee(currentUserHandler.getCurrentUser().getValue().getUuid(), event.getEventId());
+        attendee.setStatus("waiting");
+        if (location != null) {
+            GeoLocation geoLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
+            attendee.setLocation(geoLocation);
+            // update geolocation in user
+            currentUserHandler.getCurrentUser().observe(getViewLifecycleOwner(), user -> {
+                if (user != null) {
+                    GeoLocation GeoLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
+                    user.setGeoLocation(GeoLocation);
+                    UserController.getInstance().updateUserById(user.getUuid(), "geoLocation", GeoLocation);
+                }
+            });
         }
+        eventController.registerToEvent(event.getEventId())
+                .addOnSuccessListener(task -> {
+                    // Then join waitlist with AttendeeController
+                        attendeeController.updateAttendance(attendee);
+                    });
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("event", event);
+        bundle.putSerializable("attendee", attendee);
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .setReorderingAllowed(true)
+                .replace(R.id.attendee_event_fragment, AttendeeWaitlistJoinedFragment.class, bundle)
+                .commit();
     }
 
-    private void handleJoinError(Exception e) {
-        if (isAdded() && getContext() != null) {
-            Toast.makeText(getContext(),
-                    "Failed to join waitlist: " + e.getMessage(),
-                    Toast.LENGTH_LONG).show();
-        }
-    }
-
-    private void navigateToJoinedFragment() {
-        if (!isAdded()) return;
-
-        try {
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("event", event);
-            requireActivity().getSupportFragmentManager().beginTransaction()
-                    .setReorderingAllowed(true)
-                    .replace(R.id.attendee_event_fragment, AttendeeWaitlistJoinedFragment.class, bundle)
-                    .commit();
-        } catch (IllegalStateException e) {
-            handleJoinError(e);
-        }
-    }
 
     @Override
     public void onDestroyView() {

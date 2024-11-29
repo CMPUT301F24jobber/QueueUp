@@ -57,13 +57,11 @@ public class AttendeeHomeFragment extends Fragment {
         eventList = view.findViewById(R.id.event_list);  // Use 'view' to find the ListView in the fragment's layout
         eventAdapter = new AttendeeEventArrayAdapter(view.getContext(), dataList);  // Initialize the adapter with the context and data list
         eventList.setAdapter(eventAdapter);  // Set the adapter to the ListView
-        String attendeeId = CurrentUserHandler.getSingleton().getCurrentUserId();
-        if (attendeeId != null && !attendeeId.isEmpty()) {
-            eventViewModel.fetchEventsByAttendee(attendeeId);
+        String userId = CurrentUserHandler.getSingleton().getCurrentUserId();
+        if (userId != null && !userId.isEmpty()) {
+            eventViewModel.fetchEventsByUserId(userId);
         }
         observeViewModel();
-
-
     }
     private void observeViewModel() {
         eventViewModel.getEventsByAttendeeLiveData().observe(getViewLifecycleOwner(), events -> {
@@ -77,5 +75,6 @@ public class AttendeeHomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        eventViewModel.fetchEventsByUserId(CurrentUserHandler.getSingleton().getCurrentUserId());
     }
 }

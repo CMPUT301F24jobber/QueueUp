@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.handlers.PushNotificationHandler;
 import com.example.queueup.models.User;
+import com.example.queueup.services.NotificationService;
 import com.example.queueup.viewmodels.UserViewModel;
 import com.example.queueup.views.SignUp;
 import com.example.queueup.views.admin.AdminHome;
@@ -25,8 +26,11 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.security.Provider;
+
 public class MainActivity extends AppCompatActivity {
 
+    private static final String CHANNEL_ID = "QueueUp Notifications";
     private MaterialButton adminButton;
     private MaterialButton organizerButton;
     private MaterialButton attendeeButton;
@@ -34,7 +38,8 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private User user;
     private Boolean isAdmin = false;
-    private PushNotificationHandler pushNotificationHandler;
+    private static Boolean notificationServiceStarted = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,12 +74,20 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Initialize PushNotificationHandler Singleton
-        pushNotificationHandler = PushNotificationHandler.getSingleton();
-        pushNotificationHandler.handleNotificationPermissions(this, this);
+
 
         // Initialize LocationService
         LocationServices.getFusedLocationProviderClient(this);
+        startNotificationService();
 
+    }
+
+    private void startNotificationService() {
+        if (!notificationServiceStarted) {
+            Intent notificationService = new Intent(getApplicationContext(), NotificationService.class);
+            startService(notificationService);
+            notificationServiceStarted = true;
+        }
     }
 
     private void checkExistingUser() {

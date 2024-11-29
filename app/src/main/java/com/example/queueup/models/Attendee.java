@@ -20,7 +20,17 @@ public class Attendee implements Serializable {
         this.id = generateId(userId, eventId);
         this.numberInLine = 0;
         this.status = "pending";
+        this.location = null;
     }
+    public Attendee(String userId, String eventId, GeoLocation location) {
+        this.userId = userId;
+        this.eventId = eventId;
+        this.id = generateId(userId, eventId);
+        this.numberInLine = 0;
+        this.status = "pending";
+        this.location = location;
+    }
+
 
     /**
      * Returns the ID of the attendee.

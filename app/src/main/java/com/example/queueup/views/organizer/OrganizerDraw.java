@@ -5,7 +5,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -18,10 +20,13 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.example.queueup.R;
+import com.example.queueup.controllers.EventController;
 import com.example.queueup.models.Event;
 import com.example.queueup.services.ImageUploader;
 import com.example.queueup.viewmodels.EventViewModel;
-import com.example.queueup.views.attendee.AttendeeWaitlistJoinedFragment;
+import com.google.android.material.materialswitch.MaterialSwitch;
+import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.time.format.DateTimeFormatter;
 
@@ -33,17 +38,18 @@ public class OrganizerDraw extends Fragment {
 
     private Event event;
     private ImageUploader imageUploader;
+    private EventController eventController;
     private EventViewModel eventViewModel;
     private Button drawWinners;
     private ToggleButton winnerNotification;
     private ToggleButton loserNotification;
     private ToggleButton everyoneNotification;
-    private Button redrawWinners;
-    private Button cancelWinners;
-    private ConstraintLayout drawLayout;
-    private ConstraintLayout redrawLayout;
+    private TextInputLayout numDraw;
 
-    private ToggleButton rewinnerNotification;
+    private Button cancelWinners;
+    private SwitchMaterial redrawSwitch, redrawNotification;
+    private ConstraintLayout drawLayout, redrawLayout;
+    private LinearLayout winnerNotificationLayout, loserNotificationLayout, redrawNotificationLayout;
 
     private ToggleButton cancelNotification;
 
@@ -57,6 +63,7 @@ public class OrganizerDraw extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         event = this.getArguments().getSerializable("event", Event.class);
         TextView eventDate = view.findViewById(R.id.event_date);
+        eventController = EventController.getInstance();
         TextView locationText = view.findViewById(R.id.event_location);
         TextView timeText = view.findViewById(R.id.event_time);
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("EEEE MMM dd");
@@ -68,15 +75,24 @@ public class OrganizerDraw extends Fragment {
         ImageView posterImage = view.findViewById(R.id.poster_image);
         eventViewModel = new ViewModelProvider(this).get(EventViewModel.class);
         drawWinners = view.findViewById(R.id.draw_winners);
+        numDraw = view.findViewById(R.id.draw_num_attendee);
+
         winnerNotification = view.findViewById(R.id.notification_winner);
         loserNotification = view.findViewById(R.id.notification_loser);
         everyoneNotification =  view.findViewById(R.id.notification_everyone);
-        redrawWinners = view.findViewById(R.id.redraw_winners);
+
+        redrawSwitch = view.findViewById(R.id.redraw_switch);
+        redrawSwitch.setChecked(event.getRedrawEnabled());
+        redrawNotification = view.findViewById(R.id.notification_redraw_winner);
+        redrawNotification.setChecked(event.getRedrawNotificationEnabled());
         cancelWinners = view.findViewById(R.id.cancel_winners);
-        rewinnerNotification = view.findViewById(R.id.notification_redraw_winner);
         cancelNotification = view.findViewById(R.id.notification_cancelled);
+
         drawLayout = view.findViewById(R.id.draw_layout);
         redrawLayout = view.findViewById(R.id.redraw_layout);
+        winnerNotificationLayout = view.findViewById(R.id.notification_winner_layout);
+        loserNotificationLayout = view.findViewById(R.id.notification_loser_layout);
+        redrawNotificationLayout = view.findViewById(R.id.redraw_winner_notification_layout);
 
         Glide.with(this).load(event.getEventBannerImageUrl()).into(posterImage);
         timeText.setText(time_text);
@@ -102,6 +118,11 @@ public class OrganizerDraw extends Fragment {
                         Log.d("PhotoPicker", "No media selected");
                     }
                 });
+        if (event.getRedrawEnabled()) {
+            redrawNotificationLayout.setAlpha(1f);
+        } else {
+            redrawNotificationLayout.setAlpha(0.4f);
+        }
         posterImage.setOnClickListener( v -> {
             pickMedia.launch(new PickVisualMediaRequest.Builder()
                     .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
@@ -126,56 +147,61 @@ public class OrganizerDraw extends Fragment {
         everyoneNotification.setOnCheckedChangeListener((v, isChecked) -> {
             if (isChecked) {
                 everyoneNotification.setBackgroundResource(R.drawable.filled_button);
+                winnerNotificationLayout.setAlpha(0.4f);
+                loserNotificationLayout.setAlpha(0.4f);
             } else {
                 everyoneNotification.setBackgroundResource(R.drawable.hollow_button);
+                winnerNotificationLayout.setAlpha(1f);
+                loserNotificationLayout.setAlpha(1f);
             }
 
         });
-        rewinnerNotification.setOnCheckedChangeListener((v, isChecked) -> {
-            if (isChecked) {
-                rewinnerNotification.setBackgroundResource(R.drawable.filled_button);
-            } else {
-                rewinnerNotification.setBackgroundResource(R.drawable.hollow_button);
-            }
 
-        });
         cancelNotification.setOnCheckedChangeListener((v, isChecked) -> {
             if (isChecked) {
                 cancelNotification.setBackgroundResource(R.drawable.filled_button);
             } else {
                 cancelNotification.setBackgroundResource(R.drawable.hollow_button);
             }
+        });
 
+        drawWinners.setOnClickListener(v -> {
+            if (!numDraw.getEditText().getText().toString().isEmpty() && Integer.valueOf(numDraw.getEditText().getText().toString().trim()) > 0) {
+                redrawLayout.setVisibility(View.VISIBLE);
+                drawLayout.setVisibility(View.INVISIBLE);
+                eventController.drawLottery(event.getEventId(),
+                        Integer.valueOf(numDraw.getEditText().getText().toString().trim()),
+                        winnerNotification.isChecked() || everyoneNotification.isChecked(),
+                        loserNotification.isChecked() || everyoneNotification.isChecked());
+            } else {
+                Toast.makeText(getContext(), "The number of winners is invalid", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+        redrawSwitch.setOnCheckedChangeListener((v, toggled) -> {
+            eventController.setRedrawEnabled(event.getEventId(), toggled);
+            event.setRedrawEnabled(toggled);
+            if (toggled) {
+                redrawNotificationLayout.setAlpha(1f);
+            } else {
+                redrawNotificationLayout.setAlpha(0.4f);
+            }
+        });
+        redrawNotification.setOnCheckedChangeListener((v, toggled) -> {
+            eventController.setSendingNotificationOnRedraw(event.getEventId(), toggled);
+            event.setRedrawNotificationEnabled(toggled);
+        });
+        cancelWinners.setOnClickListener(v -> {
+            eventController.cancelWinners(event.getEventId(), event.getEventName(), cancelNotification.isChecked());
         });
         if (event.getIsDrawn()) {
             redrawLayout.setVisibility(View.VISIBLE);
             drawLayout.setVisibility(View.INVISIBLE);
-            redrawWinners.setOnClickListener(v -> {
-                if (rewinnerNotification.isChecked()) {
 
-                }
-                if (cancelNotification.isChecked()) {
-
-                }
-            });
         } else {
             redrawLayout.setVisibility(View.INVISIBLE);
             drawLayout.setVisibility(View.VISIBLE);
 
-            drawWinners.setOnClickListener(v -> {
-                if (everyoneNotification.isChecked()) {
-
-                } else {
-                    if (loserNotification.isChecked()) {
-
-                    }
-                    if (winnerNotification.isChecked()) {
-
-                    }
-                }
-                redrawLayout.setVisibility(View.VISIBLE);
-                drawLayout.setVisibility(View.INVISIBLE);
-            });
         }
 
     }

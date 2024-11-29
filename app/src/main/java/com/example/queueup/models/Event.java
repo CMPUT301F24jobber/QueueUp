@@ -21,7 +21,11 @@ public class Event implements Serializable {
     private String checkInQrCodeId;
     private Boolean isActive;
     private Boolean isDrawn;
+    private Boolean redrawEnabled;
+    private Boolean redrawNotificationEnabled;
+
     private Boolean isGeoLocationRequried;
+
 
     private int maxCapacity;
     private int currentCapacity;
@@ -47,6 +51,8 @@ public class Event implements Serializable {
         this.creationDate = new Date();
         this.isDrawn = isDrawn;
         this.isGeoLocationRequried = isGeoLocationRequried;
+        this.redrawEnabled = false;
+        this.redrawNotificationEnabled = false;
     }
 
     public Boolean getIsGeoLocationRequried() {
@@ -326,6 +332,7 @@ public class Event implements Serializable {
     public void setIsActive(Boolean isActive) {
         this.isActive = isActive;
     }
+
     /**
      * Checks whether the event has been drawn.
      *
@@ -342,5 +349,39 @@ public class Event implements Serializable {
      */
     public void setIsDrawn(Boolean isDrawn) {
         this.isDrawn = isDrawn;
+    }
+    /**
+     * Checks if attendees are being redrawn when one cancels.
+     *
+     * @return bool
+     */
+    public Boolean getRedrawEnabled() {
+        return redrawEnabled;
+    }
+
+    /**
+     * Sets if attendees are being redrawn when one cancels.
+     *
+     * @param redrawEnabled
+     */
+    public void setRedrawEnabled(Boolean redrawEnabled) {
+        this.redrawEnabled = redrawEnabled;
+    }
+    /**
+     * Checks if attendees are notified when winning though redraw.
+     *
+     * @return bool
+     */
+    public Boolean getRedrawNotificationEnabled() {
+        return redrawNotificationEnabled;
+    }
+
+    /**
+     * Sets if attendees are notified when winning through redraw.
+     *
+     * @param redrawNotificationEnabled
+     */
+    public void setRedrawNotificationEnabled(Boolean redrawNotificationEnabled) {
+        this.redrawNotificationEnabled = redrawNotificationEnabled;
     }
 }

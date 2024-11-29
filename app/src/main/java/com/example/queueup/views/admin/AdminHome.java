@@ -22,8 +22,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class AdminHome extends AppCompatActivity {
 
-    private FirebaseFirestore db;
-    private TextView titleTextView;
     private String deviceId;
     private BottomNavigationView navigationView;
     private ImageButton backButton;
@@ -38,8 +36,7 @@ public class AdminHome extends AppCompatActivity {
         setContentView(R.layout.admin_activity);
 
         navigationView = findViewById(R.id.bottom_navigation);
-        db = FirebaseFirestore.getInstance();
-        titleTextView = findViewById(R.id.titleTextView);
+
         backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener((view) -> {
             onBackPressed();

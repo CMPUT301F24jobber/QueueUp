@@ -129,7 +129,8 @@ public class EditProfileActivity extends AppCompatActivity {
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             imageUri = data.getData();
             isImageRemoved = false;
-            profileImageView.setImageURI(imageUri);
+            Glide.with(this).load(imageUri).circleCrop().into(profileImageView);
+
             profileInitialsTextView.setVisibility(View.GONE);
             profileImageView.setVisibility(View.VISIBLE);
         }

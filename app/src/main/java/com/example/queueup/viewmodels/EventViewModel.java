@@ -170,16 +170,13 @@ public class EventViewModel extends ViewModel {
     /**
      * Fetches events attended by a specific attendee.
      *
-     * @param attendeeId T
+     * @param userId
      */
-    public void fetchEventsByAttendee(String attendeeId) {
-        if (attendeeId == null || attendeeId.isEmpty()) {
-            errorMessageLiveData.setValue("Attendee ID is invalid.");
-            return;
-        }
+    public void fetchEventsByUserId(String userId) {
+
 
         isLoadingLiveData.setValue(true);
-        eventController.getEventsByAttendeeId(attendeeId)
+        eventController.getEventsByUserId(userId)
                 .addOnSuccessListener(new OnSuccessListener<List<DocumentSnapshot>>() {
                     @Override
                     public void onSuccess(List<DocumentSnapshot> documentSnapshots) {
@@ -251,7 +248,7 @@ public class EventViewModel extends ViewModel {
     /**
      * Creates a new event.
      *
-     * @param .
+     * @param newEvent
      */
     public void createEvent(Event newEvent) {
         if (newEvent == null) {
@@ -565,36 +562,7 @@ public class EventViewModel extends ViewModel {
         }
 
         isLoadingLiveData.setValue(true);
-        eventController.drawLottery(eventId, numberToSelect)
-                .addOnSuccessListener(new OnSuccessListener<List<String>>() {
-                    @Override
-                    public void onSuccess(List<String> selectedAttendees) {
-                        if (selectedAttendees != null && !selectedAttendees.isEmpty()) {
-                            // Notify selected attendees
-                            eventController.notifySelectedAttendees(eventId, selectedAttendees)
-                                    .addOnSuccessListener(aVoid -> {
-                                        fetchEventById(eventId);
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            errorMessageLiveData.setValue("Failed to notify selected attendees: " + e.getMessage());
-                                            isLoadingLiveData.setValue(false);
-                                        }
-                                    });
-                        } else {
-                            errorMessageLiveData.setValue("No attendees were selected.");
-                            isLoadingLiveData.setValue(false);
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        errorMessageLiveData.setValue("Failed to draw lottery: " + e.getMessage());
-                        isLoadingLiveData.setValue(false);
-                    }
-                });
+        eventController.drawLottery(eventId, numberToSelect, true, true);
     }
 
     /**
@@ -602,14 +570,14 @@ public class EventViewModel extends ViewModel {
      *
      * @param eventId
      */
-    public void handleReplacement(String eventId) {
+    public void handleReplacement(String eventId, String eventName) {
         if (eventId == null || eventId.isEmpty()) {
             errorMessageLiveData.setValue("Invalid event ID for handling replacement.");
             return;
         }
 
         isLoadingLiveData.setValue(true);
-        eventController.handleReplacement(eventId)
+        eventController.handleReplacement(eventId, eventName)
                 .addOnSuccessListener(aVoid -> {
                     fetchEventById(eventId);
                 })

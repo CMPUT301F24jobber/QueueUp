@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.handlers.PushNotificationHandler;
 import com.example.queueup.models.Attendee;
+import com.example.queueup.models.Event;
 import com.example.queueup.models.GeoLocation;
 import com.example.queueup.models.User;
 import com.google.android.gms.tasks.Task;
@@ -25,9 +26,14 @@ import java.util.Map;
 public class AttendeeController {
     private static AttendeeController singleInstance = null;
     private static final String TAG = "AttendeeController";
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
     private final CollectionReference attendeeCollectionReference = FirebaseFirestore.getInstance().collection("attendees");
     private final CollectionReference userCollectionReference = FirebaseFirestore.getInstance().collection("users");
-    private CurrentUserHandler currentUserHandler = CurrentUserHandler.getSingleton();
+    private final CurrentUserHandler currentUserHandler = CurrentUserHandler.getSingleton();
+    private UserController userController = UserController.getInstance();
+
+
 
     private AttendeeController() {}
 
@@ -132,8 +138,7 @@ public class AttendeeController {
         String userId = currentUser.getUuid();
         String attendeeId = Attendee.generateId(userId, eventId);
 
-        return attendeeCollectionReference.document(attendeeId).update("status", "cancelled");
-
+        return attendeeCollectionReference.document(attendeeId).delete();
     }
 
     /**
@@ -193,30 +198,39 @@ public class AttendeeController {
      * Notifies an attendee about their selection status.
      *
      * @param attendeeId
-     * @param isSelected
      */
-    public void notifyAttendee(String attendeeId, boolean isSelected) {
+    public void notifyAttendeebyId(String attendeeId) {
         attendeeCollectionReference.document(attendeeId).get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
                 Attendee attendee = task.getResult().toObject(Attendee.class);
                 if (attendee != null) {
                     String eventId = attendee.getEventId();
                     String userId = attendee.getUserId();
-                    String newStatus = isSelected ? "selected" : "not_selected";
-                    attendee.setStatus(newStatus);
+                    String status = attendee.getStatus();
                     // Update the attendee's status in Firestore
-                    attendeeCollectionReference.document(attendeeId).set(attendee).addOnSuccessListener(aVoid -> {
-                        Log.d(TAG, "Attendee status updated to " + newStatus + ".");
-                        // Send notification based on selection status
-
-                    }).addOnFailureListener(e -> {
-                        Log.e(TAG, "Failed to update attendee status.", e);
+                    db.collection("events").document(eventId).get().addOnSuccessListener(document -> {
+                        if (document != null) {
+                            Event event = document.toObject(Event.class);
+                            userController.notifyUserById(userId, status, makeNotificationMessage(status, event.getEventName()));
+                        }
                     });
                 }
             } else {
                 Log.e(TAG, "Failed to retrieve attendee with ID: " + attendeeId);
             }
         });
+    }
+
+    public static String makeNotificationMessage(String status, String eventName) {
+        switch (status) {
+            case "cancelled":
+                return "Your spot in " + eventName + "has been revolked.";
+            case "selected":
+                return "You were selected for " + eventName + "!";
+            case "not selected":
+                return "You were not selected for " + eventName + ".";
+        }
+        return "error";
     }
 
     /**
@@ -235,21 +249,24 @@ public class AttendeeController {
                 .get();
     }
 
+
+
     /**
      * Fetches user information for a list of attendees.
      *
      * @param attendees
      * @return Task<Map<String, User>> mapping user IDs to User objects
      */
-    public Task<Map<String, User>> fetchUsersForAttendees(List<Attendee> attendees) {
+    public Task<ArrayList<User>> fetchUsersForAttendees(List<Attendee> attendees) {
         List<Task<DocumentSnapshot>> userTasks = new ArrayList<>();
         for (Attendee attendee : attendees) {
+            Log.d("attendee", attendee.getUserId());
             Task<DocumentSnapshot> userTask = userCollectionReference.document(attendee.getUserId()).get();
             userTasks.add(userTask);
         }
 
         return Tasks.whenAllSuccess(userTasks).continueWith(task -> {
-            Map<String, User> userMap = new HashMap<>();
+            ArrayList<User> userList = new ArrayList<>();
             List<Object> results = task.getResult();
             for (int i = 0; i < results.size(); i++) {
                 Object obj = results.get(i);
@@ -259,7 +276,54 @@ public class AttendeeController {
                         User user = doc.toObject(User.class);
                         if (user != null) {
                             // Map userId to User object
-                            userMap.put(attendees.get(i).getUserId(), user);
+                            userList.add(user);
+                        }
+                    }
+                }
+            }
+            return userList;
+        });
+    }
+
+    public Task<ArrayList<ArrayList<User>>> fetchUserListsForAttendees(ArrayList<Attendee> attendees) {
+        List<Task<DocumentSnapshot>> userTasks = new ArrayList<>();
+        for (Attendee attendee : attendees) {
+            Task<DocumentSnapshot> userTask = userCollectionReference.document(attendee.getUserId()).get();
+            userTasks.add(userTask);
+        }
+        return Tasks.whenAllSuccess(userTasks).continueWith(task -> {
+            ArrayList<ArrayList<User>> userMap = new ArrayList<ArrayList<User>>();
+
+            userMap.add(new ArrayList<>());
+            userMap.add(new ArrayList<>());
+            userMap.add(new ArrayList<>());
+            userMap.add(new ArrayList<>());
+
+
+            List<Object> results = task.getResult();
+            for (int i = 0; i < results.size(); i++) {
+                Object obj = results.get(i);
+                if (obj instanceof DocumentSnapshot) {
+                    DocumentSnapshot doc = (DocumentSnapshot) obj;
+                    if (doc.exists()) {
+                        User user = doc.toObject(User.class);
+                        userMap.get(3).add(user);
+
+                        if (user != null) {
+                            // Map userId to User object
+                            switch (attendees.get(i).getStatus()){
+                                case "selected":
+                                    userMap.get(0).add(user);
+                                    break;
+                                case "cancelled":
+                                    userMap.get(1).add(user);
+                                    break;
+                                case "enrolled":
+                                    userMap.get(2).add(user);
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
                     }
                 }

@@ -2,8 +2,12 @@ package com.example.queueup.controllers;
 
 import static android.content.ContentValues.TAG;
 
+
+
 import android.location.Location;
 import android.util.Log;
+import java.util.Random;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -11,6 +15,7 @@ import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.handlers.PushNotificationHandler;
 import com.example.queueup.models.Attendee;
 import com.example.queueup.models.Event;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
@@ -20,6 +25,8 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
+
+import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,10 +40,8 @@ public class EventController {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final CollectionReference eventCollectionReference = db.collection("events");
     private final CollectionReference attendanceCollectionReference = db.collection("attendees");
-    private final CurrentUserHandler currentUserHandler = CurrentUserHandler.getSingleton();
+    private final UserController userController = UserController.getInstance();
     private final AttendeeController attendeeController = AttendeeController.getInstance();
-    private final PushNotificationHandler pushNotificationHandler = PushNotificationHandler.getSingleton();
-
     private EventController() {}
 
     public static synchronized EventController getInstance() {
@@ -77,12 +82,12 @@ public class EventController {
     /**
      * Retrieves all events that a specific attendee is registered for.
      *
-     * @param attendeeId The ID of the attendee
+     * @param userId The ID of the attendee
      * @return Task<List<DocumentSnapshot>>
      */
-    public Task<List<DocumentSnapshot>> getEventsByAttendeeId(String attendeeId) {
+    public Task<List<DocumentSnapshot>> getEventsByUserId(String userId) {
         return attendanceCollectionReference
-                .whereEqualTo("userId", attendeeId)
+                .whereEqualTo("userId", userId)
                 .get()
                 .continueWithTask(task -> {
                     if (task.isSuccessful()) {
@@ -156,11 +161,11 @@ public class EventController {
         DocumentReference eventRef = eventCollectionReference.document(eventId);
         return eventRef.get().continueWithTask(task -> {
             if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
-                List<String> attendeeIds = (List<String>) task.getResult().get("attendeeIds");
+                List<String> attendeeIds = (List<String>)task.getResult().get("attendeeIds");
                 if (attendeeIds != null && !attendeeIds.isEmpty()) {
                     List<Task<Void>> unregisterTasks = new ArrayList<>();
                     for (String userId : attendeeIds) {
-                        unregisterTasks.add(attendeeController.leaveWaitingList(eventId));
+                        unregisterTasks.add(AttendeeController.getInstance().leaveWaitingList(eventId));
                     }
                     return Tasks.whenAll(unregisterTasks);
                 }
@@ -186,55 +191,8 @@ public class EventController {
      * @return Task<Void>
      */
     public Task<Void> registerToEvent(String eventId) {
-        String userId = currentUserHandler.getCurrentUserId();
+        String userId = CurrentUserHandler.getSingleton().getCurrentUserId();
         return registerToEvent(userId, eventId, null);
-    }
-
-    /**
-     * Get the FCM tokens of all attendees of an event.
-     * @param eventId
-     * @return Task<List<String>>
-     */
-
-    public Task<List<String>> getAttendeesFCMTokens(String eventId) {
-        UserController userController = UserController.getInstance();
-        DocumentReference eventRef = eventCollectionReference.document(eventId);
-        return eventRef.get().continueWithTask(task -> {
-            if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
-                DocumentSnapshot eventSnapshot = task.getResult();
-                List<String> attendeeIds = (List<String>) eventSnapshot.get("attendeeIds");
-
-                if (attendeeIds == null || attendeeIds.isEmpty()) {
-                    return Tasks.forResult(new ArrayList<String>());
-                }
-
-                List<Task<DocumentSnapshot>> userTasks = new ArrayList<>();
-                for (String attendeeId : attendeeIds) {
-                    userTasks.add(userController.getUserById(attendeeId));
-                }
-
-                return Tasks.whenAllSuccess(userTasks).continueWith(innerTask -> {
-                    List<?> userSnapshots = innerTask.getResult();
-                    List<String> fcmTokens = new ArrayList<>();
-
-                    for (Object obj : userSnapshots) {
-                        if (obj instanceof DocumentSnapshot) {
-                            DocumentSnapshot userSnapshot = (DocumentSnapshot) obj;
-                            if (userSnapshot.exists()) {
-                                String token = userSnapshot.getString("FCMToken");
-                                if (token != null && !token.isEmpty()) {
-                                    fcmTokens.add(token);
-                                }
-                            }
-                        }
-                    }
-
-                    return fcmTokens;
-                });
-            } else {
-                throw new RuntimeException("Failed to retrieve event details.");
-            }
-        });
     }
 
     /**
@@ -272,12 +230,12 @@ public class EventController {
 
             // Update event's current capacity and attendee list
             transaction.update(eventRef, "currentCapacity", FieldValue.increment(1));
-            transaction.update(eventRef, "attendeeIds", FieldValue.arrayUnion(userId));
+            transaction.update(eventRef, "attendeeIds", FieldValue.arrayUnion(userId+eventId));
 
             return null;
         }).continueWithTask(task -> {
             if (task.isSuccessful()) {
-                return attendeeController.joinWaitingList(userId, eventId, location);
+                return AttendeeController.getInstance().joinWaitingList(userId, eventId, location);
             } else {
                 Exception e = task.getException();
                 String errorMessage = e != null ? e.getMessage() : "Unknown error";
@@ -298,35 +256,8 @@ public class EventController {
      * @return Task<Void>
      */
     public Task<Void> unregisterFromEvent(String eventId, String userId) {
-        DocumentReference eventRef = eventCollectionReference.document(eventId);
-
-        return db.runTransaction(transaction -> {
-            DocumentSnapshot eventSnapshot = transaction.get(eventRef);
-            String eventName = eventSnapshot.getString("eventName");
-            List<String> attendees = (List<String>) eventSnapshot.get("attendeeIds");
-
-            if (attendees != null && attendees.contains(userId)) {
-                transaction.update(eventRef, "attendeeIds", FieldValue.arrayRemove(userId));
-                transaction.update(eventRef, "currentCapacity", FieldValue.increment(-1));
-            } else {
-                throw new RuntimeException("You are not registered for this event.");
-            }
-
-            return null;
-        }).continueWithTask(task -> {
-            if (task.isSuccessful()) {
-                attendeeController.setAttendeeStatus(eventId, "cancelled");
-                return attendeeController.leaveWaitingList(eventId);
-            } else {
-                Exception e = task.getException();
-                String errorMessage = e != null ? e.getMessage() : "Unknown error";
-                throw new RuntimeException("(Failed to unregister from event) " + errorMessage);
-            }
-        }).addOnSuccessListener(aVoid -> {
-            Log.d("EventController", "Successfully unregistered from event.");
-        }).addOnFailureListener(e -> {
-            Log.e("EventController", "Failed to unregister from event.", e);
-        });
+        attendeeController.leaveWaitingList(eventId);
+        return eventCollectionReference.document(eventId).update("attendeeIds", FieldValue.arrayRemove(userId+eventId));
     }
 
     /**
@@ -336,65 +267,59 @@ public class EventController {
      * @param numberToSelect
      * @return Task<List<String>>
      */
-    public Task<List<String>> drawLottery(String eventId, int numberToSelect) {
-        DocumentReference eventRef = eventCollectionReference.document(eventId);
+    public void drawLottery(String eventId, int numberToSelect, boolean notifyWinner, boolean nottifyLoser) {
+        setIsDrawn(eventId);
 
-        return eventRef.get().continueWithTask(task -> {
-            if (!task.isSuccessful() || task.getResult() == null || !task.getResult().exists()) {
-                throw new RuntimeException("Failed to retrieve event details.");
-            }
+        getEventById(eventId).continueWith(task -> {
+            if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
+            Event event = task.getResult().toObject(Event.class);
+        String eventName = event.getEventName();
+        ArrayList<String> attendeeIds = event.getAttendeeIds();
 
-            DocumentSnapshot eventSnapshot = task.getResult();
-            List<String> attendeeIds = (List<String>) eventSnapshot.get("attendeeIds");
-
-            if (attendeeIds == null || attendeeIds.isEmpty()) {
-                throw new RuntimeException("No attendees to select from.");
-            }
-
-            // Shuffle the list to randomize selection
-            List<String> shuffledAttendees = new ArrayList<>(attendeeIds);
-            java.util.Collections.shuffle(shuffledAttendees);
-
-            // Select the required number of attendees
-            List<String> selectedAttendees = shuffledAttendees.subList(0, Math.min(numberToSelect, shuffledAttendees.size()));
-
-            for (String userId : selectedAttendees) {
-                attendeeController.setAttendeeStatus(Attendee.generateId(userId, eventId), "selected");
-            }
-            return Tasks.forResult(selectedAttendees);
-        });
-    }
-
-    /**
-     * Sends notifications to selected attendees to confirm their participation.
-     * If an attendee declines, selects a replacement.
-     *
-     * @param eventId
-     * @param selectedAttendees
-     * @return Task<Void>
-     */
-    public Task<Void> notifySelectedAttendees(String eventId, List<String> selectedAttendees) {
-        Log.d(TAG, "notifySelectedAttendees called with eventId: " + eventId +
-                " and selectedAttendees: " + selectedAttendees.toString());
-
-        // Send notifications to all selected attendees
-        List<Task<Void>> notificationTasks = new ArrayList<>();
-
-        for (String userId : selectedAttendees) {
-            notificationTasks.add(pushNotificationHandler.sendLotteryWinNotification(eventId, userId));
+        if (attendeeIds == null || attendeeIds.isEmpty()) {
+            throw new RuntimeException("No attendees to select from.");
         }
 
-        // After all notifications are sent, return a combined task
-        return Tasks.whenAll(notificationTasks)
-                .continueWith(task -> {
-                    if (task.isSuccessful()) {
-                        Log.d(TAG, "All notifications sent successfully.");
-                        // Optionally, you can implement a listener or a timeout to handle responses
-                        // For simplicity, we assume responses are handled elsewhere
-                        return null;
-                    } else {
-                        Log.e(TAG, "Failed to send some notifications.");
-                        throw task.getException();
+        // Shuffle the list to randomize selection
+        ArrayList<String> shuffledAttendees = new ArrayList<>(attendeeIds);
+        java.util.Collections.shuffle(shuffledAttendees);
+
+        // Select the required number of attendees
+        int correctedNum = Math.min(numberToSelect, shuffledAttendees.size());
+
+        for (int i = 0, n = shuffledAttendees.size(); i < n; ++i) {
+            String attendeeId = shuffledAttendees.get(i), selection = (i < correctedNum ? "selected" : "not selected");
+            Log.d("UserId", attendeeId.substring(0, 36));
+            userController.notifyUserById(attendeeId.substring(0, 36), selection, AttendeeController.makeNotificationMessage(selection, eventName));
+            attendeeController.setAttendeeStatus(attendeeId, selection);
+        }
+            }
+            return null;
+        });
+
+    }
+    public void cancelWinners(String eventId, String eventName, boolean notify) {
+        attendeeController.getAttendanceByEventId(eventId)
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        ArrayList<Attendee> attendees = new ArrayList<>();
+                        for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                            Attendee attendee = doc.toObject(Attendee.class);
+                            if (attendee != null) {
+                                attendees.add(attendee);
+                            }
+                        }
+                        for (Attendee attendee : attendees) {
+                            if (attendee.getStatus().equals("selected")) {
+                                if (notify) {
+                                userController.notifyUserById(attendee.getUserId(), "cancelled",
+                                        AttendeeController.makeNotificationMessage("cancelled", eventName));
+                                }
+                                attendeeController.setAttendeeStatus(attendee.getId(), "cancelled");
+                            }
+                        }
+
                     }
                 });
     }
@@ -441,7 +366,7 @@ public class EventController {
      * @return Task<Void>
      */
     public Task<Void> checkInUser(String eventId) {
-        String userId = currentUserHandler.getCurrentUserId();
+        String userId = CurrentUserHandler.getSingleton().getCurrentUserId();
         return checkInUser(userId, eventId, null);
     }
 
@@ -564,23 +489,29 @@ public class EventController {
      * @param eventId
      * @return Task<Void>
      */
-    public Task<Void> handleReplacement(String eventId) {
+    public Task<Void> handleReplacement(String eventId, String eventName) {
         Log.d(TAG, "handleReplacement called for eventId: " + eventId);
 
         return attendanceCollectionReference
                 .whereEqualTo("eventId", eventId)
-                .whereEqualTo("status", "pending")
+                .whereEqualTo("status", "waiting")
                 .get()
                 .continueWithTask(task -> {
                     if (task.isSuccessful()) {
                         QuerySnapshot querySnapshot = task.getResult();
                         if (querySnapshot != null && !querySnapshot.isEmpty()) {
                             // Select the next attendee in line
-                            DocumentSnapshot nextAttendeeDoc = querySnapshot.getDocuments().get(0);
-                            Attendee nextAttendee = nextAttendeeDoc.toObject(Attendee.class);
-                            if (nextAttendee != null) {
-                                // Send invitation notification
-                                return pushNotificationHandler.sendInvitationNotification(eventId, nextAttendee.getUserId());
+                            ArrayList<String> attendees = new ArrayList<>();
+                            for (DocumentSnapshot documentSnapshot : querySnapshot) {
+                                Attendee nextAttendee = documentSnapshot.toObject(Attendee.class);
+                                if (nextAttendee != null) {
+                                    attendees.add(nextAttendee.getUserId());
+                                }
+                            }
+                            if (!attendees.isEmpty()) {
+                                String attendeeId = attendees.get((new Random()).nextInt(attendees.size()));
+                                userController.notifyUserById(attendeeId.substring(0, 36), "selected", AttendeeController.makeNotificationMessage("selected", eventName));
+                                attendeeController.setAttendeeStatus(attendeeId, "selected");
                             }
                         }
                         return Tasks.forResult(null);
@@ -697,6 +628,18 @@ public class EventController {
                 .addOnFailureListener(e -> {
                     Log.e("EventController", "Failed to set event banner image.", e);
                 });
+    }
+    public Task<Void> setIsDrawn(String eventId) {
+        return eventCollectionReference.document(eventId)
+                .update("isDrawn",true);
+    }
+    public Task<Void> setRedrawEnabled(String eventId, boolean notify) {
+        return eventCollectionReference.document(eventId)
+                .update("redrawEnabled",notify);
+    }
+    public Task<Void> setSendingNotificationOnRedraw(String eventId, boolean notify) {
+        return eventCollectionReference.document(eventId)
+                .update("redrawNotificationEnabled",notify);
     }
 
     /**

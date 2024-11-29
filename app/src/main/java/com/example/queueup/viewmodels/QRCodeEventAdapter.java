@@ -28,7 +28,6 @@ public class QRCodeEventAdapter extends EventArrayAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = super.getView(position, convertView, parent); // get the view from the parent class
         Event event = getItem(position);
-
         return view;
     }
 

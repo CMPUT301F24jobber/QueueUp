@@ -44,7 +44,6 @@ public class OrganizerQRCodesFragment extends Fragment {
 
     private ArrayList<Event> eventList;
     private QRCodeEventAdapter eventsAdapter;
-    private FirebaseFirestore firestore;
     private EventViewModel eventViewModel;
 
     @Override
@@ -52,7 +51,6 @@ public class OrganizerQRCodesFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         eventViewModel = new ViewModelProvider(this).get(EventViewModel.class);
 
-        firestore = FirebaseFirestore.getInstance();
         eventList = new ArrayList<>();
         ListView eventsListView = view.findViewById(R.id.organizer_qrcodes_list);
         eventsAdapter = new QRCodeEventAdapter(view.getContext(), eventList);
@@ -63,7 +61,7 @@ public class OrganizerQRCodesFragment extends Fragment {
         observeViewModel();
 
         // Fetch events for the current organizer
-        String organizerId = CurrentUserHandler.getSingleton().getCurrentUserId();
+        String organizerId = CurrentUserHandler.getSingleton().getDeviceId();
         eventViewModel.fetchEventsByOrganizer(organizerId);
     }
 

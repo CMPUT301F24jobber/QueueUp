@@ -1,47 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FDF7F4"
     android:padding="16dp">
 
 
-
-    <RelativeLayout
-        android:id="@+id/header"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/queueup_title_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/title"
+            android:id="@+id/queueup_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/poppins"
             android:text="QueueUp"
-            android:textSize="34sp"
-            android:textStyle="bold"
-            android:textColor="#333333"
-            android:fontFamily="@font/poppins" />
+            android:textSize="48sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="45sp"
+            android:layout_height="45sp"
+            android:background="@drawable/circle_shape"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/queueup_title"
+            app:layout_constraintHorizontal_bias="0.333"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.636"
+            app:srcCompat="@drawable/ic_arrow_back" />
 
         <ImageButton
             android:id="@+id/saveButton"
             android:layout_width="55dp"
             android:layout_height="56dp"
             android:layout_alignParentEnd="true"
-            android:layout_marginEnd="0dp"
+            android:layout_marginStart="19dp"
             android:background="#FFEFEA"
             android:contentDescription="Checkmark"
             android:scaleType="center"
-            android:src="@drawable/ic_check" />
-    </RelativeLayout>
+            android:src="@drawable/ic_check"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/queueup_title"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <RelativeLayout
         android:id="@+id/profileSection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:layout_below="@id/header">
+        android:layout_below="@id/queueup_title_layout">
 
         <FrameLayout
             android:id="@+id/profileImageFrame"
@@ -117,6 +139,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="First Name"
+                android:maxLength="50"
                 android:gravity="center"
                 android:inputType="textPersonName"
                 android:fontFamily="@font/poppins" />
@@ -141,6 +164,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Last Name"
+                android:maxLength="50"
                 android:gravity="center"
                 android:inputType="textPersonName"
                 android:fontFamily="@font/poppins" />
@@ -151,6 +175,7 @@
                 android:layout_height="28dp"
                 android:src="@drawable/pen"
                 android:background="#FFEFEA"
+
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"/>
         </RelativeLayout>
@@ -167,6 +192,7 @@
                 android:hint="Username"
                 android:gravity="center"
                 android:inputType="text"
+                android:maxLength="50"
                 android:fontFamily="@font/poppins" />
 
             <ImageView
@@ -191,7 +217,8 @@
                 android:hint="Email"
                 android:gravity="center"
                 android:inputType="textEmailAddress"
-                android:fontFamily="@font/poppins" />
+                android:fontFamily="@font/poppins"
+                android:maxLength="50"/>
 
             <ImageView
                 android:id="@+id/editEmailIcon"
@@ -215,6 +242,7 @@
                 android:hint="Phone Number"
                 android:gravity="center"
                 android:inputType="phone"
+                android:maxLength="10"
                 android:fontFamily="@font/poppins" />
 
             <ImageView
@@ -233,7 +261,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/userInfo"
-        android:background="@drawable/outlined_round_box"
+        android:background="@drawable/thinner_outlined_round_box"
         android:padding="16dp"
         android:layout_marginTop="16dp">
 
@@ -258,8 +286,8 @@
             android:text="I want to be notified when chosen from waiting list"
             android:fontFamily="@font/poppins"
             android:textColor="#333333"
-            android:thumbTint="#8C7466"
-            android:trackTint="#E0D4C9" />
+            android:thumbTint="@color/brown"
+            android:trackTint="@color/backgroundColor"/>
 
         <Switch
             android:id="@+id/notifSwitch"
@@ -271,8 +299,8 @@
             android:text="I want to be notified when not chosen from waiting list"
             android:fontFamily="@font/poppins"
             android:textColor="#333333"
-            android:thumbTint="#8C7466"
-            android:trackTint="#E0D4C9" />
+            android:thumbTint="@color/brown"
+            android:trackTint="@color/backgroundColor"/>
 
         <Switch
             android:id="@+id/notifSwitch2"
@@ -284,8 +312,8 @@
             android:text="I want to receive other notifications from QueueUp"
             android:fontFamily="@font/poppins"
             android:textColor="#333333"
-            android:thumbTint="#8C7466"
-            android:trackTint="#E0D4C9" />
+            android:thumbTint="@color/brown"
+            android:trackTint="@color/backgroundColor" />
     </RelativeLayout>
 
 </RelativeLayout>

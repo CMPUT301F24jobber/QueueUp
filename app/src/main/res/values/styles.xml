@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+
+    <style name="TextViewStyle" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/poppins</item>
+            <item name="android:singleLine">true</item>
+            <item name="android:ellipsize">marquee</item>
+            <item name="android:marqueeRepeatLimit">marquee_forever</item>
+            <item name="android:scrollHorizontally">false</item>
+            <item name="android:focusable">false</item>
+            <item name="android:focusableInTouchMode">false</item>
+    </style>
+
+    <style name="ButtonStyle" parent="android:Widget.Holo.Button">
+        <item name="android:fontFamily">@font/poppins_extralight</item>
+    </style>
+
     <style name="CircleImageView" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
@@ -10,5 +26,16 @@
         <item name="android:height">40dp</item>
         <item name="marginHorizontal">10dp</item>
         <item name="shapeAppearance">@style/CircleImageView</item>
-        <item name="android:color">@color/brown</item></style>
+        <item name="android:color">@color/brown</item>
+    </style>
+
+
+    <style name="Widget.App.Switch" parent="Widget.Material3.CompoundButton.MaterialSwitch">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.Switch</item>
+    </style>
+
+    <style name="ThemeOverlay.App.Switch" parent="">
+        <item name="colorPrimary">@color/beige</item>
+        <item name="colorSurfaceVariant">@color/grey_beige</item>
+    </style>
 </resources>

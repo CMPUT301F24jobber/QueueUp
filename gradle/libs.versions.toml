@@ -1,5 +1,8 @@
 [versions]
-agp = "8.6.0"
+
+agp = "8.7.2"
+cameraVideo = "1.4.0"
+
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
@@ -12,8 +15,18 @@ firebaseMessaging = "24.0.2"
 places = "4.0.0"
 firebaseStorage = "21.0.1"
 navigationFragment = "2.8.3"
+cameraMlkitVision = "1.4.0"
+playServices = "12.0.1"
+playServicesVision = "20.0.0"
+firebaseCrashlyticsBuildtools = "3.0.2"
 
 [libraries]
+camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraVideo" }
+camera-core = { module = "androidx.camera:camera-core", version.ref = "cameraVideo" }
+camera-extensions = { module = "androidx.camera:camera-extensions", version.ref = "cameraVideo" }
+camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "cameraVideo" }
+camera-video = { module = "androidx.camera:camera-video", version.ref = "cameraVideo" }
+camera-view = { module = "androidx.camera:camera-view", version.ref = "cameraVideo" }
 google-firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -27,6 +40,10 @@ firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging
 places = { group = "com.google.android.libraries.places", name = "places", version.ref = "places" }
 firebase-storage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorage" }
 navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
+camera-mlkit-vision = { group = "androidx.camera", name = "camera-mlkit-vision", version.ref = "cameraMlkitVision" }
+play-services = { group = "com.google.android.gms", name = "play-services", version.ref = "playServices" }
+play-services-vision = { module = "com.google.android.gms:play-services-vision", version.ref = "playServicesVision" }
+firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
 
 
 [plugins]
