@@ -58,7 +58,6 @@ public class AttendeeHome extends AppCompatActivity {
                             .setReorderingAllowed(true)
                             .replace(R.id.attendee_activity_fragment, AttendeeHomeFragment.class, null)
                             .addToBackStack("Home")
-
                             .commit();
                     break;
                 case "Camera":

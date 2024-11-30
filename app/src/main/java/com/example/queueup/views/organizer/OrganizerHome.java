@@ -66,17 +66,20 @@ public class OrganizerHome extends AppCompatActivity {
                     getSupportFragmentManager().beginTransaction()
                             .setReorderingAllowed(true)
                             .replace(R.id.organizer_activity_fragment, OrganizerHomeFragment.class, null)
+                            .addToBackStack("Home")
                             .commit();
                     break;
                 case "QR Code":
                     getSupportFragmentManager().beginTransaction()
                             .setReorderingAllowed(true)
+                            .addToBackStack("QR Code")
                             .replace(R.id.organizer_activity_fragment, OrganizerQRCodesFragment.class, null)
                             .commit();
                     break;
                 case "Profile":
                     getSupportFragmentManager().beginTransaction()
                             .setReorderingAllowed(true)
+                            .addToBackStack("Profile")
                             .replace(R.id.organizer_activity_fragment, ProfileFragment.class, null)
                             .commit();
                     break;
