@@ -80,7 +80,7 @@ public class OrganizerHome extends AppCompatActivity {
                     getSupportFragmentManager().beginTransaction()
                             .setReorderingAllowed(true)
                             .addToBackStack("Profile")
-                            .replace(R.id.organizer_activity_fragment, ProfileFragment.class, null)
+                            .replace(R.id.organizer_activity_fragment, OrganizerFacilityFragment.class, null)
                             .commit();
                     break;
                 default:
