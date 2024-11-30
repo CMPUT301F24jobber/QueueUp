@@ -55,7 +55,11 @@ public class AttendeeWaitlistChoiceFragment extends Fragment {
             leaveButton.setText("Decline");
             leaveButton.setOnClickListener( v -> {
                 attendeeController.setAttendeeStatus(attendee.getId(), "cancelled");
-                attendee.setStatus("cancelled");
+                if (event.getRedrawEnabled()) {
+                    eventController.handleReplacement(attendee.getUserId(), event.getEventId(), event.getEventName());
+                } else {
+                    attendee.setStatus("cancelled");
+                }
 
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("event", event);
@@ -67,6 +71,7 @@ public class AttendeeWaitlistChoiceFragment extends Fragment {
             });
         } else {
             buttonOne.setText("Get a chance to be redrawn");
+            buttonOne.setTextSize(8);
             buttonOne.setOnClickListener(v -> {
                 attendeeController.setAttendeeStatus(attendee.getId(), "waiting");
                 attendee.setStatus("waiting");

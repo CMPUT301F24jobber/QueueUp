@@ -254,7 +254,7 @@ public class EventController {
         });
 
     }
-    public void cancelWinners(String eventId, String eventName, boolean notify) {
+    public void cancelWinners(String eventId, String eventName, boolean notify, boolean replace) {
         attendeeController.getAttendanceByEventId(eventId)
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
@@ -272,7 +272,11 @@ public class EventController {
                                 userController.notifyUserById(attendee.getUserId(), "cancelled",
                                         AttendeeController.makeNotificationMessage("cancelled", eventName));
                                 }
-                                attendeeController.setAttendeeStatus(attendee.getId(), "cancelled");
+                                if (replace) {
+                                    handleReplacement(attendee.getUserId(), attendee.getEventId(), eventName);
+                                } else {
+                                    attendeeController.setAttendeeStatus(attendee.getId(), "cancelled");
+                                }
                             }
                         }
 
@@ -428,9 +432,9 @@ public class EventController {
      * @param eventId
      * @return Task<Void>
      */
-    public Task<Void> handleReplacement(String eventId, String eventName) {
+    public Task<Void> handleReplacement(String userId, String eventId, String eventName) {
         Log.d(TAG, "handleReplacement called for eventId: " + eventId);
-
+        attendeeController.setAttendeeStatus(userId+eventId, "cancelled");
         return attendanceCollectionReference
                 .whereEqualTo("eventId", eventId)
                 .whereEqualTo("status", "waiting")

@@ -544,14 +544,14 @@ public class EventViewModel extends ViewModel {
      *
      * @param eventId
      */
-    public void handleReplacement(String eventId, String eventName) {
+    public void handleReplacement(String userId, String eventId, String eventName) {
         if (eventId == null || eventId.isEmpty()) {
             errorMessageLiveData.setValue("Invalid event ID for handling replacement.");
             return;
         }
 
         isLoadingLiveData.setValue(true);
-        eventController.handleReplacement(eventId, eventName)
+        eventController.handleReplacement(userId, eventId, eventName)
                 .addOnSuccessListener(aVoid -> {
                     fetchEventById(eventId);
                 })
