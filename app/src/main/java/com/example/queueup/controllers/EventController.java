@@ -200,48 +200,8 @@ public class EventController {
      * @return Task<Void>
      */
     public Task<Void> registerToEvent(String userId, String eventId, @Nullable Location location) {
-        DocumentReference eventRef = eventCollectionReference.document(eventId);
-
-        return db.runTransaction((Transaction.Function<Void>) transaction -> {
-            DocumentSnapshot eventSnapshot = transaction.get(eventRef);
-            String eventName = eventSnapshot.getString("eventName");
-            Boolean isActive = eventSnapshot.getBoolean("isActive");
-            Date endDate = eventSnapshot.getDate("eventEndDate");
-            Date currentDate = new Date();
-            if (isActive == null || !isActive || (endDate != null && endDate.before(currentDate))) {
-                throw new RuntimeException("The event \"" + eventName + "\" is no longer active or has already ended.");
-            }
-
-            Long maxCap = eventSnapshot.getLong("maxCapacity");
-            Long currCap = eventSnapshot.getLong("currentCapacity");
-            List<String> attendees = (List<String>) eventSnapshot.get("attendeeIds");
-
-            if ((maxCap != null && maxCap > 0) && (currCap != null && currCap >= maxCap)) {
-                throw new RuntimeException("The event \"" + eventName + "\" is at full capacity.");
-            }
-
-            if (attendees != null && attendees.contains(userId)) {
-                throw new RuntimeException("You have already joined the waiting list for this event.");
-            }
-
-            // Update event's current capacity and attendee list
-            transaction.update(eventRef, "currentCapacity", FieldValue.increment(1));
-            transaction.update(eventRef, "attendeeIds", FieldValue.arrayUnion(userId+eventId));
-
-            return null;
-        }).continueWithTask(task -> {
-            if (task.isSuccessful()) {
-                return AttendeeController.getInstance().joinWaitingList(userId, eventId, location);
-            } else {
-                Exception e = task.getException();
-                String errorMessage = e != null ? e.getMessage() : "Unknown error";
-                throw new RuntimeException("(Failed to register to event) " + errorMessage);
-            }
-        }).addOnSuccessListener(aVoid -> {
-            Log.d("EventController", "Successfully registered to event.");
-        }).addOnFailureListener(e -> {
-            Log.e("EventController", "Failed to register to event.", e);
-        });
+        attendeeController.joinWaitingList(userId,eventId, location);
+        return eventCollectionReference.document(eventId).update("attendeeIds", FieldValue.arrayUnion(userId+eventId));
     }
 
     /**

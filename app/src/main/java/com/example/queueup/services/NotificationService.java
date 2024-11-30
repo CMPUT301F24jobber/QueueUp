@@ -84,8 +84,7 @@ public class NotificationService extends Service {
                 }
             }
 
-            user.clearNotifications();
-            userController.updateUser(user);
+            userController.clearNotifications(user.getUuid());
         });
 
 

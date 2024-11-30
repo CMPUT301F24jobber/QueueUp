@@ -14,7 +14,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.queueup.controllers.UserController;
 import com.example.queueup.handlers.CurrentUserHandler;
-import com.example.queueup.models.Facility;
 import com.example.queueup.models.User;
 import com.example.queueup.services.NotificationService;
 import com.example.queueup.viewmodels.UserViewModel;

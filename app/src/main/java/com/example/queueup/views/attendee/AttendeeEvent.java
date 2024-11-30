@@ -15,6 +15,8 @@ import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.models.Attendee;
 import com.example.queueup.models.Event;
 
+import org.checkerframework.checker.units.qual.A;
+
 import java.time.format.DateTimeFormatter;
 
 
@@ -80,8 +82,29 @@ public class AttendeeEvent extends AppCompatActivity {
                 bundle.putSerializable("attendee", attendee);
 
                 switch (attendee.getStatus()) {
+                    case "enrolled":
+                        getSupportFragmentManager().beginTransaction()
+                                .setReorderingAllowed(true)
+                                .replace(R.id.attendee_event_fragment, AttendeeWaitlistTextFragment.class, bundle)
+                                .commit();
+                        break;
+
+                    case "cancelled":
+                        getSupportFragmentManager().beginTransaction()
+                                .setReorderingAllowed(true)
+                                .replace(R.id.attendee_event_fragment, AttendeeWaitlistTextFragment.class, bundle)
+                                .commit();
+                        break;
                     case "selected":
+                        titleText.setText("You Won the Draw!!");
+                        getSupportFragmentManager().beginTransaction()
+                                .setReorderingAllowed(true)
+                                .replace(R.id.attendee_event_fragment, AttendeeWaitlistChoiceFragment.class, bundle)
+                                .commit();
+                        break;
+
                     case "not selected":
+                        titleText.setText("You Lost the Draw");
                         getSupportFragmentManager().beginTransaction()
                                 .setReorderingAllowed(true)
                                 .replace(R.id.attendee_event_fragment, AttendeeWaitlistChoiceFragment.class, bundle)

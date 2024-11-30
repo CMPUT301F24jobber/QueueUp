@@ -14,6 +14,8 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
+
 
 public class UserController {
     private static UserController singleInstance = null;
@@ -153,6 +155,9 @@ public class UserController {
      */
     public Task<QuerySnapshot> getUserByDeviceId(String deviceId) {
         return userCollectionReference.whereEqualTo("deviceId", deviceId).get();
+    }
+    public Task<Void> clearNotifications(String userId) {
+        return userCollectionReference.document(userId).update("notifications", new ArrayList<String>());
     }
 
 
