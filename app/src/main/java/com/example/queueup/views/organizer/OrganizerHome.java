@@ -20,7 +20,7 @@ public class OrganizerHome extends AppCompatActivity {
     private TextView titleTextView;
     private String deviceId;
     private BottomNavigationView navigationView;
-    private ImageButton plusButton;
+    private ImageButton plusButton, backButton;
 
     /**
      * Called when the activity is created. Initializes the UI elements and sets up the navigation bar.
@@ -40,7 +40,10 @@ public class OrganizerHome extends AppCompatActivity {
         if (deviceId == null || deviceId.isEmpty()) {
             deviceId = UserController.getInstance().getDeviceId(getApplicationContext());
         }
-
+        backButton = findViewById(R.id.back_button);
+        backButton.setOnClickListener((view) -> {
+            onBackPressed();
+        });
         // Set the OnClickListener to navigate to OrganizerCreateEvent
         plusButton.setOnClickListener(v -> {
             Intent intent = new Intent(OrganizerHome.this, OrganizerCreateEvent.class);

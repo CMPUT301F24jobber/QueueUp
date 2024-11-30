@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.queueup.MainActivity;
@@ -23,6 +24,7 @@ import com.example.queueup.services.ImageUploader;
 import com.example.queueup.viewmodels.UserViewModel;
 import com.example.queueup.views.admin.AdminHome;
 import com.example.queueup.views.attendee.AttendeeHome;
+import com.example.queueup.views.organizer.OrganizerCreateFacility;
 import com.example.queueup.views.organizer.OrganizerHome;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
@@ -190,13 +192,7 @@ public class SignUp extends AppCompatActivity {
 
         User user = new User(firstName, lastName, username, email, phoneNumber, deviceId, isadmin);
 
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult() != null) {
-                user.setFCMToken(task.getResult());
-            } else {
-                Toast.makeText(SignUp.this, "Failed to get FCM token: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+
 
         // Check if a profile image is selected
         if (profileImageUri != null) {
@@ -225,15 +221,27 @@ public class SignUp extends AppCompatActivity {
     * @param user The user object containing user details.
      */
     private void proceedToSaveUser(User user) {
-        userViewModel.createUser(user).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Toast.makeText(SignUp.this, "User registered successfully", Toast.LENGTH_SHORT).show();
-                // Redirect based on role
-                redirectToRoleBasedActivity(role, user);
-            } else {
-                Toast.makeText(SignUp.this, "Failed to register user: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+        if (role.equals("Organizer")) {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("user", user);
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            OrganizerCreateFacility facilityDialog = new OrganizerCreateFacility();
+            facilityDialog.setArguments(bundle);
+            transaction.add(android.R.id.content, facilityDialog)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .addToBackStack("facilityCreation").commit();
+        } else {
+
+            userViewModel.createUser(user).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Toast.makeText(SignUp.this, "User registered successfully", Toast.LENGTH_SHORT).show();
+                    // Redirect based on role
+                    redirectToRoleBasedActivity(role, user);
+                } else {
+                    Toast.makeText(SignUp.this, "Failed to register user: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     /**

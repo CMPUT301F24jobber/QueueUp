@@ -42,6 +42,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private EditText editFirstName, editLastName, editUsername, editEmail, editPhone;
     private ImageView profileImageView;
     private TextView profileInitialsTextView;
+    private ImageButton backButton;
     private static final int PICK_IMAGE_REQUEST = 1;
     private Uri imageUri;
     private FirebaseStorage storage;
@@ -74,6 +75,10 @@ public class EditProfileActivity extends AppCompatActivity {
         editUsername = findViewById(R.id.editUsername);
         editEmail = findViewById(R.id.editEmail);
         editPhone = findViewById(R.id.editPhone);
+        backButton = findViewById(R.id.back_button);
+        backButton.setOnClickListener((view) -> {
+            onBackPressed();
+        });
 
         ImageButton saveButton = findViewById(R.id.saveButton);
         ImageButton editPicButton = findViewById(R.id.editPicButton);

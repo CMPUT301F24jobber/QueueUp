@@ -4,15 +4,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.provider.Settings;
-import android.util.Log;
 
-import com.example.queueup.handlers.PushNotificationHandler;
 import com.example.queueup.models.GeoLocation;
 import com.example.queueup.models.User;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -160,26 +156,6 @@ public class UserController {
     }
 
 
-
-    /**
-     * Checks if a user has enabled a specific type of notification.
-     *
-     * @param userId
-     * @return Task<Boolean>
-     */
-    public Task<Boolean> isNotificationEnabled(String userId, PushNotificationHandler.NotificationType type) {
-        return getUserById(userId).continueWith(task -> {
-            if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
-                User user = task.getResult().toObject(User.class);
-                if (user != null) {
-                    return user.isReceiveAllNotifications();
-                }
-                return false;
-            } else {
-                throw new RuntimeException("User not found or failed to retrieve.");
-            }
-        });
-    }
     public Task<Void> notifyUserById(String userId, String status, String notification) {
         return userCollectionReference.document(userId).update("notifications", FieldValue.arrayUnion(status, notification));
     }

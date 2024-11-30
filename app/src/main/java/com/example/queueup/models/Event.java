@@ -14,7 +14,6 @@ public class Event implements Serializable {
     private String eventBannerImageUrl;
     private String eventId;
     private ArrayList<String> attendeeIds;
-    private ArrayList<HashMap<String, String>> announcementList;
     private Date eventStartDate;
     private Date eventEndDate;
     private Date creationDate;
@@ -46,7 +45,6 @@ public class Event implements Serializable {
         this.maxCapacity = maxCapacity;
         this.isActive = isActive;
         this.attendeeIds = new ArrayList<>();
-        this.announcementList = new ArrayList<>();
         this.currentCapacity = 0;
         this.creationDate = new Date();
         this.isDrawn = isDrawn;
@@ -142,33 +140,6 @@ public class Event implements Serializable {
      */
     public ArrayList<String> getAttendeeIds() {
         return attendeeIds;
-    }
-
-    /**
-     * Retrieves the list of announcements related to the event.
-     *
-     * @return a list of announcements, each represented as a key-value pair
-     */
-    public ArrayList<HashMap<String, String>> getAnnouncementList() {
-        return announcementList;
-    }
-
-    /**
-     * Adds a new announcement to the event.
-     *
-     * @param announcement a map containing announcement details
-     */
-    public void addAnnouncement(HashMap<String, String> announcement) {
-        announcementList.add(announcement);
-    }
-
-    /**
-     * Sets the list of announcements for the event.
-     *
-     * @param announcementList a list of announcements to associate with the event
-     */
-    public void setAnnouncementList(ArrayList<HashMap<String, String>> announcementList) {
-        this.announcementList = announcementList;
     }
 
     /**

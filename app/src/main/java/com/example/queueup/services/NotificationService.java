@@ -39,7 +39,7 @@ public class NotificationService extends Service {
     private UserController userController = UserController.getInstance();
 
     private String deviceId;
-    Thread thread;
+    private Thread thread;
 
     private void showNotification(String title) {
 
@@ -141,15 +141,8 @@ public class NotificationService extends Service {
                                int flags,
                                int startId) {
         super.onStartCommand(intent, flags, startId);
-        Notification notification =
-                new NotificationCompat.Builder(this, "CHANNEL_ID")
-                        // Create the notification to display while the service
-                        // is running
-                        .build();
-
 
         deviceId = userController.getDeviceId(getApplicationContext());
-
 
         notificationManager =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);

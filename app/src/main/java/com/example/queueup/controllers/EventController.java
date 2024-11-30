@@ -7,12 +7,10 @@ import static android.content.ContentValues.TAG;
 import android.location.Location;
 import android.util.Log;
 import java.util.Random;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
 import com.example.queueup.handlers.CurrentUserHandler;
-import com.example.queueup.handlers.PushNotificationHandler;
 import com.example.queueup.models.Attendee;
 import com.example.queueup.models.Event;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -25,8 +23,6 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
-
-import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -85,7 +81,7 @@ public class EventController {
      * @param userId The ID of the attendee
      * @return Task<List<DocumentSnapshot>>
      */
-    public Task<List<DocumentSnapshot>> getEventsByUserId(String userId) {
+    public Task<List<DocumentSnapshot>> getEnrolledEventsByUserId(String userId) {
         return attendanceCollectionReference
                 .whereEqualTo("userId", userId)
                 .get()
@@ -324,23 +320,6 @@ public class EventController {
                 });
     }
 
-    /**
-     * Adds an announcement to an event.
-     *
-     * @param eventId
-     * @param announcement
-     * @return Task<Void>
-     */
-    public Task<Void> addAnnouncement(String eventId, HashMap<String, String> announcement) {
-        return eventCollectionReference.document(eventId)
-                .update("announcementList", FieldValue.arrayUnion(announcement))
-                .addOnSuccessListener(aVoid -> {
-                    Log.d("EventController", "Announcement added successfully.");
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("EventController", "Failed to add announcement.", e);
-                });
-    }
 
     /**
      * Retrieves all announcements for a specific event.
@@ -528,15 +507,8 @@ public class EventController {
      * @param eventId
      * @return Task<String>
      */
-    public Task<String> getEventName(String eventId) {
-        return getEventById(eventId).continueWith(task -> {
-            if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
-                Event event = task.getResult().toObject(Event.class);
-                return event != null ? event.getEventName() : null;
-            } else {
-                throw new RuntimeException("Event not found or failed to retrieve.");
-            }
-        });
+    public Task<DocumentSnapshot> getDocumentSnapshot(String eventId) {
+        return eventCollectionReference.document(eventId).get();
     }
 
     /**
@@ -587,30 +559,6 @@ public class EventController {
                 });
     }
 
-    /**
-     * Retrieves the user IDs of cancelled attendees for a specific event.
-     *
-     * @param eventId
-     * @return Task<List<String>>
-     */
-    public Task<List<String>> getCancelledUserIds(String eventId) {
-        return attendanceCollectionReference
-                .whereEqualTo("eventId", eventId)
-                .whereEqualTo("status", "cancelled")
-                .get()
-                .continueWith(task -> {
-                    if (task.isSuccessful()) {
-                        List<String> userIds = new ArrayList<>();
-                        for (DocumentSnapshot doc : task.getResult()) {
-                            userIds.add(doc.getString("userId"));
-                        }
-                        return userIds;
-                    } else {
-                        throw new RuntimeException("Failed to retrieve cancelled attendees.");
-                    }
-                });
-    }
-
 
     /**
      * Adds or updates the event banner image URL.
@@ -640,6 +588,10 @@ public class EventController {
     public Task<Void> setSendingNotificationOnRedraw(String eventId, boolean notify) {
         return eventCollectionReference.document(eventId)
                 .update("redrawNotificationEnabled",notify);
+    }
+    public Task<Void> updateEventField(String eventId, String field, Object obj) {
+        return eventCollectionReference.document(eventId)
+                .update("redrawNotificationEnabled", obj);
     }
 
     /**

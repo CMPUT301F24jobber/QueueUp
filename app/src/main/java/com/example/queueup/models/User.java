@@ -27,8 +27,8 @@ public class User implements Parcelable {
     private boolean receiveNotChosenNotifications = true;
     private boolean receiveAllNotifications = true;
     private List<String> waitingListEvents;
-    private String FCMToken;
     private GeoLocation geoLocation;
+    private String facility;
 
 
     public User() {
@@ -50,6 +50,7 @@ public class User implements Parcelable {
         this.phoneNumber = phoneNumber;
         this.deviceId = deviceId;
         this.isadmin = isadmin;
+        this.facility = "";
         receiveChosenNotifications = true;
         receiveNotChosenNotifications = true;
         receiveAllNotifications = true;
@@ -79,10 +80,10 @@ public class User implements Parcelable {
         waitingListEvents = in.createStringArrayList();
 
         // Read FCMToken before notifications
-        FCMToken = in.readString();
         notifications = in.createStringArrayList();
 
         geoLocation = in.readParcelable(GeoLocation.class.getClassLoader());
+        facility = in.readString();
 
         Log.d("User", "Reading from Parcel: " + this.toString());
     }
@@ -204,6 +205,21 @@ public class User implements Parcelable {
     }
 
     /**
+     * Returns the facility of the user.
+     */
+    public String getFacility() {
+        return facility;
+    }
+
+    /**
+     * Sets the facility of the user.
+     * @param facility
+     */
+    public void setFacility(String facility) {
+        this.facility = facility;
+    }
+
+    /**
      * Returns whether the user is an admin.
      */
     public Boolean getIsadmin() {
@@ -264,20 +280,6 @@ public class User implements Parcelable {
         this.deviceId = deviceId;
     }
 
-    /**
-     * Returns the FCM token of the user.
-     */
-    public String getFCMToken() {
-        return FCMToken;
-    }
-
-    /**
-     * Sets the FCM token of the user.
-     * @param FCMToken
-     */
-    public void setFCMToken(String FCMToken) {
-        this.FCMToken = FCMToken;
-    }
 
     /**
      * Returns whether the user receives notifications when chosen.
@@ -433,7 +435,6 @@ public class User implements Parcelable {
         parcel.writeStringList(waitingListEvents);
 
         // Write FCMToken before notifications
-        parcel.writeString(FCMToken);
         parcel.writeStringList(notifications);
 
         parcel.writeParcelable(geoLocation, flags);
@@ -448,6 +449,7 @@ public class User implements Parcelable {
                 ", username='" + username + '\'' +
                 ", emailAddress='" + emailAddress + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
+                ", facility='" + facility + '\'' +
                 ", isadmin=" + isadmin +
                 ", profileImageUrl='" + profileImageUrl + '\'' +
                 ", deviceId='" + deviceId + '\'' +
@@ -455,7 +457,6 @@ public class User implements Parcelable {
                 ", receiveNotChosenNotifications=" + receiveNotChosenNotifications +
                 ", receiveAllNotifications=" + receiveAllNotifications +
                 ", waitingListEvents=" + waitingListEvents +
-                ", FCMToken='" + FCMToken + '\'' +
                 ", notifications=" + notifications +
                 ", geoLocation=" + geoLocation +
                 '}';
