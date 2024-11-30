@@ -57,7 +57,7 @@ public class OrganizerCreateFacility extends DialogFragment {
         facilityNameInputLayout = view.findViewById(R.id.facilityNameInputLayout);
 
         backButton.setOnClickListener(v -> {
-            getActivity().onBackPressed();
+            dismiss();
         });
         submitButton = view.findViewById(R.id.submitButton);
         submitButton.setOnClickListener( v -> {

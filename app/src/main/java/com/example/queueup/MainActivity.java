@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
         facilityDialog.setArguments(bundle);
         transaction.add(android.R.id.content, facilityDialog)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .addToBackStack("facilityCreation").commit();
+                .commit();
     }
     private void handleOrganizerSelection() {
         userController.getUserByDeviceId(userViewModel.getDeviceId()).addOnSuccessListener(querySnapshot -> {

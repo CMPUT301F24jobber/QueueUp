@@ -229,7 +229,7 @@ public class SignUp extends AppCompatActivity {
             facilityDialog.setArguments(bundle);
             transaction.add(android.R.id.content, facilityDialog)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                    .addToBackStack("facilityCreation").commit();
+                    .commit();
         } else {
 
             userViewModel.createUser(user).addOnCompleteListener(task -> {
