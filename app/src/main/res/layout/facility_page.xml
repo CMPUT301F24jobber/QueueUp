@@ -33,6 +33,19 @@
         android:backgroundTint="#8C7466"
         android:layout_below="@id/facility_name"
         android:layout_centerHorizontal="true" />
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/switch_role"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Switch Role"
+        android:fontFamily="@font/poppins"
+        android:layout_below="@id/editButton"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true"
+        android:backgroundTint="@color/red"
+        android:textColor="@android:color/white"
+        app:cornerRadius="8dp" />
+
 
 
 </RelativeLayout>

@@ -35,6 +35,7 @@ public class OrganizerFacilityFragment extends Fragment {
 
     private TextView facilityName;
     private Button editButton;
+    private MaterialButton switchRoleButton;
     private User user;
 
     @Override
@@ -42,6 +43,7 @@ public class OrganizerFacilityFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         facilityName = view.findViewById(R.id.facility_name);
         editButton = view.findViewById(R.id.editButton);
+        switchRoleButton = view.findViewById(R.id.switch_role);
         user = CurrentUserHandler.getSingleton().getCurrentUser().getValue();
         facilityName.setText(user.getFacility());
         editButton.setOnClickListener(v -> {
@@ -54,5 +56,12 @@ public class OrganizerFacilityFragment extends Fragment {
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .commit();
         });
+        // Set up Switch Role Button Click Listener
+        switchRoleButton.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), MainActivity.class);
+            startActivity(intent);
+            requireActivity().finish();
+        });
+
     }
 }
