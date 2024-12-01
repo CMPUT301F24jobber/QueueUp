@@ -26,7 +26,7 @@ public class OrganizerHomeFragment extends Fragment {
     private ListView eventList;
     private OrganizerEventArrayAdapter eventAdapter;
     private EventViewModel eventViewModel;
-
+    private String organizerId;
     public OrganizerHomeFragment() {
         super(R.layout.organizer_home_fragment);
     }
@@ -72,7 +72,7 @@ public class OrganizerHomeFragment extends Fragment {
         observeViewModel();
 
         // Fetch events for the current organizer
-        String organizerId = CurrentUserHandler.getSingleton().getCurrentUserId();
+        organizerId = CurrentUserHandler.getSingleton().getCurrentUserId();
         eventViewModel.fetchEventsByOrganizer(organizerId);
     }
 
@@ -87,6 +87,12 @@ public class OrganizerHomeFragment extends Fragment {
             }
             eventAdapter.notifyDataSetChanged();
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        eventViewModel.fetchEventsByOrganizer(organizerId);
     }
 
     /**
