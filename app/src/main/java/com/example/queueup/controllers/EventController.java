@@ -523,6 +523,29 @@ public class EventController {
                 });
     }
 
+    /**
+     * Retrieves the user IDs of checked-in attendees for a specific event.
+     *
+     * @param eventId
+     * @return Task<List<String>>
+     */
+    public Task<Boolean> isCapacityReached(String eventId) {
+        return eventCollectionReference.document(eventId).get().continueWith(task -> {
+            if (task.isSuccessful()) {
+                Event event = task.getResult().toObject(Event.class);
+                if (event != null) {
+                    int maxCap = event.getMaxCapacity();
+                    List<String> attendeeIds = event.getAttendeeIds();
+                    return attendeeIds != null && attendeeIds.size() >= maxCap;
+                } else {
+                    throw new RuntimeException("Failed to retrieve event.");
+                }
+            } else {
+                throw new RuntimeException("Failed to retrieve event.");
+            }
+        });
+    }
+
 
     /**
      * Adds or updates the event banner image URL.
