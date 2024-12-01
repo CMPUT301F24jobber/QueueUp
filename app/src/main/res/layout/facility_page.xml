@@ -18,6 +18,8 @@
         android:textColor="#8C7466"
         android:maxLines="2"
         android:singleLine="false"
+        android:ellipsize="end"
+
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:fontFamily="@font/poppins_bold" />

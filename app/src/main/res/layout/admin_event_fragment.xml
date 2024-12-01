@@ -17,7 +17,6 @@
 
         android:background="@drawable/circle_shape"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         android:scaleType="centerCrop"
         app:layout_constraintTop_toTopOf="parent"
@@ -40,6 +39,7 @@
         android:layout_marginTop="40dp"
         android:fontFamily="@font/poppins_extralight"
         android:text="Event Name"
+        android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="28sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -54,6 +54,7 @@
         android:fontFamily="@font/poppins_extralight"
         android:text="start date"
 
+        android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -69,6 +70,7 @@
         android:fontFamily="@font/poppins_extralight"
         android:text="end date"
 
+        android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -84,6 +86,7 @@
         android:fontFamily="@font/poppins_extralight"
 
         android:text="event location"
+        android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
