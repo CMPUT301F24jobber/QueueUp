@@ -230,6 +230,13 @@ public class MainActivityTest {
         // Wait for the final screen to load
         onView(isRoot()).perform(waitFor(5000));
         onView(withId(R.id.plusButton)).check(matches(isDisplayed()));
+
+        // Create Event
+        onView(withId(R.id.plusButton)).perform(click());
+
+        onView(isRoot()).perform(waitFor(5000));
+        onView(allOf(isDescendantOfA(withId(R.id.eventNameEditText)), isAssignableFrom(TextInputEditText.class)))
+                .perform(typeText("Test Event"), closeSoftKeyboard());
     }
 
     /**
