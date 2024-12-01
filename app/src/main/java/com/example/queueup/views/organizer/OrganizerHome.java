@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.queueup.R;
 import com.example.queueup.controllers.UserController;
+import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.views.profiles.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -28,6 +29,7 @@ public class OrganizerHome extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.organizer_activity);
+        CurrentUserHandler.getSingleton().getCurrentUser();
 
         // Initialize views
         navigationView = findViewById(R.id.bottom_navigation);

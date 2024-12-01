@@ -62,7 +62,10 @@ public class OrganizerCreateFacility extends DialogFragment {
         submitButton = view.findViewById(R.id.submitButton);
         submitButton.setOnClickListener( v -> {
             String name = facilityNameInputLayout.getEditText().getText().toString();
-            if (name.isEmpty()) return;
+            if (name.isEmpty()) {
+                Toast.makeText(getContext(), "Facility Name can't be empty", Toast.LENGTH_SHORT).show();
+                return;
+            }
             user.setFacility(name);
             userController.updateUser(user);
             Intent intent = new Intent(getActivity(), OrganizerHome.class); // Navigate to OrganizerHome
