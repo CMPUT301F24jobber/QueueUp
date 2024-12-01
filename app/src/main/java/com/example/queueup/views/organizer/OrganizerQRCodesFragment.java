@@ -53,7 +53,7 @@ public class OrganizerQRCodesFragment extends Fragment {
 
         eventList = new ArrayList<>();
         ListView eventsListView = view.findViewById(R.id.organizer_qrcodes_list);
-        eventsAdapter = new QRCodeEventAdapter(view.getContext(), eventList);
+        eventsAdapter = new QRCodeEventAdapter(requireContext(), eventList);
 
 
         eventsListView.setAdapter(eventsAdapter);
@@ -61,7 +61,7 @@ public class OrganizerQRCodesFragment extends Fragment {
         observeViewModel();
 
         // Fetch events for the current organizer
-        String organizerId = CurrentUserHandler.getSingleton().getDeviceId();
+        String organizerId = CurrentUserHandler.getSingleton().getCurrentUserId();
         eventViewModel.fetchEventsByOrganizer(organizerId);
     }
 
