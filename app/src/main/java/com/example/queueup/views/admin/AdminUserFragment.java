@@ -44,11 +44,13 @@ public class AdminUserFragment extends Fragment {
         TextView userName = view.findViewById(R.id.username);
         TextView emailText = view.findViewById(R.id.email);
         TextView phoneText = view.findViewById(R.id.phone_number);
+        TextView profileInitials = view.findViewById(R.id.profile_initials);
         ImageView profileImage = view.findViewById(R.id.profile_image);
 
         User user = this.getArguments().getParcelable("user", User.class);
 
         titleText.setText(user.getUsername() + "'s Profile");
+        profileInitials.setText(user.getInitials());
         displayName.setText(user.getFullName());
         userName.setText("@" + user.getUsername());
         emailText.setText("Email: " + user.getEmailAddress());
@@ -56,6 +58,7 @@ public class AdminUserFragment extends Fragment {
 
         // Load profile picture using Glide (add Glide dependency if not already added)
         if (user.getProfileImageUrl() != null && !user.getProfileImageUrl().isEmpty()) {
+            profileInitials.setVisibility(View.INVISIBLE);
             Glide.with(requireContext())
                     .load(user.getProfileImageUrl())
                     .circleCrop()

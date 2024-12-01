@@ -16,8 +16,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class OrganizerHome extends AppCompatActivity {
 
-    private FirebaseFirestore db;
-    private TextView titleTextView;
     private String deviceId;
     private BottomNavigationView navigationView;
     private ImageButton plusButton, backButton;
@@ -33,7 +31,6 @@ public class OrganizerHome extends AppCompatActivity {
 
         // Initialize views
         navigationView = findViewById(R.id.bottom_navigation);
-        db = FirebaseFirestore.getInstance();
         plusButton = findViewById(R.id.plusButton);
         // Get deviceId from intent or UserController
         deviceId = getIntent().getStringExtra("deviceId");

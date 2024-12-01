@@ -21,39 +21,55 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/profile_image_container"
+
+    <FrameLayout
+        android:id="@+id/profileImageFrame"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginTop="32dp"
-        app:cardCornerRadius="50dp"
-        app:cardElevation="0dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/profile_title">
+        app:layout_constraintTop_toBottomOf="@id/profile_title"
+        android:background="@drawable/circle_shape">
+
+        <TextView
+            android:id="@+id/profile_initials"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text=""
+            android:fontFamily="@font/poppins_bold"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:gravity="center"
+            android:visibility="visible"
+            android:layout_gravity="center"/>
 
         <ImageView
             android:id="@+id/profile_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:contentDescription="Profile picture"
-            android:background="@color/backgroundColor"/>
+            android:visibility="gone"
+            android:layout_gravity="center"
+            />
 
-    </androidx.cardview.widget.CardView>
+    </FrameLayout>
 
     <TextView
         android:id="@+id/display_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:fontFamily="@font/poppins_bold"
         android:text="Example Name"
+        android:textAlignment="center"
         android:textColor="#B4A7A7"
         android:textSize="20sp"
-        android:fontFamily="@font/poppins_bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/profile_image_container" />
+        app:layout_constraintTop_toBottomOf="@id/profileImageFrame" />
 
     <TextView
         android:id="@+id/username"
@@ -62,6 +78,7 @@
         android:layout_marginTop="8dp"
         android:fontFamily="@font/poppins_extralight"
         android:text="\@example_user"
+        android:textAlignment="center"
         android:textColor="#000000"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -72,10 +89,10 @@
         android:id="@+id/email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:fontFamily="@font/poppins_extralight"
-
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/poppins"
         android:text="Email: example@email.com"
+        android:textAlignment="center"
         android:textColor="#000000"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -84,12 +101,14 @@
 
     <TextView
         android:id="@+id/phone_number"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="212dp"
+        android:layout_height="38dp"
         android:layout_marginTop="8dp"
-        android:fontFamily="@font/poppins_extralight"
+        android:fontFamily="@font/poppins"
 
         android:text="Phone Number: 1234567890"
+        android:textAlignment="center"
+        android:textAllCaps="false"
         android:textColor="#000000"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
