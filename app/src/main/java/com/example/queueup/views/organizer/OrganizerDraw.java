@@ -192,7 +192,7 @@ public class OrganizerDraw extends Fragment {
             event.setRedrawNotificationEnabled(toggled);
         });
         cancelWinners.setOnClickListener(v -> {
-            eventController.cancelWinners(event.getEventId(), event.getEventName(), cancelNotification.isChecked());
+            eventController.cancelWinners(event.getEventId(), event.getEventName(), cancelNotification.isChecked(), redrawSwitch.isChecked());
         });
         if (event.getIsDrawn()) {
             redrawLayout.setVisibility(View.VISIBLE);

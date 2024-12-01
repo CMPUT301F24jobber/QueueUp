@@ -37,7 +37,6 @@ public class AttendeeQRscanFragment extends Fragment {
     }
     MaterialButton scanButton;
     EventController eventController;
-    PreviewView previewView;
     AttendeeController attendeeController;
 
     /**
@@ -51,8 +50,7 @@ public class AttendeeQRscanFragment extends Fragment {
         scanButton = view.findViewById(R.id.scan_button);
         attendeeController = AttendeeController.getInstance();
         eventController = EventController.getInstance();
-        previewView = view.findViewById(R.id.cameraView);
-        previewView.setVisibility(View.INVISIBLE);
+
         ActivityResultLauncher<ScanOptions> barCodeLauncher = registerForActivityResult(new ScanContract(), result -> {
             Intent originalIntent = result.getOriginalIntent();
 

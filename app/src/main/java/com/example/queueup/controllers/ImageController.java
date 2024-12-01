@@ -124,29 +124,11 @@ public class ImageController {
         }
 
         StorageReference storageRef;
-        try {
-            storageRef = storage.getReferenceFromUrl(image.getImageUrl());
-        } catch (IllegalArgumentException e) {
-            Log.e("ImageController", "Invalid image URL: " + image.getImageUrl(), e);
-            return Tasks.forException(e);
-        }
+        storageRef = storage.getReferenceFromUrl(image.getImageUrl());
+
 
         Task<Void> deleteImageTask = storageRef.delete();
-        Task<Void> deleteDocumentTask = imageRef.document(image.getImageId()).delete();
 
-        if (image.getStorageReferenceId() != null) {
-            Task<Void> removeReferenceTask = removeReference(image);
-            return Tasks.whenAll(deleteImageTask, deleteDocumentTask, removeReferenceTask);
-        }
-
-        // If it's the user's own profile picture
-        User currentUser = currentUserHandler.getCurrentUser().getValue();
-        if (currentUser != null && currentUser.getProfileImageUrl() != null && currentUser.getProfileImageUrl().contains(image.getImageId())) {
-            Log.d("ImageController", "Deleting user profile image.");
-            currentUser.setProfileImageUrl(null);
-            currentUserHandler.updateUser(currentUser);
-        }
-
-        return Tasks.whenAll(deleteImageTask, deleteDocumentTask);
+        return deleteImageTask;
     }
 }

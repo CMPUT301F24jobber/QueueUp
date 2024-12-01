@@ -65,8 +65,6 @@ public class AdminEventFragment extends Fragment {
 
         });
 
-
-
         eventTitle.setText(event.getEventName());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE MMM dd, uuuu");
         String startDateText = event.getEventStartDate().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate().format(formatter);

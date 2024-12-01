@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.queueup.R;
 import com.example.queueup.controllers.UserController;
+import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.views.profiles.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -16,11 +17,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class OrganizerHome extends AppCompatActivity {
 
-    private FirebaseFirestore db;
-    private TextView titleTextView;
     private String deviceId;
     private BottomNavigationView navigationView;
-    private ImageButton plusButton;
+    private ImageButton plusButton, backButton;
 
     /**
      * Called when the activity is created. Initializes the UI elements and sets up the navigation bar.
@@ -30,17 +29,20 @@ public class OrganizerHome extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.organizer_activity);
+        CurrentUserHandler.getSingleton().getCurrentUser();
 
         // Initialize views
         navigationView = findViewById(R.id.bottom_navigation);
-        db = FirebaseFirestore.getInstance();
         plusButton = findViewById(R.id.plusButton);
         // Get deviceId from intent or UserController
         deviceId = getIntent().getStringExtra("deviceId");
         if (deviceId == null || deviceId.isEmpty()) {
             deviceId = UserController.getInstance().getDeviceId(getApplicationContext());
         }
-
+        backButton = findViewById(R.id.back_button);
+        backButton.setOnClickListener((view) -> {
+            onBackPressed();
+        });
         // Set the OnClickListener to navigate to OrganizerCreateEvent
         plusButton.setOnClickListener(v -> {
             Intent intent = new Intent(OrganizerHome.this, OrganizerCreateEvent.class);
@@ -63,18 +65,21 @@ public class OrganizerHome extends AppCompatActivity {
                     getSupportFragmentManager().beginTransaction()
                             .setReorderingAllowed(true)
                             .replace(R.id.organizer_activity_fragment, OrganizerHomeFragment.class, null)
+                            .addToBackStack("Home")
                             .commit();
                     break;
                 case "QR Code":
                     getSupportFragmentManager().beginTransaction()
                             .setReorderingAllowed(true)
+                            .addToBackStack("QR Code")
                             .replace(R.id.organizer_activity_fragment, OrganizerQRCodesFragment.class, null)
                             .commit();
                     break;
                 case "Profile":
                     getSupportFragmentManager().beginTransaction()
                             .setReorderingAllowed(true)
-                            .replace(R.id.organizer_activity_fragment, ProfileFragment.class, null)
+                            .addToBackStack("Profile")
+                            .replace(R.id.organizer_activity_fragment, OrganizerFacilityFragment.class, null)
                             .commit();
                     break;
                 default:

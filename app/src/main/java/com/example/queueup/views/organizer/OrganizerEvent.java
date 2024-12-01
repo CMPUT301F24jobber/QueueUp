@@ -14,7 +14,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class OrganizerEvent extends AppCompatActivity {
     private ImageButton backButton;
     private BottomNavigationView navigationView;
-    Event event;
+    private Event event;
 
     /**
      * Called when the activity is created. Initializes the UI elements and sets up the navigation bar.

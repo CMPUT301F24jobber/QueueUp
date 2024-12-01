@@ -13,8 +13,10 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.Serializable;
 
-public class Image {
+
+public class Image implements Serializable {
     private String imageUrl;
     private String filePath;
     private String storageReferenceId;
@@ -35,6 +37,15 @@ public class Image {
         this.imageSize = imageSize;
         this.imageType = imageType;
         this.creationDate = creationDate;
+    }
+
+    public Image(String storageReferenceId,  String imageType, String imageUrl, String imageId) {
+        this.storageReferenceId = storageReferenceId;
+        this.imageUrl = imageUrl;
+        this.imageType = imageType;
+        this.imageId = imageId;
+
+
     }
 
 

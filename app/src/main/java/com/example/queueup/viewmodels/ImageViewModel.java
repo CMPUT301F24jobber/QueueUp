@@ -175,8 +175,6 @@ public class ImageViewModel extends ViewModel {
                 callback.onImageDeleted();
             }
         }).addOnFailureListener(e -> {
-            Log.e("ImageViewModel", "Image deletion failed", e);
-            errorMessageLiveData.setValue("Image deletion failed: " + e.getMessage());
             if (callback != null) {
                 callback.onImageDeleteFailed();
             }

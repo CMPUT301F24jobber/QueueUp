@@ -7,12 +7,10 @@ import static android.content.ContentValues.TAG;
 import android.location.Location;
 import android.util.Log;
 import java.util.Random;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
 import com.example.queueup.handlers.CurrentUserHandler;
-import com.example.queueup.handlers.PushNotificationHandler;
 import com.example.queueup.models.Attendee;
 import com.example.queueup.models.Event;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -25,8 +23,6 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
-
-import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -85,7 +81,7 @@ public class EventController {
      * @param userId The ID of the attendee
      * @return Task<List<DocumentSnapshot>>
      */
-    public Task<List<DocumentSnapshot>> getEventsByUserId(String userId) {
+    public Task<List<DocumentSnapshot>> getEnrolledEventsByUserId(String userId) {
         return attendanceCollectionReference
                 .whereEqualTo("userId", userId)
                 .get()
@@ -204,48 +200,8 @@ public class EventController {
      * @return Task<Void>
      */
     public Task<Void> registerToEvent(String userId, String eventId, @Nullable Location location) {
-        DocumentReference eventRef = eventCollectionReference.document(eventId);
-
-        return db.runTransaction((Transaction.Function<Void>) transaction -> {
-            DocumentSnapshot eventSnapshot = transaction.get(eventRef);
-            String eventName = eventSnapshot.getString("eventName");
-            Boolean isActive = eventSnapshot.getBoolean("isActive");
-            Date endDate = eventSnapshot.getDate("eventEndDate");
-            Date currentDate = new Date();
-            if (isActive == null || !isActive || (endDate != null && endDate.before(currentDate))) {
-                throw new RuntimeException("The event \"" + eventName + "\" is no longer active or has already ended.");
-            }
-
-            Long maxCap = eventSnapshot.getLong("maxCapacity");
-            Long currCap = eventSnapshot.getLong("currentCapacity");
-            List<String> attendees = (List<String>) eventSnapshot.get("attendeeIds");
-
-            if ((maxCap != null && maxCap > 0) && (currCap != null && currCap >= maxCap)) {
-                throw new RuntimeException("The event \"" + eventName + "\" is at full capacity.");
-            }
-
-            if (attendees != null && attendees.contains(userId)) {
-                throw new RuntimeException("You have already joined the waiting list for this event.");
-            }
-
-            // Update event's current capacity and attendee list
-            transaction.update(eventRef, "currentCapacity", FieldValue.increment(1));
-            transaction.update(eventRef, "attendeeIds", FieldValue.arrayUnion(userId+eventId));
-
-            return null;
-        }).continueWithTask(task -> {
-            if (task.isSuccessful()) {
-                return AttendeeController.getInstance().joinWaitingList(userId, eventId, location);
-            } else {
-                Exception e = task.getException();
-                String errorMessage = e != null ? e.getMessage() : "Unknown error";
-                throw new RuntimeException("(Failed to register to event) " + errorMessage);
-            }
-        }).addOnSuccessListener(aVoid -> {
-            Log.d("EventController", "Successfully registered to event.");
-        }).addOnFailureListener(e -> {
-            Log.e("EventController", "Failed to register to event.", e);
-        });
+        attendeeController.joinWaitingList(userId,eventId, location);
+        return eventCollectionReference.document(eventId).update("attendeeIds", FieldValue.arrayUnion(userId+eventId));
     }
 
     /**
@@ -298,7 +254,7 @@ public class EventController {
         });
 
     }
-    public void cancelWinners(String eventId, String eventName, boolean notify) {
+    public void cancelWinners(String eventId, String eventName, boolean notify, boolean replace) {
         attendeeController.getAttendanceByEventId(eventId)
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
@@ -316,7 +272,11 @@ public class EventController {
                                 userController.notifyUserById(attendee.getUserId(), "cancelled",
                                         AttendeeController.makeNotificationMessage("cancelled", eventName));
                                 }
-                                attendeeController.setAttendeeStatus(attendee.getId(), "cancelled");
+                                if (replace) {
+                                    handleReplacement(attendee.getUserId(), attendee.getEventId(), eventName);
+                                } else {
+                                    attendeeController.setAttendeeStatus(attendee.getId(), "cancelled");
+                                }
                             }
                         }
 
@@ -324,23 +284,6 @@ public class EventController {
                 });
     }
 
-    /**
-     * Adds an announcement to an event.
-     *
-     * @param eventId
-     * @param announcement
-     * @return Task<Void>
-     */
-    public Task<Void> addAnnouncement(String eventId, HashMap<String, String> announcement) {
-        return eventCollectionReference.document(eventId)
-                .update("announcementList", FieldValue.arrayUnion(announcement))
-                .addOnSuccessListener(aVoid -> {
-                    Log.d("EventController", "Announcement added successfully.");
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("EventController", "Failed to add announcement.", e);
-                });
-    }
 
     /**
      * Retrieves all announcements for a specific event.
@@ -489,9 +432,9 @@ public class EventController {
      * @param eventId
      * @return Task<Void>
      */
-    public Task<Void> handleReplacement(String eventId, String eventName) {
+    public Task<Void> handleReplacement(String userId, String eventId, String eventName) {
         Log.d(TAG, "handleReplacement called for eventId: " + eventId);
-
+        attendeeController.setAttendeeStatus(userId+eventId, "cancelled");
         return attendanceCollectionReference
                 .whereEqualTo("eventId", eventId)
                 .whereEqualTo("status", "waiting")
@@ -528,15 +471,8 @@ public class EventController {
      * @param eventId
      * @return Task<String>
      */
-    public Task<String> getEventName(String eventId) {
-        return getEventById(eventId).continueWith(task -> {
-            if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
-                Event event = task.getResult().toObject(Event.class);
-                return event != null ? event.getEventName() : null;
-            } else {
-                throw new RuntimeException("Event not found or failed to retrieve.");
-            }
-        });
+    public Task<DocumentSnapshot> getDocumentSnapshot(String eventId) {
+        return eventCollectionReference.document(eventId).get();
     }
 
     /**
@@ -587,30 +523,6 @@ public class EventController {
                 });
     }
 
-    /**
-     * Retrieves the user IDs of cancelled attendees for a specific event.
-     *
-     * @param eventId
-     * @return Task<List<String>>
-     */
-    public Task<List<String>> getCancelledUserIds(String eventId) {
-        return attendanceCollectionReference
-                .whereEqualTo("eventId", eventId)
-                .whereEqualTo("status", "cancelled")
-                .get()
-                .continueWith(task -> {
-                    if (task.isSuccessful()) {
-                        List<String> userIds = new ArrayList<>();
-                        for (DocumentSnapshot doc : task.getResult()) {
-                            userIds.add(doc.getString("userId"));
-                        }
-                        return userIds;
-                    } else {
-                        throw new RuntimeException("Failed to retrieve cancelled attendees.");
-                    }
-                });
-    }
-
 
     /**
      * Adds or updates the event banner image URL.
@@ -640,6 +552,10 @@ public class EventController {
     public Task<Void> setSendingNotificationOnRedraw(String eventId, boolean notify) {
         return eventCollectionReference.document(eventId)
                 .update("redrawNotificationEnabled",notify);
+    }
+    public Task<Void> updateEventField(String eventId, String field, Object obj) {
+        return eventCollectionReference.document(eventId)
+                .update("redrawNotificationEnabled", obj);
     }
 
     /**

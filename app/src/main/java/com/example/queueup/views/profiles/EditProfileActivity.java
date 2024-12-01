@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,9 +43,11 @@ public class EditProfileActivity extends AppCompatActivity {
     private EditText editFirstName, editLastName, editUsername, editEmail, editPhone;
     private ImageView profileImageView;
     private TextView profileInitialsTextView;
+    private ImageButton backButton;
     private static final int PICK_IMAGE_REQUEST = 1;
     private Uri imageUri;
     private FirebaseStorage storage;
+    private Switch selectedSwitch, notSelectedSwitch, allNotificationSwitch;
     private String deviceId;
     private CurrentUserHandler currentUserHandler;
     private UserViewModel userViewModel;
@@ -74,6 +77,13 @@ public class EditProfileActivity extends AppCompatActivity {
         editUsername = findViewById(R.id.editUsername);
         editEmail = findViewById(R.id.editEmail);
         editPhone = findViewById(R.id.editPhone);
+        backButton = findViewById(R.id.back_button);
+        backButton.setOnClickListener((view) -> {
+            onBackPressed();
+        });
+        selectedSwitch = findViewById(R.id.notifSelectedSwitch);
+        notSelectedSwitch = findViewById(R.id.notifNotSelectedSwitch);
+        allNotificationSwitch = findViewById(R.id.notifAllSwitch);
 
         ImageButton saveButton = findViewById(R.id.saveButton);
         ImageButton editPicButton = findViewById(R.id.editPicButton);
@@ -160,6 +170,9 @@ public class EditProfileActivity extends AppCompatActivity {
             editEmail.setText(currentUser.getEmailAddress());
             editPhone.setText(currentUser.getPhoneNumber());
             displayProfileImageOrInitials();
+            selectedSwitch.setChecked(currentUser.isReceiveChosenNotifications());
+            notSelectedSwitch.setChecked(currentUser.isReceiveNotChosenNotifications());
+            allNotificationSwitch.setChecked(currentUser.isReceiveAllNotifications());
         }
     }
 
@@ -218,6 +231,9 @@ public class EditProfileActivity extends AppCompatActivity {
         currentUser.setUsername(username);
         currentUser.setEmailAddress(email);
         currentUser.setPhoneNumber(phoneNumber);
+        currentUser.setReceiveChosenNotifications(selectedSwitch.isChecked());
+        currentUser.setReceiveNotChosenNotifications(notSelectedSwitch.isChecked());
+        currentUser.setReceiveAllNotifications(allNotificationSwitch.isChecked());
 
         // Handle profile picture changes
         if (imageUri != null) {

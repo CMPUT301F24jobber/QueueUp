@@ -41,15 +41,61 @@ public class AttendeeWaitlistChoiceFragment extends Fragment {
 
         if (attendee.getStatus().equals("selected")) {
             buttonOne.setText("Enroll in Event");
+            buttonOne.setOnClickListener( v -> {
+                attendeeController.setAttendeeStatus(attendee.getId(), "enrolled");
+                attendee.setStatus("enrolled");
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("event", event);
+                bundle.putSerializable("attendee", attendee);
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .setReorderingAllowed(true)
+                        .replace(R.id.attendee_event_fragment, AttendeeWaitlistTextFragment.class, bundle)
+                        .commit();
+            });
             leaveButton.setText("Decline");
+            leaveButton.setOnClickListener( v -> {
+                attendeeController.setAttendeeStatus(attendee.getId(), "cancelled");
+                if (event.getRedrawEnabled()) {
+                    eventController.handleReplacement(attendee.getUserId(), event.getEventId(), event.getEventName());
+                } else {
+                    attendee.setStatus("cancelled");
+                }
+
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("event", event);
+                bundle.putSerializable("attendee", attendee);
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .setReorderingAllowed(true)
+                        .replace(R.id.attendee_event_fragment, AttendeeWaitlistTextFragment.class, bundle)
+                        .commit();
+            });
         } else {
             buttonOne.setText("Get a chance to be redrawn");
+            buttonOne.setTextSize(8);
+            buttonOne.setOnClickListener(v -> {
+                attendeeController.setAttendeeStatus(attendee.getId(), "waiting");
+                attendee.setStatus("waiting");
+
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("event", event);
+                bundle.putSerializable("attendee", attendee);
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .setReorderingAllowed(true)
+                        .replace(R.id.attendee_event_fragment, AttendeeWaitlistJoinedFragment.class, bundle)
+                        .commit();
+            });
             leaveButton.setText("Decline");
+            leaveButton.setOnClickListener(v -> {
+                eventController.unregisterFromEvent(event.getEventId(), attendee.getUserId());
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("event", event);
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .setReorderingAllowed(true)
+                        .replace(R.id.attendee_event_fragment, AttendeeWaitlistFragment.class, bundle)
+                        .commit();
+            });
         }
-        leaveButton.setOnClickListener(v -> {
-            attendeeController.setAttendeeStatus(attendee.getId(), "cancelled");
-            getActivity().onBackPressed();
-        });
+
 
     }
 }

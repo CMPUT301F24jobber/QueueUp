@@ -6,7 +6,6 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import com.example.queueup.handlers.CurrentUserHandler;
-import com.example.queueup.handlers.PushNotificationHandler;
 import com.example.queueup.models.Attendee;
 import com.example.queueup.models.Event;
 import com.example.queueup.models.GeoLocation;
@@ -19,9 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class AttendeeController {
     private static AttendeeController singleInstance = null;

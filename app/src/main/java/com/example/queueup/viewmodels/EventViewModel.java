@@ -176,7 +176,7 @@ public class EventViewModel extends ViewModel {
 
 
         isLoadingLiveData.setValue(true);
-        eventController.getEventsByUserId(userId)
+        eventController.getEnrolledEventsByUserId(userId)
                 .addOnSuccessListener(new OnSuccessListener<List<DocumentSnapshot>>() {
                     @Override
                     public void onSuccess(List<DocumentSnapshot> documentSnapshots) {
@@ -490,32 +490,6 @@ public class EventViewModel extends ViewModel {
     }
 
     /**
-     * Adds an announcement to an event.
-     *
-     * @param eventId
-     * @param announcement
-     */
-    public void addAnnouncement(String eventId, HashMap<String, String> announcement) {
-        if (eventId == null || eventId.isEmpty() || announcement == null || announcement.isEmpty()) {
-            errorMessageLiveData.setValue("Invalid event ID or announcement data.");
-            return;
-        }
-
-        isLoadingLiveData.setValue(true);
-        eventController.addAnnouncement(eventId, announcement)
-                .addOnSuccessListener(aVoid -> {
-                    fetchAnnouncements(eventId);
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        errorMessageLiveData.setValue("Failed to add announcement: " + e.getMessage());
-                        isLoadingLiveData.setValue(false);
-                    }
-                });
-    }
-
-    /**
      * Fetches announcements for a specific event.
      *
      * @param eventId
@@ -570,14 +544,14 @@ public class EventViewModel extends ViewModel {
      *
      * @param eventId
      */
-    public void handleReplacement(String eventId, String eventName) {
+    public void handleReplacement(String userId, String eventId, String eventName) {
         if (eventId == null || eventId.isEmpty()) {
             errorMessageLiveData.setValue("Invalid event ID for handling replacement.");
             return;
         }
 
         isLoadingLiveData.setValue(true);
-        eventController.handleReplacement(eventId, eventName)
+        eventController.handleReplacement(userId, eventId, eventName)
                 .addOnSuccessListener(aVoid -> {
                     fetchEventById(eventId);
                 })

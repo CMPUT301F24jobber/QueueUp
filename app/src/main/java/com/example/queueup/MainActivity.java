@@ -9,24 +9,25 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.queueup.controllers.UserController;
 import com.example.queueup.handlers.CurrentUserHandler;
-import com.example.queueup.handlers.PushNotificationHandler;
 import com.example.queueup.models.User;
 import com.example.queueup.services.NotificationService;
 import com.example.queueup.viewmodels.UserViewModel;
 import com.example.queueup.views.SignUp;
 import com.example.queueup.views.admin.AdminHome;
 import com.example.queueup.views.attendee.AttendeeHome;
+import com.example.queueup.views.organizer.OrganizerCreateFacility;
 import com.example.queueup.views.organizer.OrganizerHome;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-
-import java.security.Provider;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,9 +35,12 @@ public class MainActivity extends AppCompatActivity {
     private MaterialButton adminButton;
     private MaterialButton organizerButton;
     private MaterialButton attendeeButton;
+    private UserController userController = UserController.getInstance();
+
     private UserViewModel userViewModel;
     private FirebaseFirestore db;
     private User user;
+
     private Boolean isAdmin = false;
     private static Boolean notificationServiceStarted = false;
 
@@ -185,10 +189,39 @@ public class MainActivity extends AppCompatActivity {
         }
         startActivity(intent);
     }
+    private void navigateToFacilityPage(User user) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("user", user);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        OrganizerCreateFacility facilityDialog = new OrganizerCreateFacility();
+        facilityDialog.setArguments(bundle);
+        transaction.add(android.R.id.content, facilityDialog)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .commit();
+    }
+    private void handleOrganizerSelection() {
+        userController.getUserByDeviceId(userViewModel.getDeviceId()).addOnSuccessListener(querySnapshot -> {
+            if (!querySnapshot.getDocuments().isEmpty()) {
+                DocumentSnapshot documentSnapshot = querySnapshot.getDocuments().get(0);
+                user = documentSnapshot.toObject(User.class);
+            } else {
+                user = null;
+            }
+            if (user != null) {
+                if (user.getFacility() == null || user.getFacility().isEmpty()) {
+                    navigateToFacilityPage(user);
+                } else {
+                    redirectToRoleBasedActivity("Organizer", user);
+                }
+            } else {
+                navigateToSignupPage("Organizer");
+            }
+        });
+    }
 
     private void setupRoleSelection() {
         adminButton.setOnClickListener(v -> handleRoleSelection("Admin"));
-        organizerButton.setOnClickListener(v -> handleRoleSelection("Organizer"));
+        organizerButton.setOnClickListener(v -> handleOrganizerSelection());
         attendeeButton.setOnClickListener(v -> handleRoleSelection("Attendee"));
     }
 }

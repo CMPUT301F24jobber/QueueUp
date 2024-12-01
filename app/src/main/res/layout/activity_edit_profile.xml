@@ -277,7 +277,7 @@
             android:layout_centerHorizontal="true" />
 
         <Switch
-            android:id="@+id/notifSwitch1"
+            android:id="@+id/notifSelectedSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/notifTitle"
@@ -290,10 +290,10 @@
             android:trackTint="@color/backgroundColor"/>
 
         <Switch
-            android:id="@+id/notifSwitch"
+            android:id="@+id/notifNotSelectedSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/notifSwitch1"
+            android:layout_below="@id/notifSelectedSwitch"
             android:layout_marginTop="12dp"
             android:layout_alignParentStart="true"
             android:text="I want to be notified when not chosen from waiting list"
@@ -303,10 +303,10 @@
             android:trackTint="@color/backgroundColor"/>
 
         <Switch
-            android:id="@+id/notifSwitch2"
+            android:id="@+id/notifAllSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/notifSwitch"
+            android:layout_below="@id/notifNotSelectedSwitch"
             android:layout_marginTop="12dp"
             android:layout_alignParentStart="true"
             android:text="I want to receive other notifications from QueueUp"
