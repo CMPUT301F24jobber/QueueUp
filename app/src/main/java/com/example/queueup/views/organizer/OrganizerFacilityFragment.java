@@ -1,15 +1,12 @@
 package com.example.queueup.views.organizer;
 
-import android.app.Activity;
+import static com.example.queueup.handlers.CurrentUserHandler.userViewModel;
+
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,14 +14,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.bumptech.glide.Glide;
 import com.example.queueup.MainActivity;
 import com.example.queueup.R;
-import com.example.queueup.controllers.UserController;
 import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.models.User;
-import com.example.queueup.viewmodels.UserViewModel;
-import com.example.queueup.views.profiles.EditProfileActivity;
+import com.example.queueup.viewmodels.EventViewModel;
 import com.google.android.material.button.MaterialButton;
 
 
@@ -36,7 +30,8 @@ public class OrganizerFacilityFragment extends Fragment {
     private TextView facilityName;
     private Button editButton;
     private MaterialButton switchRoleButton;
-    private User user;
+    private EventViewModel eventViewModel;
+    private User currentUser;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -44,11 +39,14 @@ public class OrganizerFacilityFragment extends Fragment {
         facilityName = view.findViewById(R.id.facility_name);
         editButton = view.findViewById(R.id.editButton);
         switchRoleButton = view.findViewById(R.id.switch_role);
-        user = CurrentUserHandler.getSingleton().getCurrentUser().getValue();
-        facilityName.setText(user.getFacility());
+        currentUser = CurrentUserHandler.getSingleton().getCurrentUser().getValue();
+        facilityName.setText(currentUser.getFacility());
+        eventViewModel = new ViewModelProvider(this).get(EventViewModel.class);
+
+
         editButton.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
-            bundle.putParcelable("user", user);
+            bundle.putParcelable("user", currentUser);
             FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
             OrganizerCreateFacility facilityDialog = new OrganizerCreateFacility();
             facilityDialog.setArguments(bundle);
@@ -62,6 +60,20 @@ public class OrganizerFacilityFragment extends Fragment {
             startActivity(intent);
             requireActivity().finish();
         });
+        observeViewModel();
+        fetchUserData();
 
     }
+    private void observeViewModel() {
+        userViewModel.getCurrentUser().observe(getViewLifecycleOwner(), user -> {
+            if (user != null) {
+                currentUser = user;
+                facilityName.setText(currentUser.getFacility());
+            }
+        });
+    }
+    private void fetchUserData() {
+        userViewModel.loadUserByDeviceId(userViewModel.getDeviceId());
+    }
+
 }
