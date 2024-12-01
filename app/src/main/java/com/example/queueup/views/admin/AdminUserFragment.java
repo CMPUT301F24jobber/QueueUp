@@ -3,6 +3,7 @@ package com.example.queueup.views.admin;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -11,6 +12,7 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.example.queueup.R;
+import com.example.queueup.controllers.EventController;
 import com.example.queueup.controllers.UserController;
 import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.models.Event;
@@ -25,7 +27,6 @@ public class AdminUserFragment extends Fragment {
         super(R.layout.admin_user_fragment);
     }
 
-    private MaterialButton deleteButton;
 
     /**
      * Called when the fragment's view has been created.
@@ -37,9 +38,12 @@ public class AdminUserFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        deleteButton = view.findViewById(R.id.delete_button);
+        LinearLayout facilityLayout = view.findViewById(R.id.facility_layout);
+        MaterialButton deleteButton = view.findViewById(R.id.delete_button);
+        MaterialButton deleteFacility = view.findViewById(R.id.delete_facility);
 
         TextView titleText = view.findViewById(R.id.profile_title);
+        TextView facilityName = view.findViewById(R.id.facility_name);
         TextView displayName = view.findViewById(R.id.display_name);
         TextView userName = view.findViewById(R.id.username);
         TextView emailText = view.findViewById(R.id.email);
@@ -55,6 +59,18 @@ public class AdminUserFragment extends Fragment {
         userName.setText("@" + user.getUsername());
         emailText.setText("Email: " + user.getEmailAddress());
         phoneText.setText("Phone: " + user.getPhoneNumber());
+        if (user.getFacility() == null || user.getFacility().isEmpty()) {
+            facilityLayout.setVisibility(View.GONE);
+        } else {
+            facilityName.setText(user.getFacility());
+            deleteFacility.setOnClickListener( v -> {
+                user.setFacility(null);
+                EventController.getInstance().deleteEventsByUser(user.getUuid());
+
+                UserController.getInstance().updateUser(user);
+                facilityLayout.setVisibility(View.GONE);
+            });
+        }
 
         // Load profile picture using Glide (add Glide dependency if not already added)
         if (user.getProfileImageUrl() != null && !user.getProfileImageUrl().isEmpty()) {
