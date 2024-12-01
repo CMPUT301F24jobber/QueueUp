@@ -36,7 +36,7 @@ import java.util.UUID;
 
 public class OrganizerCreateFacility extends DialogFragment {
 
-    private Button uploadButton, submitButton;
+    private Button uploadButton, facilitySubmitButton;
     private ImageButton backButton;
     private TextInputLayout facilityNameInputLayout;
     private User user;
@@ -53,14 +53,14 @@ public class OrganizerCreateFacility extends DialogFragment {
         user = this.getArguments().getParcelable("user", User.class);
 
         backButton = view.findViewById(R.id.back_button);
-        submitButton = view.findViewById(R.id.submitButton);
+        facilitySubmitButton = view.findViewById(R.id.facilitySubmitButton);
         facilityNameInputLayout = view.findViewById(R.id.facilityNameInputLayout);
 
         backButton.setOnClickListener(v -> {
             dismiss();
         });
-        submitButton = view.findViewById(R.id.submitButton);
-        submitButton.setOnClickListener( v -> {
+        facilitySubmitButton = view.findViewById(R.id.facilitySubmitButton);
+        facilitySubmitButton.setOnClickListener( v -> {
             String name = facilityNameInputLayout.getEditText().getText().toString();
             if (name.isEmpty()) {
                 Toast.makeText(getContext(), "Facility Name can't be empty", Toast.LENGTH_SHORT).show();

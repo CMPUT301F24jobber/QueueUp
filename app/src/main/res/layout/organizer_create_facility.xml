@@ -43,7 +43,7 @@
         app:boxCornerRadiusTopEnd="16dp"
         app:boxCornerRadiusTopStart="16dp"
 
-        app:layout_constraintBottom_toTopOf="@+id/submitButton"
+        app:layout_constraintBottom_toTopOf="@+id/facilitySubmitButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/subtitleTextView">
@@ -53,11 +53,12 @@
             android:layout_height="wrap_content"
             android:inputType="textCapWords"
             android:maxLength="50" />
+
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Submit Button -->
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/submitButton"
+        android:id="@+id/facilitySubmitButton"
         android:layout_width="238dp"
         android:layout_height="43dp"
         android:layout_marginBottom="68dp"

@@ -221,7 +221,7 @@ public class AttendeeController {
     public static String makeNotificationMessage(String status, String eventName) {
         switch (status) {
             case "cancelled":
-                return "Your spot in " + eventName + "has been revolked.";
+                return "Your spot in " + eventName + " has been revolked.";
             case "selected":
                 return "You were selected for " + eventName + "!";
             case "not selected":
