@@ -7,10 +7,12 @@ import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.RootMatchers.isDialog;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
+import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.anything;
@@ -20,11 +22,13 @@ import static java.util.EnumSet.allOf;
 import static org.hamcrest.Matchers.allOf;
 
 import android.view.View;
+import android.widget.DatePicker;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.action.ViewActions;
+import androidx.test.espresso.contrib.PickerActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
@@ -33,6 +37,7 @@ import com.example.queueup.views.SignUp;
 import com.google.android.material.textfield.TextInputEditText;
 
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -218,8 +223,6 @@ public class MainActivityTest {
         // Click the submit button
         onView(withId(R.id.submitButton)).perform(click());
 
-        // Wait for the next screen to load
-        onView(isRoot()).perform(waitFor(5000));
         onView(withId(R.id.facilityNameInputLayout)).check(matches(isDisplayed()));
 
         // Fill in facility details
@@ -227,7 +230,6 @@ public class MainActivityTest {
                 .perform(typeText("CCIS 1-140"), closeSoftKeyboard());
         onView(withId(R.id.facilitySubmitButton)).perform(click());
 
-        // Wait for the final screen to load
         onView(isRoot()).perform(waitFor(5000));
         onView(withId(R.id.plusButton)).check(matches(isDisplayed()));
 
@@ -235,8 +237,24 @@ public class MainActivityTest {
         onView(withId(R.id.plusButton)).perform(click());
 
         onView(isRoot()).perform(waitFor(5000));
-        onView(allOf(isDescendantOfA(withId(R.id.eventNameEditText)), isAssignableFrom(TextInputEditText.class)))
+        onView(withId(R.id.eventNameEditText)).check(matches(isDisplayed()));
+
+        onView((withId(R.id.eventNameEditText)))
                 .perform(typeText("Test Event"), closeSoftKeyboard());
+
+        // Click on the EditText to open the DatePickerDialog
+        onView(withId(R.id.startDateEditText)).perform(click());
+
+        // Set the date (January 1, 2025)
+        onView(withClassName(Matchers.equalTo(DatePicker.class.getName())))
+                .perform(PickerActions.setDate(2025, 1, 1));
+
+        // Click on OK button
+        onView(withId(android.R.id.button1)).perform(click());
+
+        // Verify the selected date is displayed in the EditText
+        onView(withId(R.id.startDateEditText))
+                .check(matches(withText("2025-01-01")));
     }
 
     /**
