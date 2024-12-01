@@ -19,6 +19,7 @@ import com.example.queueup.models.Event;
 import com.example.queueup.models.GeoLocation;
 import com.example.queueup.services.LocationService;
 import com.example.queueup.viewmodels.UserViewModel;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 public class AttendeeWaitlistFragment extends Fragment {
     private Button joinWaitlistButton;
@@ -40,7 +41,15 @@ public class AttendeeWaitlistFragment extends Fragment {
         attendeeController = AttendeeController.getInstance();
         eventController = EventController.getInstance();
         currentUserHandler = CurrentUserHandler.getSingleton();
-
+        eventController.isCapacityReached(event.getEventId()).addOnSuccessListener(new OnSuccessListener<Boolean>() {
+            @Override
+            public void onSuccess(Boolean isCapacityReached) {
+                if (isCapacityReached) {
+                    joinWaitlistButton.setEnabled(false);
+                    joinWaitlistButton.setText("Event is full");
+                }
+            }
+        });
         if (event != null && event.getIsGeoLocationRequried() && getContext() != null) {
             Toast.makeText(getContext(), "Geolocation is required for this event.", Toast.LENGTH_LONG).show();
         }
