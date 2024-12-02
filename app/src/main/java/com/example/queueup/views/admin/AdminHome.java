@@ -62,41 +62,39 @@ public class AdminHome extends AppCompatActivity {
 
         navigationView.setOnItemSelectedListener(menuItem -> {
             String title = String.valueOf(menuItem.getTitle());
+            Fragment fragment = null;
+            String tag = null;
+
             switch (title) {
                 case "Home":
-                    getSupportFragmentManager().beginTransaction()
-                            .setReorderingAllowed(true)
-                            .replace(R.id.admin_activity_fragment, AdminHomeFragment.class, null)
-                            .addToBackStack("Home")
-                            .commit();
+                    fragment = new AdminHomeFragment();
+                    tag = "Home";
                     break;
                 case "Users":
-                    getSupportFragmentManager().beginTransaction()
-                            .setReorderingAllowed(true)
-                            .replace(R.id.admin_activity_fragment, AdminUsersFragment.class, null)
-                            .addToBackStack("Users")
-                            .commit();
+                    fragment = new AdminUsersFragment();
+                    tag = "Users";
                     break;
                 case "Gallery":
-                    getSupportFragmentManager().beginTransaction()
-                            .setReorderingAllowed(true)
-                            .replace(R.id.admin_activity_fragment, AdminGalleryFragment.class, null)
-                            .addToBackStack("Gallery")
-                            .commit();
+                    fragment = new AdminGalleryFragment();
+                    tag = "Gallery";
                     break;
                 case "Profile":
-                    getSupportFragmentManager().beginTransaction()
-                            .setReorderingAllowed(true)
-                            .replace(R.id.admin_activity_fragment, ProfileFragment.class, null) // Changed to ProfileFragment
-                            .addToBackStack("Profile")
-                            .commit();
+                    fragment = new ProfileFragment();
+                    tag = "Profile";
                     break;
                 default:
                     break;
             }
+
+            if (fragment != null && getSupportFragmentManager().findFragmentByTag(tag) == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .setReorderingAllowed(true)
+                        .replace(R.id.admin_activity_fragment, fragment, tag)
+                        .addToBackStack(tag)
+                        .commit();
+            }
             return true;
         });
-
     }
 
 }

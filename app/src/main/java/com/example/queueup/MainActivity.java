@@ -195,9 +195,13 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         OrganizerCreateFacility facilityDialog = new OrganizerCreateFacility();
         facilityDialog.setArguments(bundle);
-        transaction.add(android.R.id.content, facilityDialog)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .commit();
+
+        // Check if the fragment is already added
+        if (getSupportFragmentManager().findFragmentByTag("FACILITY_DIALOG") == null) {
+            transaction.add(android.R.id.content, facilityDialog, "FACILITY_DIALOG")
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .commit();
+        }
     }
     private void handleOrganizerSelection() {
         userController.getUserByDeviceId(userViewModel.getDeviceId()).addOnSuccessListener(querySnapshot -> {
