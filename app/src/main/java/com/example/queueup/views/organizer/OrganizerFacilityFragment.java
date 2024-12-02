@@ -56,9 +56,9 @@ public class OrganizerFacilityFragment extends Fragment {
         });
         // Set up Switch Role Button Click Listener
         switchRoleButton.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), MainActivity.class);
+            Intent intent = new Intent(getActivity(), OrganizerFacilityFragment.class);
             startActivity(intent);
-            requireActivity().finish();
+            getActivity().finish();
         });
         observeViewModel();
         fetchUserData();
