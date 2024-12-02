@@ -13,6 +13,7 @@ QueueUp redefines event management with its sleek modern interface, exceptional 
 https://github.com/user-attachments/assets/c8685832-d047-4c8d-be3a-10e5eeba112a
 
 Want to sign up for an event? Tap the camera icon in your navigation bar and scan the QR code. You can also choose to join or leave the waitlist!
+
 Note: In the video above, the user scans the QR code in an virtual environment provided by the emulator in Android Studio Code. This feature works with the phone's camera as well.
 
 ## Demo
