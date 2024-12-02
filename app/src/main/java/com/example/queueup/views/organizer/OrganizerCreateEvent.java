@@ -271,7 +271,7 @@ public class OrganizerCreateEvent extends AppCompatActivity {
         String eventId = UUID.randomUUID().toString();
         String qrCodeId = UUID.randomUUID().toString();
         ImageUploader imageUploader = new ImageUploader();
-        if (description == "test") {
+        if (description.equals("test")) {
             Event newEvent = new Event(
                     eventId,
                     eventName,
