@@ -42,6 +42,6 @@
     </fragment>
     <fragment
         android:id="@+id/adminProfileFragment"
-        android:name="com.example.queueup.views.profiles.ProfileFragment"
+        android:name="com.example.queueup.views.admin.AdminProfileFragment"
         android:label="AdminProfileFragment" />
 </navigation>
