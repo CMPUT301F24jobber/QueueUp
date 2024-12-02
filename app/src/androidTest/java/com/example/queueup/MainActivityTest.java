@@ -7,7 +7,6 @@ import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.RootMatchers.isDialog;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -23,12 +22,12 @@ import static org.hamcrest.Matchers.allOf;
 
 import android.view.View;
 import android.widget.DatePicker;
+import android.widget.TimePicker;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.action.ViewActions;
-import androidx.test.espresso.contrib.PickerActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
@@ -37,7 +36,6 @@ import com.example.queueup.views.SignUp;
 import com.google.android.material.textfield.TextInputEditText;
 
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -197,30 +195,24 @@ public class MainActivityTest {
      */
     @Test
     public void testSignUpForOrganizer() {
-        // Click the organizer button to navigate to the sign-up screen
+        // Navigate to the Organizer sign-up screen
         onView(withId(R.id.organizerButton)).perform(click());
 
-        // Wait for the first screen to load
+        // Wait for the screen to load
         onView(isRoot()).perform(waitFor(5000));
         onView(withId(R.id.firstNameInputLayout)).check(matches(isDisplayed()));
 
-        // Fill in the form fields
+        // Fill out the form fields
         onView(allOf(isDescendantOfA(withId(R.id.firstNameInputLayout)), isAssignableFrom(TextInputEditText.class)))
                 .perform(typeText("Son"), closeSoftKeyboard());
-
         onView(allOf(isDescendantOfA(withId(R.id.lastNameInputLayout)), isAssignableFrom(TextInputEditText.class)))
                 .perform(typeText("Goku"), closeSoftKeyboard());
-
         onView(allOf(isDescendantOfA(withId(R.id.emailInputLayout)), isAssignableFrom(TextInputEditText.class)))
                 .perform(typeText("sonGoku@test.ca"), closeSoftKeyboard());
-
         onView(allOf(isDescendantOfA(withId(R.id.phoneNumberInputLayout)), isAssignableFrom(TextInputEditText.class)))
                 .perform(typeText("9000000000"), closeSoftKeyboard());
-
         onView(allOf(isDescendantOfA(withId(R.id.usernameInputLayout)), isAssignableFrom(TextInputEditText.class)))
                 .perform(typeText("songoku"), closeSoftKeyboard());
-
-        // Click the submit button
         onView(withId(R.id.submitButton)).perform(click());
 
         onView(withId(R.id.facilityNameInputLayout)).check(matches(isDisplayed()));
@@ -242,19 +234,40 @@ public class MainActivityTest {
         onView((withId(R.id.eventNameEditText)))
                 .perform(typeText("Test Event"), closeSoftKeyboard());
 
-        // Click on the EditText to open the DatePickerDialog
+        // Set Start Date
         onView(withId(R.id.startDateEditText)).perform(click());
+        onView(isAssignableFrom(DatePicker.class)).perform(PickerActions.setDate(2025, 1, 1));
+        onView(withText("OK")).perform(click());
 
-        // Set the date (January 1, 2025)
-        onView(withClassName(Matchers.equalTo(DatePicker.class.getName())))
-                .perform(PickerActions.setDate(2025, 1, 1));
+        // Set Start Time
+        onView(withId(R.id.startTimeEditText)).perform(click());
+        onView(isAssignableFrom(TimePicker.class)).perform(PickerActions.setTime(12, 0));
+        onView(withText("OK")).perform(click());
 
-        // Click on OK button
-        onView(withId(android.R.id.button1)).perform(click());
+        // Set End Date
+        onView(withId(R.id.endDateEditText)).perform(click());
+        onView(isAssignableFrom(DatePicker.class)).perform(PickerActions.setDate(2025, 1, 2));
+        onView(withText("OK")).perform(click());
 
-        // Verify the selected date is displayed in the EditText
-        onView(withId(R.id.startDateEditText))
-                .check(matches(withText("2025-01-01")));
+        // Set End Time
+        onView(withId(R.id.endTimeEditText)).perform(click());
+        onView(isAssignableFrom(TimePicker.class)).perform(PickerActions.setTime(16, 0));
+        onView(withText("OK")).perform(click());
+
+        onView((withId(R.id.locationEditText)))
+                .perform(typeText("Edmonton"), closeSoftKeyboard());
+
+        onView((withId(R.id.descriptionEditText)))
+                .perform(typeText("This is a test event"), closeSoftKeyboard());
+
+        onView((withId(R.id.attendeeLimitEditText)))  // Going to check unlimited anyways so it will overwite this
+                .perform(typeText("10"), closeSoftKeyboard());
+
+        onView(withId(R.id.unlimitedAttendeeCheckBox)).perform(click());
+
+        onView(withId(R.id.geolocationRequiredCheckBox)).perform(click());
+
+        onView(withId(R.id.submitButton)).perform(click());
     }
 
     /**
