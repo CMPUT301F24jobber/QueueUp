@@ -16,7 +16,6 @@ Want to sign up for an event? Tap the camera icon in your navigation bar and sca
 
 Note: In the video above, the user scans the QR code in a virtual environment provided by the emulator in Android Studio Code. This feature works with the phone's camera as well.
 
-## Demo
 ### Create your own event!
 https://github.com/user-attachments/assets/e59812ee-b683-491c-a1e8-cd464a8cf6a8
 
