@@ -71,7 +71,13 @@ public class OrganizerQRCodesFragment extends Fragment {
     private void observeViewModel() {
         eventViewModel.getEventsByOrganizerLiveData().observe(getViewLifecycleOwner(), events -> {
             eventList.clear();
-            eventList.addAll(events);
+            for (int i = 0, n = events.size(); i < n; ++i) {
+                Event event = events.get(i);
+                if (event != null && event.getCheckInQrCodeId() != null) {
+                    eventList.add(event);
+                }
+            }
+
             eventsAdapter.notifyDataSetChanged();
         });
     }
