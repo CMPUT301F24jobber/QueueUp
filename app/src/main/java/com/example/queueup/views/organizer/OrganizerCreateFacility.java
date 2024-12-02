@@ -25,6 +25,7 @@ import androidx.fragment.app.DialogFragment;
 import com.bumptech.glide.Glide;
 import com.example.queueup.R;
 import com.example.queueup.controllers.UserController;
+import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.models.Event;
 import com.example.queueup.models.User;
 import com.example.queueup.views.SignUp;
@@ -67,6 +68,7 @@ public class OrganizerCreateFacility extends DialogFragment {
                 return;
             }
             user.setFacility(name);
+            CurrentUserHandler.getSingleton().updateUser(user);
             userController.updateUser(user);
             Intent intent = new Intent(getActivity(), OrganizerHome.class); // Navigate to OrganizerHome
             startActivity(intent);
