@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.queueup.MainActivity;
 import com.example.queueup.R;
+import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.models.User;
 import com.example.queueup.services.ImageUploader;
 import com.example.queueup.viewmodels.UserViewModel;
@@ -231,7 +232,7 @@ public class SignUp extends AppCompatActivity {
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .commit();
         } else {
-
+            CurrentUserHandler.getSingleton().updateUser(user);
             userViewModel.createUser(user).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     Toast.makeText(SignUp.this, "User registered successfully", Toast.LENGTH_SHORT).show();
