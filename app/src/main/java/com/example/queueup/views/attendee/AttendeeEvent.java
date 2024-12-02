@@ -122,6 +122,18 @@ public class AttendeeEvent extends AppCompatActivity {
                 }
 
             });
+        } else {
+            attendeeController.getAttendanceById(currentUserHandler.getCurrentUserId()+event.getEventId())
+                    .addOnSuccessListener(querySnapshot -> {
+                        attendee = querySnapshot.toObject(Attendee.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("event", event);
+                        bundle.putSerializable("attendee", attendee);
+                        getSupportFragmentManager().beginTransaction()
+                                .setReorderingAllowed(true)
+                                .replace(R.id.attendee_event_fragment, AttendeeWaitlistJoinedFragment.class, bundle)
+                                .commit();
+                    });
         }
 
     }
