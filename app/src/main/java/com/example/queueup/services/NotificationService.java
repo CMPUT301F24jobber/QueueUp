@@ -18,6 +18,7 @@ import androidx.core.app.ServiceCompat;
 
 import com.example.queueup.R;
 import com.example.queueup.controllers.UserController;
+import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.models.User;
 import com.example.queueup.viewmodels.UserViewModel;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -120,6 +121,9 @@ public class NotificationService extends Service {
                             if (querySnapshot != null && !querySnapshot.isEmpty()) {
                                 DocumentSnapshot document = querySnapshot.getDocuments().get(0);
                                 user = document.toObject(User.class);
+                            }
+                            if (user != null) {
+                                CurrentUserHandler.getSingleton().updateUser(user);
                             }
                             showAllNotifications();
                         });
