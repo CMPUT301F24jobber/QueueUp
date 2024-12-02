@@ -35,8 +35,7 @@ public class AdminEventFragment extends Fragment {
     TextView endDate;
     TextView eventLocation;
     ImageView eventImage;
-    MaterialButton deleteButton;
-    ToggleButton deleteQrButton;
+    MaterialButton deleteButton, deleteQrButton;
     private EventViewModel eventViewModel;
 
     /**
@@ -46,7 +45,6 @@ public class AdminEventFragment extends Fragment {
      */
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        qrToggle = view.findViewById(R.id.delete_qr_button);
         eventTitle = view.findViewById(R.id.event_title);
         startDate = view.findViewById(R.id.start_date);
         endDate = view.findViewById(R.id.end_date);
@@ -56,14 +54,6 @@ public class AdminEventFragment extends Fragment {
         deleteQrButton = view.findViewById(R.id.delete_qr_button);
         Event event = this.getArguments().getSerializable("event", Event.class);
 
-        qrToggle.setOnCheckedChangeListener((v, isChecked) -> {
-            if (isChecked) {
-                qrToggle.setBackgroundResource(R.drawable.filled_button);
-            } else {
-                qrToggle.setBackgroundResource(R.drawable.hollow_button);
-            }
-
-        });
 
         eventTitle.setText(event.getEventName());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE MMM dd, uuuu");
