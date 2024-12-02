@@ -64,8 +64,5 @@ public class EditProfileTesting {
 
         onView(withId(R.id.submitButton)).perform(click());
 
-        // Need to write test for profile activity & edit profile
-
-
     }
 }
