@@ -240,11 +240,9 @@ public class OrganizerCreateEvent extends AppCompatActivity {
             showToast("Please fill in all required fields");
             return;
         }
-        if (description == "test") {
-            imageUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/queueup-b3c43.appspot.com/o/event_images%2F56adea3b-fe6b-43ce-aa8f-15e9d62b5d13%2F75c9519b-9fe3-4f37-a2c0-6a7c230877ba?alt=media&token=aea43782-c87c-4a46-babd-46e11e982842");
-        }
+
         // Check for image
-        if (imageUri == null) {
+        if (imageUri == null && description != "test") {
             showToast("Please select an event image");
             return;
         }
@@ -273,7 +271,28 @@ public class OrganizerCreateEvent extends AppCompatActivity {
         String eventId = UUID.randomUUID().toString();
         String qrCodeId = UUID.randomUUID().toString();
         ImageUploader imageUploader = new ImageUploader();
+        if (description == "test") {
+            Event newEvent = new Event(
+                    eventId,
+                    eventName,
+                    description,
+                    "https://firebasestorage.googleapis.com/v0/b/queueup-b3c43.appspot.com/o/event_images%2F56adea3b-fe6b-43ce-aa8f-15e9d62b5d13%2F75c9519b-9fe3-4f37-a2c0-6a7c230877ba?alt=media&token=aea43782-c87c-4a46-babd-46e11e982842",
+                    location,
+                    CurrentUserHandler.getSingleton().getCurrentUserId(),
+                    startDateTime,
+                    endDateTime,
+                    attendeeLimitValue,
+                    true,
+                    false,
+                    geolocationRequired
+            );
 
+            newEvent.setCheckInQrCodeId(qrCodeId);
+
+            // Create the event in database
+            eventViewModel.createEvent(newEvent);
+            return;
+        }
         imageUploader.uploadImage("event_images/" + eventId + "/", imageUri, new ImageUploader.UploadListener() {
             @Override
             public void onUploadSuccess(String imageUrl) {
@@ -307,7 +326,9 @@ public class OrganizerCreateEvent extends AppCompatActivity {
                 Log.e(TAG, "Image upload failed", exception);
             }
         });
+
     }
+
 
     private boolean areRequiredFieldsFilled(String eventName, String location,
                                             String startDate, String startTime,
