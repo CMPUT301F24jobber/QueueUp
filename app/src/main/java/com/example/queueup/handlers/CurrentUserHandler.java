@@ -31,6 +31,7 @@ public class CurrentUserHandler {
             if (User != null) {
                 singleInstance.cachedUserId = User.getUuid();
             }
+
         });
     }
 

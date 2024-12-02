@@ -1,19 +1,29 @@
 package com.example.queueup.viewmodels;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.queueup.controllers.UserController;
+import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.models.User;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 
 
 public class UserViewModel extends AndroidViewModel {
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final CollectionReference userCollectionReference = db.collection("users");
     private final UserController userController;
     private final MutableLiveData<User> currentUser = new MutableLiveData<>();
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
@@ -22,7 +32,23 @@ public class UserViewModel extends AndroidViewModel {
     public UserViewModel(@NonNull Application application) {
         super(application);
         userController = UserController.getInstance();
-
+        String deviceId = userController.getDeviceId(getApplication());
+            db.collection("users").whereEqualTo("deviceId", deviceId)
+                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable QuerySnapshot snapshot,
+                                            @Nullable FirebaseFirestoreException e) {
+                            if (e != null) {
+                                return;
+                            }
+                            userController.getUserByDeviceId(deviceId).addOnSuccessListener(querySnapshot -> {
+                                if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                                    DocumentSnapshot document = querySnapshot.getDocuments().get(0);
+                                    currentUser.setValue( document.toObject(User.class));
+                                }
+                            });
+                        }
+                    });
     }
 
     /**
