@@ -220,7 +220,7 @@ public class MainActivityTest {
         // Fill in facility details
         onView(allOf(isDescendantOfA(withId(R.id.facilityNameInputLayout)), isAssignableFrom(TextInputEditText.class)))
                 .perform(typeText("CCIS 1-140"), closeSoftKeyboard());
-        onView(withId(R.id.facilitySubmitButton)).perform(click());
+        onView(withId(R.id.facility_submit_button)).perform(click());
 
         onView(isRoot()).perform(waitFor(5000));
         onView(withId(R.id.plusButton)).check(matches(isDisplayed()));
@@ -258,7 +258,7 @@ public class MainActivityTest {
                 .perform(typeText("Edmonton"), closeSoftKeyboard());
 
         onView((withId(R.id.descriptionEditText)))
-                .perform(typeText("This is a test event"), closeSoftKeyboard());
+                .perform(typeText("test"), closeSoftKeyboard());
 
         onView((withId(R.id.attendeeLimitEditText)))  // Going to check unlimited anyways so it will overwite this
                 .perform(typeText("10"), closeSoftKeyboard());

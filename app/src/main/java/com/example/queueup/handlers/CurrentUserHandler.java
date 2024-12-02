@@ -18,7 +18,7 @@ public class CurrentUserHandler {
     public static UserViewModel userViewModel;
     private static AppCompatActivity ownerActivity;
     private static UserController userController = UserController.getInstance();
-    private String cachedUserId = null;
+    private static String cachedUserId = null;
 
     private static void setSingleton() {
         if (ownerActivity == null) {
@@ -38,6 +38,9 @@ public class CurrentUserHandler {
     public static CurrentUserHandler getSingleton() {
         if (singleInstance == null) {
             setSingleton();
+        }
+        if (userViewModel.getCurrentUser() != null && userViewModel.getCurrentUser().getValue() != null) {
+            cachedUserId = userViewModel.getCurrentUser().getValue().getUuid();
         }
         return singleInstance;
     }

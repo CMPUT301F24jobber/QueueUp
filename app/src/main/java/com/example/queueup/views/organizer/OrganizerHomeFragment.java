@@ -72,7 +72,7 @@ public class OrganizerHomeFragment extends Fragment {
         observeViewModel();
 
         // Fetch events for the current organizer
-        organizerId = CurrentUserHandler.getSingleton().getCurrentUser().getValue().getUuid();
+        organizerId = CurrentUserHandler.getSingleton().getCurrentUserId();
         if (organizerId == null || organizerId.isEmpty()) {
             organizerId = CurrentUserHandler.getSingleton().getCurrentUserId();
         }
