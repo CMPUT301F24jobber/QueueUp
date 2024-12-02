@@ -72,7 +72,7 @@
         android:textSize="18sp"
         android:padding="16dp"
         app:cornerRadius="24dp"
-        app:backgroundTint="@color/light_beige"
+        app:backgroundTint="#F1E8E1"
         app:layout_constraintBottom_toTopOf="@id/attendeeButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
