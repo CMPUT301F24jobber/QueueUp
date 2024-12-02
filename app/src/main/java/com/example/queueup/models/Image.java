@@ -28,7 +28,16 @@ public class Image implements Serializable {
 
     public Image() {}
 
-
+    /***
+     * Constructor
+     * @param imageUrl
+     * @param filePath
+     * @param storageReferenceId
+     * @param imageId
+     * @param imageSize
+     * @param imageType
+     * @param creationDate
+     */
     public Image(String imageUrl, String filePath, String storageReferenceId, String imageId, long imageSize, String imageType, String creationDate) {
         this.imageUrl = imageUrl;
         this.filePath = filePath;
@@ -44,8 +53,6 @@ public class Image implements Serializable {
         this.imageUrl = imageUrl;
         this.imageType = imageType;
         this.imageId = imageId;
-
-
     }
 
 

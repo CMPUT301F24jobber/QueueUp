@@ -2,12 +2,20 @@ package com.example.queueup.models;
 
 import java.util.UUID;
 
+
 public class QRCode {
     private String id;
     private String eventId;
 
+    /***
+     * Empty constructor for QRCode
+     */
     public QRCode() {}
 
+    /***
+     * Constructor for QRCode using an event's id.
+     * @param eventId
+     */
     public QRCode(String eventId) {
         this.id = UUID.randomUUID().toString();
         this.eventId = eventId;

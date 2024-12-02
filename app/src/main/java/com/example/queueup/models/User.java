@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+
 public class User implements Parcelable {
     private String uuid;
     private String firstName;
@@ -31,6 +32,9 @@ public class User implements Parcelable {
     private String facility;
 
 
+    /***
+     * Default constructor for user
+     */
     public User() {
         this.notifications = new ArrayList<>();
         this.waitingListEvents = new ArrayList<>();
@@ -40,6 +44,16 @@ public class User implements Parcelable {
     }
 
 
+    /***
+     * Constructor for User with all fields
+     * @param firstName
+     * @param lastName
+     * @param username
+     * @param emailAddress
+     * @param phoneNumber
+     * @param deviceId
+     * @param isadmin
+     */
     public User(String firstName, String lastName, String username, String emailAddress, String phoneNumber, String deviceId, Boolean isadmin) {
         this();
         this.uuid = UUID.randomUUID().toString();
@@ -56,6 +70,10 @@ public class User implements Parcelable {
         receiveAllNotifications = true;
     }
 
+    /***
+     * Parcel constructor for user
+     * @param in
+     */
     protected User(Parcel in) {
         uuid = in.readString();
         firstName = in.readString();
@@ -88,7 +106,9 @@ public class User implements Parcelable {
         Log.d("User", "Reading from Parcel: " + this.toString());
     }
 
-
+    /***
+     * Creator for parcel
+     */
     public static final Creator<User> CREATOR = new Creator<User>() {
         @Override
         public User createFromParcel(Parcel in) {
@@ -101,10 +121,18 @@ public class User implements Parcelable {
         }
     };
 
+    /***
+     * Gets geolocation of the user
+     * @return GeoLocation of user
+     */
     public GeoLocation getGeoLocation() {
         return geoLocation;
     }
 
+    /***
+     * Sets the geolocation of the user.
+     * @param geoLocation
+     */
     public void setGeoLocation(GeoLocation geoLocation) {
         this.geoLocation = geoLocation;
     }
