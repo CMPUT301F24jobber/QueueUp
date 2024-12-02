@@ -157,7 +157,6 @@ public class NotificationService extends Service {
         });
         thread.start();
 
-        Toast.makeText(this, "notification service started", Toast.LENGTH_SHORT).show();
         return Service.START_STICKY;
     }
 

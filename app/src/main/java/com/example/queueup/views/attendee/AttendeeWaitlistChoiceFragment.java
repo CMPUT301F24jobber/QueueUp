@@ -70,8 +70,7 @@ public class AttendeeWaitlistChoiceFragment extends Fragment {
                         .commit();
             });
         } else {
-            buttonOne.setText("Get a chance to be redrawn");
-            buttonOne.setTextSize(8);
+            buttonOne.setText("Redraw me");
             buttonOne.setOnClickListener(v -> {
                 attendeeController.setAttendeeStatus(attendee.getId(), "waiting");
                 attendee.setStatus("waiting");
