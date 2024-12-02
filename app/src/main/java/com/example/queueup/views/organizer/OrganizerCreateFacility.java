@@ -60,7 +60,6 @@ public class OrganizerCreateFacility extends DialogFragment {
         backButton.setOnClickListener(v -> {
             dismiss();
         });
-        submitButton = view.findViewById(R.id.submitButton);
         submitButton.setOnClickListener( v -> {
             String name = facilityNameInputLayout.getEditText().getText().toString();
             if (name.isEmpty()) {
