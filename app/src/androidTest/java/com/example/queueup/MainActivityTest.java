@@ -268,6 +268,9 @@ public class MainActivityTest {
         onView(withId(R.id.geolocationRequiredCheckBox)).perform(click());
 
         onView(withId(R.id.submitButton)).perform(click());
+
+        onView(isRoot()).perform(waitFor(10000));
+        onView(withId(R.id.plusButton)).check(matches(isDisplayed()));
     }
 
     /**

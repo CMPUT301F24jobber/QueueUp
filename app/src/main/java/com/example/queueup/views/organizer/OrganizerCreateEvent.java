@@ -244,7 +244,6 @@ public class OrganizerCreateEvent extends AppCompatActivity {
         // Check for image
         if (imageUri == null) {
             showToast("Please select an event image");
-            return;
         }
 
         // Validate dates
@@ -272,39 +271,26 @@ public class OrganizerCreateEvent extends AppCompatActivity {
         String qrCodeId = UUID.randomUUID().toString();
         ImageUploader imageUploader = new ImageUploader();
 
-        imageUploader.uploadImage("event_images/" + eventId + "/", imageUri, new ImageUploader.UploadListener() {
-            @Override
-            public void onUploadSuccess(String imageUrl) {
-                // Create event object with the uploaded image URL
-                Event newEvent = new Event(
-                        eventId,
-                        eventName,
-                        description,
-                        imageUrl,
-                        location,
-                        CurrentUserHandler.getSingleton().getCurrentUserId(),
-                        startDateTime,
-                        endDateTime,
-                        attendeeLimitValue,
-                        true,
-                        false,
-                        geolocationRequired
-                );
 
-                newEvent.setCheckInQrCodeId(qrCodeId);
+        Event newEvent = new Event(
+                eventId,
+                eventName,
+                description,
+                null,
+                location,
+                CurrentUserHandler.getSingleton().getCurrentUserId(),
+                startDateTime,
+                endDateTime,
+                attendeeLimitValue,
+                true,
+                false,
+                geolocationRequired
+        );
 
-                // Create the event in database
-                eventViewModel.createEvent(newEvent);
-                showToast("Creating event...");
-            }
+        eventViewModel.createEvent(newEvent);
 
-            @Override
-            public void onUploadFailure(Exception exception) {
-                showToast("Failed to upload image. Please try again.");
-                submitButton.setEnabled(true);
-                Log.e(TAG, "Image upload failed", exception);
-            }
-        });
+        // Create the event in database
+        showToast("Creating event...");
     }
 
     private boolean areRequiredFieldsFilled(String eventName, String location,
