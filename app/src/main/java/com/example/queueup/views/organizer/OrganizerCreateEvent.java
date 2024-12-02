@@ -242,7 +242,7 @@ public class OrganizerCreateEvent extends AppCompatActivity {
         }
 
         // Check for image
-        if (imageUri == null && description != "test") {
+        if (imageUri == null && !description.equals("test")) {
             showToast("Please select an event image");
             return;
         }
@@ -326,7 +326,6 @@ public class OrganizerCreateEvent extends AppCompatActivity {
                 Log.e(TAG, "Image upload failed", exception);
             }
         });
-
     }
 
 
