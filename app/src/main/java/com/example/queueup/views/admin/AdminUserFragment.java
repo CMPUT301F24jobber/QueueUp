@@ -82,6 +82,8 @@ public class AdminUserFragment extends Fragment {
         }
 
         deleteButton.setOnClickListener((v) -> {
+            EventController.getInstance().deleteEventsByUser(user.getUuid());
+
             UserController.getInstance().deleteUserById(user.getUuid()).addOnSuccessListener((stuf) -> {
                 getActivity().onBackPressed();
             });
