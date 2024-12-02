@@ -14,6 +14,7 @@ import com.example.queueup.controllers.EventController;
 import com.example.queueup.handlers.CurrentUserHandler;
 import com.example.queueup.models.Attendee;
 import com.example.queueup.models.Event;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 public class AttendeeWaitlistChoiceFragment extends Fragment {
     public AttendeeWaitlistChoiceFragment() {
@@ -54,11 +55,11 @@ public class AttendeeWaitlistChoiceFragment extends Fragment {
             leaveButton.setText("Decline");
             leaveButton.setOnClickListener( v -> {
                 attendeeController.setAttendeeStatus(attendee.getId(), "cancelled");
-                if (event.getRedrawEnabled()) {
-                    eventController.handleReplacement(attendee.getUserId(), event.getEventId(), event.getEventName());
-                } else {
-                    attendee.setStatus("cancelled");
-                }
+                eventController.getEventById(event.getEventId()).addOnSuccessListener(querySnapshot -> {
+                        event = querySnapshot.toObject(Event.class);
+                        if (event.getRedrawEnabled()) eventController.handleReplacement(attendee.getUserId(), event.getEventId(), event.getEventName());
+                    });
+                attendee.setStatus("cancelled");
 
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("event", event);
