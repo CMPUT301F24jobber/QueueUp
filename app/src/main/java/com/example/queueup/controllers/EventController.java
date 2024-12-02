@@ -454,7 +454,7 @@ public class EventController {
                             if (!attendees.isEmpty()) {
                                 String attendeeId = attendees.get((new Random()).nextInt(attendees.size()));
                                 userController.notifyUserById(attendeeId.substring(0, 36), "selected", AttendeeController.makeNotificationMessage("selected", eventName));
-                                attendeeController.setAttendeeStatus(attendeeId, "selected");
+                                attendeeController.setAttendeeStatus(attendeeId+eventId, "selected");
                             }
                         }
                         return Tasks.forResult(null);
