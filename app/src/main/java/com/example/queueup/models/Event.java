@@ -29,8 +29,27 @@ public class Event implements Serializable {
     private int maxCapacity;
     private int currentCapacity;
 
+    /***
+     * Empty Constructor used for firebase
+     */
     public Event() {
     }
+
+    /***
+     * Main Constructor populating all fields needed on creation.
+     * @param eventId
+     * @param eventName
+     * @param eventDescription
+     * @param eventBannerImageUrl
+     * @param eventLocation
+     * @param organizerId
+     * @param eventStartDate
+     * @param eventEndDate
+     * @param maxCapacity
+     * @param isActive
+     * @param isDrawn
+     * @param isGeoLocationRequried
+     */
     public Event(String eventId, String eventName, String eventDescription, String eventBannerImageUrl,
                  String eventLocation, String organizerId, Date eventStartDate, Date eventEndDate,
                  int maxCapacity, Boolean isActive, Boolean isDrawn, Boolean isGeoLocationRequried) {
@@ -53,10 +72,20 @@ public class Event implements Serializable {
         this.redrawNotificationEnabled = false;
     }
 
+    /***
+     * Retrieves whether event requires geolocation or not.
+     *
+     * @return Boolean representing geolocation requirement
+     */
     public Boolean getIsGeoLocationRequried() {
         return isGeoLocationRequried;
     }
 
+    /***
+     * Set whether event requires geolocation or not.
+     *
+     * @param isGeoLocationRequried
+     */
     public void setIsGeoLocationRequried(Boolean isGeoLocationRequried) {
         this.isGeoLocationRequried = isGeoLocationRequried;
     }

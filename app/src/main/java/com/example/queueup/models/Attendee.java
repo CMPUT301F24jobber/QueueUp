@@ -11,9 +11,16 @@ public class Attendee implements Serializable {
     private GeoLocation location;
     private String status;
 
+    /***
+     * Empty constructor for Attendee
+     */
     public Attendee() {}
 
-    // Constructor for Attendee
+    /***
+     * Constructor for Attendee without geolocation
+     * @param userId
+     * @param eventId
+     */
     public Attendee(String userId, String eventId) {
         this.userId = userId;
         this.eventId = eventId;
@@ -22,6 +29,13 @@ public class Attendee implements Serializable {
         this.status = "pending";
         this.location = null;
     }
+
+    /***
+     * Constructor for Attendee with geolocation
+     * @param userId
+     * @param eventId
+     * @param location
+     */
     public Attendee(String userId, String eventId, GeoLocation location) {
         this.userId = userId;
         this.eventId = eventId;
