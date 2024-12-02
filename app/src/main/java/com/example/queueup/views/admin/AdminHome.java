@@ -47,17 +47,14 @@ public class AdminHome extends AppCompatActivity {
             deviceId = UserController.getInstance().getDeviceId(getApplicationContext());
         }
 
-        NavHostFragment navHostFragment =
-                (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.admin_activity_fragment);
-        NavController navController = navHostFragment.getNavController();
 
 
-        if (savedInstanceState == null) {
+
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
                     .replace(R.id.admin_activity_fragment, AdminHomeFragment.class, null)
                     .commit();
-        }
+
 
 
         navigationView.setOnItemSelectedListener(menuItem -> {

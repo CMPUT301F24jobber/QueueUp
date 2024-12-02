@@ -20,6 +20,7 @@ import com.example.queueup.MainActivity;
 import com.example.queueup.controllers.EventController;
 import com.example.queueup.models.Event;
 import com.example.queueup.viewmodels.EventViewModel;
+import com.example.queueup.views.SignUp;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -48,6 +49,12 @@ public class AttendeeQRscanActivity extends CaptureActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(AttendeeQRscanActivity.this, AttendeeHome.class); // Navigate to AttendeeHome
+        startActivity(intent);
+        finish();
+    }
 
 
 
