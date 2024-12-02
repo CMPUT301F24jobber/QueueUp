@@ -74,7 +74,7 @@ public class OrganizerCreateEvent extends AppCompatActivity {
 
         // Enable submit button when user is authenticated
         CurrentUserHandler.getSingleton().getCurrentUser().observe(this, user -> {
-            submitButton.setEnabled(user != null && user.getUuid() != null);
+            submitButton.setEnabled(user != null);
         });
     }
 
