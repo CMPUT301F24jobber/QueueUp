@@ -41,6 +41,8 @@ public class AttendeeEvent extends AppCompatActivity {
         TextView locationText = findViewById(R.id.event_location);
         TextView timeText = findViewById(R.id.event_time);
         TextView descriptionText = findViewById(R.id.description);
+        TextView attendeeText = findViewById(R.id.attendees_text);
+
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("EEEE MMM dd");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm a");
         String date_text = event.getEventStartDate().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate().format(dateFormatter);
@@ -50,6 +52,7 @@ public class AttendeeEvent extends AppCompatActivity {
         titleText.setText(event.getEventName());
         eventDate.setText(date_text);
         locationText.setText(event.getEventLocation());
+        attendeeText.setText("Attendees: " + event.getAttendeeIds().size() + "/" + (event.getMaxCapacity() == Integer.MAX_VALUE? "Unlimited" : event.getMaxCapacity()));
 
         timeText.setText(time_text);
         descriptionText.setText(event.getEventDescription());

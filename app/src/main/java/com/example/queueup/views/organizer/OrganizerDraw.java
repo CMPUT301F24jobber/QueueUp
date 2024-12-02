@@ -66,11 +66,13 @@ public class OrganizerDraw extends Fragment {
         eventController = EventController.getInstance();
         TextView locationText = view.findViewById(R.id.event_location);
         TextView timeText = view.findViewById(R.id.event_time);
+        TextView attendeeText = view.findViewById(R.id.attendees_text);
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("EEEE MMM dd");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm a");
         String date_text = event.getEventStartDate().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate().format(dateFormatter);
         String time_text = event.getEventStartDate().toInstant().atZone(java.time.ZoneId.systemDefault()).format(timeFormatter);
         eventDate.setText(date_text);
+        attendeeText.setText("Attendees: " + event.getAttendeeIds().size() + "/" + (event.getMaxCapacity() == Integer.MAX_VALUE? "Unlimited" : event.getMaxCapacity()));
         locationText.setText(event.getEventLocation());
         ImageView posterImage = view.findViewById(R.id.poster_image);
         eventViewModel = new ViewModelProvider(this).get(EventViewModel.class);

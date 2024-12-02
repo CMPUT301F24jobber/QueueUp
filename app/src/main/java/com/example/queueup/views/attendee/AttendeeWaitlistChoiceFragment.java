@@ -24,7 +24,6 @@ public class AttendeeWaitlistChoiceFragment extends Fragment {
     private Button buttonOne, leaveButton;
     private EventController eventController;
     private AttendeeController attendeeController;
-    private CurrentUserHandler currentUserHandler;
     private Event event;
     private Attendee attendee;
 
